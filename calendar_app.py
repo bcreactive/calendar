@@ -63,28 +63,15 @@ class CalendarApp(App):
         # A grid of enumerated buttons, starting at the correct weekday
         if len(self.weeks) == 4:
             self.bottom_row = GridLayout(cols=7, rows=4, spacing=5)
-            for i in range(self.week_start):
-                label = Label(text="")
-                self.bottom_row.add_widget(label)
-            for i in range(self.month_lenght):
-                button = Button(text=str(i+1))
-                self.bottom_row.add_widget(button)
+            self.set_buttons()
+
         elif len(self.weeks) == 5:
             self.bottom_row = GridLayout(cols=7, rows=5, spacing=5)
-            for i in range(self.week_start):
-                label = Label(text="")
-                self.bottom_row.add_widget(label)
-            for i in range(self.month_lenght):
-                button = Button(text=str(i+1))
-                self.bottom_row.add_widget(button)
+            self.set_buttons()
+
         elif len(self.weeks) == 6:
             self.bottom_row = GridLayout(cols=7, rows=6, spacing=5)
-            for i in range(self.week_start):
-                label = Label(text="")
-                self.bottom_row.add_widget(label)
-            for i in range(self.month_lenght):
-                button = Button(text=str(i+1))
-                self.bottom_row.add_widget(button)
+            self.set_buttons()
 
         # Create the main layout by stacking the top row, middle row, and grid
         self.main_layout = BoxLayout(orientation='vertical')
@@ -93,6 +80,16 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.bottom_row)
 
         return self.main_layout
+    
+    def set_buttons(self):
+        # Set the placeholder labels to have buttons start at the correct day
+        for i in range(self.week_start):
+            label = Label(text="")
+            self.bottom_row.add_widget(label)
+        # Set button-grid
+        for i in range(self.month_lenght):
+            button = Button(text=str(i+1))
+            self.bottom_row.add_widget(button)
 
     def get_month_name(self, value):
         if value == 1:
@@ -163,33 +160,17 @@ class CalendarApp(App):
 
         if len(self.weeks) == 4:
             self.bottom_row = GridLayout(cols=7, rows=4, spacing=5)
-            for i in range(self.week_start):
-                label = Label(text="")
-                self.bottom_row.add_widget(label)
-            for i in range(self.month_lenght):
-                button = Button(text=str(i+1))
-                self.bottom_row.add_widget(button)
+            self.set_buttons()
         elif len(self.weeks) == 5:
             self.bottom_row = GridLayout(cols=7, rows=6, spacing=5)
-            for i in range(self.week_start):
-                label = Label(text="")
-                self.bottom_row.add_widget(label)
-            for i in range(self.month_lenght):
-                button = Button(text=str(i+1))
-                self.bottom_row.add_widget(button)
+            self.set_buttons()
         elif len(self.weeks) == 6:
             self.bottom_row = GridLayout(cols=7, rows=6, spacing=5)
-            for i in range(self.week_start):
-                label = Label(text="")
-                self.bottom_row.add_widget(label)
-            for i in range(self.month_lenght):
-                button = Button(text=str(i+1))
-                self.bottom_row.add_widget(button)
+            self.set_buttons()
 
         self.main_layout.add_widget(self.top_row)
         self.main_layout.add_widget(self.mid_row)
         self.main_layout.add_widget(self.bottom_row)
-        
 
     def dec_year(self, x):
         self.current_year -= 1
