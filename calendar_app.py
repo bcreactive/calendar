@@ -10,6 +10,10 @@ import calendar
 class CalendarApp(App):
     def __init__(self, **kwargs):
         super(CalendarApp, self).__init__(**kwargs)
+        self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
+        self.mid_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
+        self.bottom_row = GridLayout(cols=7, rows=5, spacing=5)
+        self.main_layout = BoxLayout(orientation='vertical')
 
         self.current_year = datetime.now().year
         self.current_month = datetime.now().month
@@ -42,14 +46,8 @@ class CalendarApp(App):
         # get the amount of days for the passed year/month
         self.month_lenght = calendar.monthrange(self.current_year,
                                            self.current_month)[1]
-        
-        self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
-        # self.middle_row = ""
-        # self.bottom_row = ""
-        # self.layout = ""
                 
     def build(self):
-        
         # Create the top row of buttons and labels: swithch year/month
         self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
         first_row = [self.year_rwd, self.year, self.year_fwd, self.spaceholder,
@@ -63,7 +61,15 @@ class CalendarApp(App):
             self.mid_row.add_widget(i)
 
         # A grid of enumerated buttons, starting at the correct weekday
-        if len(self.weeks) == 5:
+        if len(self.weeks) == 4:
+            self.bottom_row = GridLayout(cols=7, rows=4, spacing=5)
+            for i in range(self.week_start):
+                label = Label(text="")
+                self.bottom_row.add_widget(label)
+            for i in range(self.month_lenght):
+                button = Button(text=str(i+1))
+                self.bottom_row.add_widget(button)
+        elif len(self.weeks) == 5:
             self.bottom_row = GridLayout(cols=7, rows=5, spacing=5)
             for i in range(self.week_start):
                 label = Label(text="")
@@ -134,11 +140,61 @@ class CalendarApp(App):
     def update_values(self):
         self.month.text = self.get_month_name(self.current_month)
         self.year.text = f'{self.current_year}'
+        self.weeks = self.load_month()
+        self.month_lenght = calendar.monthrange(self.current_year,
+                                           self.current_month)[1]
+
+        # Clear existing buttons
+        self.top_row.clear_widgets()
+        self.mid_row.clear_widgets()
+        self.bottom_row.clear_widgets()
+        self.main_layout.clear_widgets()
+
+        # Recreate rows with updated values.
+        self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
+        first_row = [self.year_rwd, self.year, self.year_fwd, self.spaceholder,
+                     self.month_rwd, self.month, self.month_fwd]
+        for i in first_row:
+            self.top_row.add_widget(i)
         
+        self.mid_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
+        for i in self.day_labels:
+            self.mid_row.add_widget(i)
+
+        if len(self.weeks) == 4:
+            self.bottom_row = GridLayout(cols=7, rows=4, spacing=5)
+            for i in range(self.week_start):
+                label = Label(text="")
+                self.bottom_row.add_widget(label)
+            for i in range(self.month_lenght):
+                button = Button(text=str(i+1))
+                self.bottom_row.add_widget(button)
+        elif len(self.weeks) == 5:
+            self.bottom_row = GridLayout(cols=7, rows=6, spacing=5)
+            for i in range(self.week_start):
+                label = Label(text="")
+                self.bottom_row.add_widget(label)
+            for i in range(self.month_lenght):
+                button = Button(text=str(i+1))
+                self.bottom_row.add_widget(button)
+        elif len(self.weeks) == 6:
+            self.bottom_row = GridLayout(cols=7, rows=6, spacing=5)
+            for i in range(self.week_start):
+                label = Label(text="")
+                self.bottom_row.add_widget(label)
+            for i in range(self.month_lenght):
+                button = Button(text=str(i+1))
+                self.bottom_row.add_widget(button)
+
+        self.main_layout.add_widget(self.top_row)
+        self.main_layout.add_widget(self.mid_row)
+        self.main_layout.add_widget(self.bottom_row)
+        
+
     def dec_year(self, x):
         self.current_year -= 1
         self.update_values()
-        
+
     def inc_year(self, x):
         self.current_year += 1
         self.update_values()
@@ -150,7 +206,7 @@ class CalendarApp(App):
         else:
             self.current_month -= 1
         self.update_values()
-
+ 
     def inc_month(self, x):
         if self.current_month == 12:
             self.current_month = 1
@@ -158,7 +214,7 @@ class CalendarApp(App):
         else:
             self.current_month += 1
         self.update_values()
-
+        
     
 if __name__ == '__main__':
     CalendarApp().run()
