@@ -18,16 +18,16 @@ class CalendarApp(App):
         self.month_name = self.get_month_name(self.current_month)
 
         self.year_rwd = Button(text="<", height=50)
-        self.year = Label(text=f'{self.current_year}', font_size=30)
+        self.year = Label(text=f'{self.current_year}', font_size=20)
         self.year_fwd = Button(text=">", height=50)
 
         self.year_rwd.bind(on_press=self.dec_year)
         self.year_fwd.bind(on_press=self.inc_year)
 
-        self.spaceholder = Label(text='', font_size=30)
+        self.spaceholder = Label(text='', font_size=20)
 
         self.month_rwd = Button(text="<", height=50)
-        self.month = Label(text=f'{self.month_name}', font_size=30)
+        self.month = Label(text=f'{self.month_name}', font_size=20)
         self.month_fwd = Button(text=">", height=50)
 
         self.month_rwd.bind(on_press=self.dec_month)
@@ -133,23 +133,27 @@ class CalendarApp(App):
 
     def dec_year(self, x):
         self.current_year -= 1
+        self.year.text = f'{self.current_year}'
         
     def inc_year(self, x):
         self.current_year += 1
+        self.year.text = f'{self.current_year}'
 
     def dec_month(self, x):
         if self.current_month == 1:
             self.current_month = 12
             self.current_year -= 1
-            return
-        self.current_month -= 1
+        else:
+            self.current_month -= 1
+        self.month.text = self.get_month_name(self.current_month)
 
     def inc_month(self, x):
         if self.current_month == 12:
             self.current_month = 1
             self.current_year += 1
-            return
-        self.current_month += 1
+        else:
+            self.current_month += 1
+        self.month.text = self.get_month_name(self.current_month)
 
     
 if __name__ == '__main__':
