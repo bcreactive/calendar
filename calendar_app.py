@@ -10,10 +10,6 @@ import calendar
 class CalendarApp(App):
     def __init__(self, **kwargs):
         super(CalendarApp, self).__init__(**kwargs)
-        self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
-        self.mid_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
-        self.bottom_row = GridLayout(cols=7, rows=5, spacing=5)
-        self.main_layout = BoxLayout(orientation='vertical')
 
         self.current_year = datetime.now().year
         self.current_month = datetime.now().month
@@ -25,15 +21,15 @@ class CalendarApp(App):
         self.year = Label(text=f'{self.current_year}', font_size=20)
         self.year_fwd = Button(text=">", height=50)
 
-        self.year_rwd.bind(on_press=self.dec_year)
-        self.year_fwd.bind(on_press=self.inc_year)
-
         self.spaceholder = Label(text='', font_size=20)
 
         self.month_rwd = Button(text="<", height=50)
         self.month = Label(text=f'{self.month_name}', font_size=20)
         self.month_fwd = Button(text=">", height=50)
 
+        # Bindings for buttons
+        self.year_rwd.bind(on_press=self.dec_year)
+        self.year_fwd.bind(on_press=self.inc_year)
         self.month_rwd.bind(on_press=self.dec_month)
         self.month_fwd.bind(on_press=self.inc_month)
         
@@ -80,7 +76,7 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.bottom_row)
 
         return self.main_layout
-    
+
     def set_buttons(self):
         # Set the placeholder labels to have buttons start at the correct day
         for i in range(self.week_start):
@@ -89,7 +85,11 @@ class CalendarApp(App):
         # Set button-grid
         for i in range(self.month_lenght):
             button = Button(text=str(i+1))
+            button.bind(on_press=self.button_pressed)
             self.bottom_row.add_widget(button)
+    
+    def button_pressed(self, instance):
+        print(f"Button {instance.text} was pressed!")
 
     def get_month_name(self, value):
         if value == 1:
