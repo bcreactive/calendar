@@ -43,10 +43,10 @@ class CalendarApp(App):
         self.month_lenght = calendar.monthrange(self.current_year,
                                            self.current_month)[1]
         
-        self.top_row = ""
-        self.middle_row = ""
-        self.bottom_row = ""
-        self.layout = ""
+        self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
+        # self.middle_row = ""
+        # self.bottom_row = ""
+        # self.layout = ""
                 
     def build(self):
         
@@ -58,9 +58,9 @@ class CalendarApp(App):
             self.top_row.add_widget(i)
         
         # Create middle row to show the days names
-        self.middle_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
+        self.mid_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
         for i in self.day_labels:
-            self.middle_row.add_widget(i)
+            self.mid_row.add_widget(i)
 
         # A grid of enumerated buttons, starting at the correct weekday
         if len(self.weeks) == 5:
@@ -83,7 +83,7 @@ class CalendarApp(App):
         # Create the main layout by stacking the top row, middle row, and grid
         self.main_layout = BoxLayout(orientation='vertical')
         self.main_layout.add_widget(self.top_row)
-        self.main_layout.add_widget(self.middle_row)
+        self.main_layout.add_widget(self.mid_row)
         self.main_layout.add_widget(self.bottom_row)
 
         return self.main_layout
@@ -131,13 +131,17 @@ class CalendarApp(App):
         self.week_start = weeks[0].index(1)
         return weeks
 
+    def update_values(self):
+        self.month.text = self.get_month_name(self.current_month)
+        self.year.text = f'{self.current_year}'
+        
     def dec_year(self, x):
         self.current_year -= 1
-        self.year.text = f'{self.current_year}'
+        self.update_values()
         
     def inc_year(self, x):
         self.current_year += 1
-        self.year.text = f'{self.current_year}'
+        self.update_values()
 
     def dec_month(self, x):
         if self.current_month == 1:
@@ -145,7 +149,7 @@ class CalendarApp(App):
             self.current_year -= 1
         else:
             self.current_month -= 1
-        self.month.text = self.get_month_name(self.current_month)
+        self.update_values()
 
     def inc_month(self, x):
         if self.current_month == 12:
@@ -153,7 +157,7 @@ class CalendarApp(App):
             self.current_year += 1
         else:
             self.current_month += 1
-        self.month.text = self.get_month_name(self.current_month)
+        self.update_values()
 
     
 if __name__ == '__main__':
