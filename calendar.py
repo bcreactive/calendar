@@ -33,19 +33,20 @@ class CalendarApp(App):
         
     def build(self):
         
-        # Create the top row of buttons
+        # Create the top row of buttons and labels: swithch year/month
         first_row = [self.year_rwd, self.year, self.year_fwd, self.spaceholder,
                      self.month_rwd, self.month, self.month_fwd]
         
-        top_row = BoxLayout(orientation='horizontal')
+        top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
         for i in first_row:
             top_row.add_widget(i)
         
-        middle_row = BoxLayout(orientation='horizontal')
+        # Create middle row to show the days names
+        middle_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
         for i in self.day_labels:
             middle_row.add_widget(i)
 
-        # Bottom grid with 5 rows and 7 columns
+        # A grid of enumerated buttons, to chose a day
         bottom_row = GridLayout(cols=7, rows=5, spacing=5)
         for i in range(31):
             button = Button(text=str(i+1))
