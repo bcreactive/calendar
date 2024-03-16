@@ -11,8 +11,8 @@ class CalendarApp(App):
     def __init__(self, **kwargs):
         super(CalendarApp, self).__init__(**kwargs)
 
-        self.current_year = datetime.now().year
-        self.current_month = datetime.now().month
+        self.current_year = datetime.now().year-1
+        self.current_month = datetime.now().month+1
         self.current_day = datetime.now().day
 
         self.month_name = self.get_month_name(self.current_month)
@@ -28,8 +28,17 @@ class CalendarApp(App):
         self.month_fwd = Button(text=">", height=50)
         
         self.day_labels = self.get_day_labels()
-        self.load_month()
         
+        # get the weeks with weekdays in lists
+        self.week_start = 0
+        self.weeks = self.load_month()
+        print(self.weeks) 
+        print(self.week_start)
+
+        # get the amount of days for the passed year/month
+        self.month_lenght = calendar.monthrange(self.current_year,
+                                           self.current_month)[1]
+                
     def build(self):
         
         # Create the top row of buttons and labels: swithch year/month
@@ -44,11 +53,23 @@ class CalendarApp(App):
         for i in self.day_labels:
             middle_row.add_widget(i)
 
-        # A grid of enumerated buttons, to chose a day
-        bottom_row = GridLayout(cols=7, rows=5, spacing=5)
-        for i in range(31):
-            button = Button(text=str(i+1))
-            bottom_row.add_widget(button)
+        # A grid of enumerated buttons, starting at the correct weekday
+        if len(self.weeks) == 5:
+            bottom_row = GridLayout(cols=7, rows=5, spacing=5)
+            for i in range(self.week_start):
+                label = Label(text="")
+                bottom_row.add_widget(label)
+            for i in range(self.month_lenght):
+                button = Button(text=str(i+1))
+                bottom_row.add_widget(button)
+        elif len(self.weeks) == 6:
+            bottom_row = GridLayout(cols=7, rows=6, spacing=5)
+            for i in range(self.week_start):
+                label = Label(text="")
+                bottom_row.add_widget(label)
+            for i in range(self.month_lenght):
+                button = Button(text=str(i+1))
+                bottom_row.add_widget(button)
 
         # Create the main layout by stacking the top row, middle row, and grid
         main_layout = BoxLayout(orientation='vertical')
@@ -96,8 +117,10 @@ class CalendarApp(App):
         return labels
        
     def load_month(self):
+        # get the weeks in lists and get the 1. weekday of the month
         weeks = calendar.monthcalendar(self.current_year, self.current_month)
-        print(weeks)
+        self.week_start = weeks[0].index(1)
+        return weeks
 
 
 if __name__ == '__main__':
