@@ -4,6 +4,7 @@ from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from datetime import datetime
+import calendar
 
 
 class CalendarApp(App):
@@ -25,19 +26,16 @@ class CalendarApp(App):
         self.month_rwd = Button(text="<", height=50)
         self.month = Label(text=f'{self.month_name}', font_size=30)
         self.month_fwd = Button(text=">", height=50)
-
-        self.day_names = ["Montag", "Dienstag", "Mittwoch", "Donnerstag",
-                      "Freitag", "Samstag", "Sonntag"]
         
         self.day_labels = self.get_day_labels()
+        self.load_month()
         
     def build(self):
         
         # Create the top row of buttons and labels: swithch year/month
+        top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
         first_row = [self.year_rwd, self.year, self.year_fwd, self.spaceholder,
                      self.month_rwd, self.month, self.month_fwd]
-        
-        top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
         for i in first_row:
             top_row.add_widget(i)
         
@@ -87,12 +85,20 @@ class CalendarApp(App):
             return "Dezember"
 
     def get_day_labels(self):
+        day_names = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag",
+                     "Samstag", "Sonntag"]
+        
         labels = []
-        for i in self.day_names:
+        for i in day_names:
             label = Label(text=f'{i}', font_size=20)
             labels.append(label)
+
         return labels
        
+    def load_month(self):
+        weeks = calendar.monthcalendar(self.current_year, self.current_month)
+        print(weeks)
+
 
 if __name__ == '__main__':
     CalendarApp().run()
