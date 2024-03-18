@@ -44,14 +44,15 @@ class CalendarApp(App):
         # get the weeks with weekdays in lists
         self.week_start = 0
         self.weeks = self.load_month()
-        self.check_entries()
+        # self.check_entries()
 
         # get the amount of days for the passed year/month
         self.month_lenght = calendar.monthrange(self.current_year,
                                            self.current_month)[1]
-        
+       
         self.entered_text = ''
-        
+        self.day_entry = ''  
+        # self.mark_entries() 
                 
     def build(self):
         # Create the top row of buttons and labels: swithch year/month
@@ -84,21 +85,37 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.top_row)
         self.main_layout.add_widget(self.mid_row)
         self.main_layout.add_widget(self.bottom_row)
+        self.mark_entries() 
 
         return self.main_layout
-
-    def check_entries(self):
-        # print(self.weeks)
-        # for i in self.weeks:
-        #     for j in i:
-        #         if not j == 0:
-        pass
     
+    def mark_entries(self):
+        for child in self.bottom_row.children:
+            # if isinstance(child, Button):
+            # Get the date corresponding to the button
+            if len(str(self.current_month)) == 1:
+                if len(str(child.text)) == 1:
+                    date = f'{self.current_year}0{self.current_month}0{child.text}'
+                elif len(str(child.text)) == 2:
+                    date = f'{self.current_year}0{self.current_month}{child.text}'
+
+            if len(str(self.current_month)) == 2:
+                if len(str(child.text)) == 1:
+                    date = f'{self.current_year}{self.current_month}0{child.text}'
+                elif len(str(child.text)) == 2:
+                    date = f'{self.current_year}{self.current_month}{child.text}'
+                    
+             # Check if the date key is present in the save file
+            if date in self.save_file:
+                # Change the background color of the button
+                child.background_color = get_color_from_hex('#62ff33')  
+
+   
     def load_json(self):
         with open('save_file.json', 'r') as file:
             data = json.load(file)
             return data
-
+    
     def set_buttons(self):
         # Set the placeholder labels to have buttons start at the correct day
         for i in range(self.week_start):
@@ -120,9 +137,7 @@ class CalendarApp(App):
         # Create a popup window with a textbox.
         month = self.get_month_name(self.current_month)
         self.button_nr = instance.text
-        # print(button_nr)
 
-        # Create a TextInput widget for user input
         text_input = TextInput(hint_text='Enter your text here...',
                                multiline=False)
         text_input.bind(text=self.on_text_input)
@@ -151,7 +166,6 @@ class CalendarApp(App):
                            f' {self.current_year}', content=main_box,
                            size_hint=(0.8, 0.8))
     
-        # Open the Popup window
         self.popup.open()
 
     def close_popup(self, instance):
@@ -162,8 +176,7 @@ class CalendarApp(App):
         
     def save_entry(self, instance):
         month = len(str(self.current_month))
-        day = len(str(self.button_nr))
-       
+        day = len(str(self.button_nr))   
         if month == 1 and day == 1:
             date = f'{self.current_year}0{self.current_month}0{self.button_nr}'
         elif month == 1 and day == 2:
@@ -263,6 +276,7 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.mid_row)
         self.main_layout.add_widget(self.bottom_row)
 
+        self.mark_entries()
         # self.check_today()
 
     def check_today(self):
