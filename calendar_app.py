@@ -3,6 +3,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
+from kivy.utils import get_color_from_hex
+from kivy.uix.popup import Popup
 from datetime import datetime
 import calendar
 
@@ -78,13 +80,20 @@ class CalendarApp(App):
         return self.main_layout
 
     def set_buttons(self):
+        
         # Set the placeholder labels to have buttons start at the correct day
         for i in range(self.week_start):
             label = Label(text="")
             self.bottom_row.add_widget(label)
+
         # Set button-grid
+        current_day_visible = self.check_today()
         for i in range(self.month_lenght):
-            button = Button(text=str(i+1))
+            if current_day_visible and self.current_day == i:
+                button.background_color = get_color_from_hex('#FF5733')  # Set button color to orange
+                button = Button(text=str(i+1))
+            else:
+                button = Button(text=str(i+1))
             button.bind(on_press=self.button_pressed)
             self.bottom_row.add_widget(button)
     
@@ -171,6 +180,14 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.top_row)
         self.main_layout.add_widget(self.mid_row)
         self.main_layout.add_widget(self.bottom_row)
+
+        # self.check_today()
+
+    def check_today(self):
+        if (self.current_year == datetime.now().year and
+            self.current_month == datetime.now().month):
+            return True
+        return False
 
     def dec_year(self, x):
         self.current_year -= 1
