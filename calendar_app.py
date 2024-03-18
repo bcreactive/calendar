@@ -149,6 +149,8 @@ class CalendarApp(App):
         self.close_button.bind(on_press=self.close_popup)
         self.save_button = Button(text='Save')
         self.save_button.bind(on_press=self.save_entry)
+        self.delete_button = Button(text='Delete')
+        self.delete_button.bind(on_press=self.delete_entry)
         
         # Create a layout to hold the TextInput and Button widgets
         main_box = BoxLayout(orientation='vertical')
@@ -158,8 +160,9 @@ class CalendarApp(App):
 
         button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
         button_box.add_widget(self.close_button)
+        button_box.add_widget(self.delete_button)
         button_box.add_widget(self.save_button)
-
+        
         main_box.add_widget(content_box)
         main_box.add_widget(button_box)
 
@@ -190,6 +193,19 @@ class CalendarApp(App):
     def close_popup(self, instance):
         self.popup.dismiss()
 
+    def delete_entry(self, instance):
+        self.ask_delete()
+        key = self.check_entry(self.button_nr)
+        if key:
+            del self.save_file[key]
+            with open('save_file.json', 'w') as file:
+                json.dump(self.save_file, file)
+        self.update_values()
+        self.close_popup(instance)
+
+    def ask_delete(self):
+        pass
+    
     def on_text_input(self, instance, value):
         self.entered_text = instance.text
         
