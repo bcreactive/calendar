@@ -107,7 +107,6 @@ class CalendarApp(App):
                     
              # Check if the date key is present in the save file
             if date in self.save_file:
-                # Change the background color of the button
                 child.background_color = get_color_from_hex('#62ff33')  
 
    
@@ -193,6 +192,7 @@ class CalendarApp(App):
             json.dump(self.save_file, file)
 
         self.entered_text = ''
+        self.mark_entries()
         self.close_popup(instance)
         
     def get_month_name(self, value):
@@ -277,7 +277,6 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.bottom_row)
 
         self.mark_entries()
-        # self.check_today()
 
     def check_today(self):
         # check, if the current date is visible on screen
