@@ -44,6 +44,7 @@ class CalendarApp(App):
         # get the weeks with weekdays in lists
         self.week_start = 0
         self.weeks = self.load_month()
+        self.check_entries()
 
         # get the amount of days for the passed year/month
         self.month_lenght = calendar.monthrange(self.current_year,
@@ -87,16 +88,16 @@ class CalendarApp(App):
         return self.main_layout
 
     def check_entries(self):
+        # print(self.weeks)
+        # for i in self.weeks:
+        #     for j in i:
+        #         if not j == 0:
         pass
-
+    
     def load_json(self):
         with open('save_file.json', 'r') as file:
             data = json.load(file)
             return data
-
-    # def save_json(self):
-    #     with open('save_file.json', 'w') as file:
-    #         json.dump(data, file)
 
     def set_buttons(self):
         # Set the placeholder labels to have buttons start at the correct day
@@ -158,15 +159,29 @@ class CalendarApp(App):
 
     def on_text_input(self, instance, value):
         self.entered_text = instance.text
-        # print(self.entered_text)
         
     def save_entry(self, instance):
-        date = f'{self.current_year}{self.current_month}{self.button_nr}'
+        month = len(str(self.current_month))
+        day = len(str(self.button_nr))
+       
+        if month == 1 and day == 1:
+            date = f'{self.current_year}0{self.current_month}0{self.button_nr}'
+        elif month == 1 and day == 2:
+            date = f'{self.current_year}0{self.current_month}{self.button_nr}'
+        elif month == 2 and day == 1:
+            date = f'{self.current_year}{self.current_month}0{self.button_nr}'
+        else:
+            date = f'{self.current_year}{self.current_month}{self.button_nr}'
+
         new_entry = {date: self.entered_text}
         self.save_file.update(new_entry)
+
         with open('save_file.json', 'w') as file:
             json.dump(self.save_file, file)
-    
+
+        self.entered_text = ''
+        self.close_popup(instance)
+        
     def get_month_name(self, value):
         if value == 1:
             return "Januar"
