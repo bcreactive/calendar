@@ -5,6 +5,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.utils import get_color_from_hex
 from kivy.uix.popup import Popup
+from kivy.uix.textinput import TextInput
 from datetime import datetime
 import calendar
 
@@ -44,6 +45,8 @@ class CalendarApp(App):
         # get the amount of days for the passed year/month
         self.month_lenght = calendar.monthrange(self.current_year,
                                            self.current_month)[1]
+        
+        self.popup = Popup(title=f'', content=None, size_hint=(0.8, 0.8))
                 
     def build(self):
         # Create the top row of buttons and labels: swithch year/month
@@ -80,7 +83,6 @@ class CalendarApp(App):
         return self.main_layout
 
     def set_buttons(self):
-        
         # Set the placeholder labels to have buttons start at the correct day
         for i in range(self.week_start):
             label = Label(text="")
@@ -90,7 +92,7 @@ class CalendarApp(App):
         current_day_visible = self.check_today()
         for i in range(self.month_lenght):
             if current_day_visible and self.current_day == i:
-                button.background_color = get_color_from_hex('#FF5733')  # Set button color to orange
+                button.background_color = get_color_from_hex('#FF5733')
                 button = Button(text=str(i+1))
             else:
                 button = Button(text=str(i+1))
@@ -98,8 +100,45 @@ class CalendarApp(App):
             self.bottom_row.add_widget(button)
     
     def button_pressed(self, instance):
-        print(f"Button {instance.text} was pressed!")
+        # Create a popup window with the button text as content
+        month = self.get_month_name(self.current_month)
 
+        # Create a TextInput widget for user input
+        text_input = TextInput(hint_text='Enter your text here...',
+                               multiline=False)
+        
+        # Create a Button widget to close the popup
+        self.close_button = Button(text='Close')
+        self.close_button.bind(on_press=self.close_popup)
+        self.save_button = Button(text='Save')
+        self.save_button.bind(on_press=self.save_entry)
+        
+        # Create a layout to hold the TextInput and Button widgets
+        main_box = BoxLayout(orientation='vertical')
+        content_box = BoxLayout(orientation='vertical')
+        content_box.add_widget(text_input)
+
+        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
+        button_box.add_widget(self.close_button)
+        button_box.add_widget(self.save_button)
+
+        main_box.add_widget(content_box)
+        main_box.add_widget(button_box)
+
+         # Create the Popup window with customized content
+        self.popup = Popup(title=f'{instance.text}. {month}' + 
+                           f' {self.current_year}', content=main_box,
+                           size_hint=(0.8, 0.8))
+    
+        # Open the Popup window
+        self.popup.open()
+
+    def close_popup(self, instance):
+        self.popup.dismiss()
+    
+    def save_entry(self, instance):
+        pass
+    
     def get_month_name(self, value):
         if value == 1:
             return "Januar"
@@ -184,6 +223,7 @@ class CalendarApp(App):
         # self.check_today()
 
     def check_today(self):
+        # check, if the current date is visible on screen
         if (self.current_year == datetime.now().year and
             self.current_month == datetime.now().month):
             return True
