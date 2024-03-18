@@ -135,11 +135,11 @@ class CalendarApp(App):
 
         # search if there is saved text
         key = self.check_entry(self.button_nr)
+        # if saved text: preload in textbox
         if key:
             content = self.save_file[key]
             text_input = TextInput(text=content, multiline=True)
         else:
-        # if saved text: preload in textbox
             text_input = TextInput(hint_text='Enter your text here...',
                                multiline=True)
         text_input.bind(text=self.on_text_input)
@@ -150,7 +150,7 @@ class CalendarApp(App):
         self.save_button = Button(text='Save')
         self.save_button.bind(on_press=self.save_entry)
         self.delete_button = Button(text='Delete')
-        self.delete_button.bind(on_press=self.delete_entry)
+        self.delete_button.bind(on_press=self.ask_delete)
         
         # Create a layout to hold the TextInput and Button widgets
         main_box = BoxLayout(orientation='vertical')
@@ -194,7 +194,7 @@ class CalendarApp(App):
         self.popup.dismiss()
 
     def delete_entry(self, instance):
-        self.ask_delete()
+        self.close_ask()
         key = self.check_entry(self.button_nr)
         if key:
             del self.save_file[key]
@@ -203,9 +203,26 @@ class CalendarApp(App):
         self.update_values()
         self.close_popup(instance)
 
-    def ask_delete(self):
-        pass
+    def ask_delete(self, instance):
+        cancel_button = Button(text='Cancel')
+        cancel_button.bind(on_press=self.close_ask)
+        ok_button = Button(text='OK')
+        ok_button.bind(on_press=self.delete_entry)
+
+        main_box = BoxLayout(orientation='vertical')
+        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.1))      
+        button_box.add_widget(cancel_button)
+        button_box.add_widget(ok_button)
+        main_box.add_widget(button_box)
+
+        self.ask_popup = Popup(title=f'erase entry?', content=main_box,
+                               size_hint=(0.2, 0.2))
     
+        self.ask_popup.open()
+    
+    def close_ask(self, x=None):
+        self.ask_popup.dismiss()
+
     def on_text_input(self, instance, value):
         self.entered_text = instance.text
         
@@ -221,11 +238,12 @@ class CalendarApp(App):
         else:
             date = f'{self.current_year}{self.current_month}{self.button_nr}'
 
-        new_entry = {date: self.entered_text}
-        self.save_file.update(new_entry)
+        if self.entered_text:
+            new_entry = {date: self.entered_text}
+            self.save_file.update(new_entry)
 
-        with open('save_file.json', 'w') as file:
-            json.dump(self.save_file, file)
+            with open('save_file.json', 'w') as file:
+                json.dump(self.save_file, file)
 
         self.entered_text = ''
         self.mark_entries()
