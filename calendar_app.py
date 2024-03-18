@@ -44,7 +44,6 @@ class CalendarApp(App):
         # get the weeks with weekdays in lists
         self.week_start = 0
         self.weeks = self.load_month()
-        # self.check_entries()
 
         # get the amount of days for the passed year/month
         self.month_lenght = calendar.monthrange(self.current_year,
@@ -52,7 +51,6 @@ class CalendarApp(App):
        
         self.entered_text = ''
         self.day_entry = ''  
-        # self.mark_entries() 
                 
     def build(self):
         # Create the top row of buttons and labels: swithch year/month
@@ -92,7 +90,6 @@ class CalendarApp(App):
     def mark_entries(self):
         for child in self.bottom_row.children:
             # if isinstance(child, Button):
-            # Get the date corresponding to the button
             if len(str(self.current_month)) == 1:
                 if len(str(child.text)) == 1:
                     date = f'{self.current_year}0{self.current_month}0{child.text}'
@@ -109,7 +106,6 @@ class CalendarApp(App):
             if date in self.save_file:
                 child.background_color = get_color_from_hex('#62ff33')  
 
-   
     def load_json(self):
         with open('save_file.json', 'r') as file:
             data = json.load(file)
@@ -137,8 +133,15 @@ class CalendarApp(App):
         month = self.get_month_name(self.current_month)
         self.button_nr = instance.text
 
-        text_input = TextInput(hint_text='Enter your text here...',
-                               multiline=False)
+        # search if there is saved text
+        key = self.check_entry(self.button_nr)
+        if key:
+            content = self.save_file[key]
+            text_input = TextInput(text=content, multiline=True)
+        else:
+        # if saved text: preload in textbox
+            text_input = TextInput(hint_text='Enter your text here...',
+                               multiline=True)
         text_input.bind(text=self.on_text_input)
         
         # Create a Button widget to close the popup
@@ -166,6 +169,23 @@ class CalendarApp(App):
                            size_hint=(0.8, 0.8))
     
         self.popup.open()
+
+    def check_entry(self, number):
+        if len(str(number)) == 1:
+            if len(str(self.current_month)) == 1:
+                date = f'{self.current_year}0{self.current_month}0{number}'
+            elif len(str(self.current_month)) == 2:
+                date = f'{self.current_year}{self.current_month}0{number}'
+        elif len(str(number)) == 2:
+            if len(str(self.current_month)) == 1:
+                date = f'{self.current_year}0{self.current_month}{number}'
+            elif len(str(self.current_month)) == 2:
+                date = f'{self.current_year}{self.current_month}{number}'
+
+        if date in self.save_file:   
+            return date
+        else:
+            return False
 
     def close_popup(self, instance):
         self.popup.dismiss()
