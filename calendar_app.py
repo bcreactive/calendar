@@ -7,6 +7,7 @@ from kivy.utils import get_color_from_hex
 from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
 from datetime import datetime
+from kivy.graphics import Color
 import calendar
 import json
 
@@ -104,8 +105,8 @@ class CalendarApp(App):
                     
              # Check if the date key is present in the save file
             if date in self.save_file:
-                child.background_color = get_color_from_hex('#62ff33')  
-
+                child.background_color = get_color_from_hex('#13ecb9')  
+    
     def load_json(self):
         with open('save_file.json', 'r') as file:
             data = json.load(file)
@@ -120,9 +121,9 @@ class CalendarApp(App):
         # Set button-grid
         current_day_visible = self.check_today()
         for i in range(self.month_lenght):
-            if current_day_visible and self.current_day == i:
-                button.background_color = get_color_from_hex('#FF5733')
-                button = Button(text=str(i+1))
+            if current_day_visible and self.current_day == i+1:
+                button = Button(text=str(i+1), font_size=60,
+                                color=get_color_from_hex('#ec6613') )
             else:
                 button = Button(text=str(i+1))
             button.bind(on_press=self.button_pressed)
