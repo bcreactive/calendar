@@ -8,6 +8,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
 from datetime import datetime
 import calendar
+import json
 
 
 class CalendarApp(App):
@@ -17,6 +18,8 @@ class CalendarApp(App):
         self.current_year = datetime.now().year
         self.current_month = datetime.now().month
         self.current_day = datetime.now().day
+
+        self.save_file = self.load_json()
 
         self.month_name = self.get_month_name(self.current_month)
 
@@ -46,7 +49,8 @@ class CalendarApp(App):
         self.month_lenght = calendar.monthrange(self.current_year,
                                            self.current_month)[1]
         
-        self.popup = Popup(title=f'', content=None, size_hint=(0.8, 0.8))
+        self.entered_text = ''
+        
                 
     def build(self):
         # Create the top row of buttons and labels: swithch year/month
@@ -82,6 +86,18 @@ class CalendarApp(App):
 
         return self.main_layout
 
+    def check_entries(self):
+        pass
+
+    def load_json(self):
+        with open('save_file.json', 'r') as file:
+            data = json.load(file)
+            return data
+
+    # def save_json(self):
+    #     with open('save_file.json', 'w') as file:
+    #         json.dump(data, file)
+
     def set_buttons(self):
         # Set the placeholder labels to have buttons start at the correct day
         for i in range(self.week_start):
@@ -100,12 +116,15 @@ class CalendarApp(App):
             self.bottom_row.add_widget(button)
     
     def button_pressed(self, instance):
-        # Create a popup window with the button text as content
+        # Create a popup window with a textbox.
         month = self.get_month_name(self.current_month)
+        self.button_nr = instance.text
+        # print(button_nr)
 
         # Create a TextInput widget for user input
         text_input = TextInput(hint_text='Enter your text here...',
                                multiline=False)
+        text_input.bind(text=self.on_text_input)
         
         # Create a Button widget to close the popup
         self.close_button = Button(text='Close')
@@ -115,6 +134,7 @@ class CalendarApp(App):
         
         # Create a layout to hold the TextInput and Button widgets
         main_box = BoxLayout(orientation='vertical')
+
         content_box = BoxLayout(orientation='vertical')
         content_box.add_widget(text_input)
 
@@ -135,9 +155,17 @@ class CalendarApp(App):
 
     def close_popup(self, instance):
         self.popup.dismiss()
-    
+
+    def on_text_input(self, instance, value):
+        self.entered_text = instance.text
+        # print(self.entered_text)
+        
     def save_entry(self, instance):
-        pass
+        date = f'{self.current_year}{self.current_month}{self.button_nr}'
+        new_entry = {date: self.entered_text}
+        self.save_file.update(new_entry)
+        with open('save_file.json', 'w') as file:
+            json.dump(self.save_file, file)
     
     def get_month_name(self, value):
         if value == 1:
