@@ -29,6 +29,7 @@ class CalendarApp(App):
         self.year_fwd = Button(text=">", height=50)
 
         self.spaceholder = Label(text='', font_size=20)
+        self.home_button = Button(text="Home")
 
         self.month_rwd = Button(text="<", height=50)
         self.month = Label(text=f'{self.month_name}', font_size=20)
@@ -39,6 +40,7 @@ class CalendarApp(App):
         self.year_fwd.bind(on_press=self.inc_year)
         self.month_rwd.bind(on_press=self.dec_month)
         self.month_fwd.bind(on_press=self.inc_month)
+        self.home_button.bind(on_press=self.today_view)
         
         self.day_labels = self.get_day_labels()
         
@@ -56,7 +58,7 @@ class CalendarApp(App):
     def build(self):
         # Create the top row of buttons and labels: swithch year/month
         self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
-        first_row = [self.year_rwd, self.year, self.year_fwd, self.spaceholder,
+        first_row = [self.year_rwd, self.year, self.year_fwd, self.home_button,
                      self.month_rwd, self.month, self.month_fwd]
         for i in first_row:
             self.top_row.add_widget(i)
@@ -308,7 +310,7 @@ class CalendarApp(App):
 
         # Recreate rows with updated values.
         self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
-        first_row = [self.year_rwd, self.year, self.year_fwd, self.spaceholder,
+        first_row = [self.year_rwd, self.year, self.year_fwd, self.home_button,
                      self.month_rwd, self.month, self.month_fwd]
         for i in first_row:
             self.top_row.add_widget(i)
@@ -340,9 +342,14 @@ class CalendarApp(App):
             return True
         return False
 
+    def today_view(self, x):
+        self.current_year = datetime.now().year
+        self.current_month = datetime.now().month
+        self.update_values()
+
     def dec_year(self, x):
         self.current_year -= 1
-        self.update_values()
+        
 
     def inc_year(self, x):
         self.current_year += 1
