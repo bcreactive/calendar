@@ -124,7 +124,7 @@ class CalendarApp(App):
         current_day_visible = self.check_today()
         for i in range(self.month_lenght):
             if current_day_visible and self.current_day == i+1:
-                button = Button(text=str(i+1), font_size=50,
+                button = Button(text=str(i+1), font_size=40,
                                 color=get_color_from_hex('#ec6613') )
             else:
                 button = Button(text=str(i+1))
@@ -161,7 +161,7 @@ class CalendarApp(App):
         content_box = BoxLayout(orientation='vertical')
         content_box.add_widget(text_input)
 
-        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
+        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.15))
         button_box.add_widget(self.close_button)
         button_box.add_widget(self.delete_button)
         button_box.add_widget(self.save_button)
@@ -172,7 +172,7 @@ class CalendarApp(App):
          # Create the Popup window with customized content
         self.popup = Popup(title=f'{instance.text}. {month}' + 
                            f' {self.current_year}', content=main_box,
-                           size_hint=(0.8, 0.8))
+                           size_hint=(0.9, 0.9))
     
         self.popup.open()
 
@@ -193,7 +193,7 @@ class CalendarApp(App):
         else:
             return False
 
-    def close_popup(self, instance):
+    def close_popup(self, x=None):
         self.popup.dismiss()
 
     def delete_entry(self, instance):
@@ -206,27 +206,27 @@ class CalendarApp(App):
         self.update_values()
         self.close_popup(instance)
 
-    def ask_delete(self, instance):
+    def ask_delete(self, x=None):
         cancel_button = Button(text='Cancel')
         cancel_button.bind(on_press=self.close_ask)
         ok_button = Button(text='OK')
         ok_button.bind(on_press=self.delete_entry)
 
         main_box = BoxLayout(orientation='vertical')
-        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.1))      
+        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.4))      
         button_box.add_widget(cancel_button)
         button_box.add_widget(ok_button)
         main_box.add_widget(button_box)
 
         self.ask_popup = Popup(title=f'erase entry?', content=main_box,
-                               size_hint=(0.2, 0.2))
+                               size_hint=(0.3, 0.3))
     
         self.ask_popup.open()
     
     def close_ask(self, x=None):
         self.ask_popup.dismiss()
 
-    def on_text_input(self, instance, value):
+    def on_text_input(self, instance, x=None):
         self.entered_text = instance.text
         
     def save_entry(self, instance):
@@ -284,7 +284,7 @@ class CalendarApp(App):
         
         labels = []
         for i in day_names:
-            label = Label(text=f'{i}', font_size=20)
+            label = Label(text=f'{i}', font_size=15)
             labels.append(label)
 
         return labels
@@ -343,20 +343,20 @@ class CalendarApp(App):
             return True
         return False
 
-    def today_view(self, x):
+    def today_view(self, x=None):
         self.current_year = datetime.now().year
         self.current_month = datetime.now().month
         self.update_values()
 
-    def dec_year(self, x):
+    def dec_year(self, x=None):
         self.current_year -= 1
+        self.update_values()
         
-
-    def inc_year(self, x):
+    def inc_year(self, x=None):
         self.current_year += 1
         self.update_values()
 
-    def dec_month(self, x):
+    def dec_month(self, x=None):
         if self.current_month == 1:
             self.current_month = 12
             self.current_year -= 1
@@ -364,7 +364,7 @@ class CalendarApp(App):
             self.current_month -= 1
         self.update_values()
  
-    def inc_month(self, x):
+    def inc_month(self, x=None):
         if self.current_month == 12:
             self.current_month = 1
             self.current_year += 1
