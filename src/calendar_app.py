@@ -9,6 +9,9 @@ from kivy.uix.textinput import TextInput
 from datetime import datetime
 import calendar
 import json
+# disable input multitouch functionality
+from kivy.config import Config
+Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 
 
 class CalendarApp(App):
