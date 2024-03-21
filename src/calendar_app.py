@@ -7,7 +7,6 @@ from kivy.utils import get_color_from_hex
 from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
 from datetime import datetime
-from kivy.graphics import Color
 import calendar
 import json
 
@@ -57,7 +56,8 @@ class CalendarApp(App):
                 
     def build(self):
         # Create the top row of buttons and labels: swithch year/month
-        self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
+        self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1),
+                                 spacing=5)
         first_row = [self.year_rwd, self.year, self.year_fwd, self.home_button,
                      self.month_rwd, self.month, self.month_fwd]
         for i in first_row:
@@ -124,7 +124,7 @@ class CalendarApp(App):
         current_day_visible = self.check_today()
         for i in range(self.month_lenght):
             if current_day_visible and self.current_day == i+1:
-                button = Button(text=str(i+1), font_size=60,
+                button = Button(text=str(i+1), font_size=50,
                                 color=get_color_from_hex('#ec6613') )
             else:
                 button = Button(text=str(i+1))
@@ -309,7 +309,8 @@ class CalendarApp(App):
         self.main_layout.clear_widgets()
 
         # Recreate rows with updated values.
-        self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
+        self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1),
+                                 spacing=5)
         first_row = [self.year_rwd, self.year, self.year_fwd, self.home_button,
                      self.month_rwd, self.month, self.month_fwd]
         for i in first_row:
