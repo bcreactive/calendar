@@ -9,10 +9,15 @@ from kivy.uix.textinput import TextInput
 from datetime import datetime
 import calendar
 import json
-# disable input multitouch functionality
-from kivy.config import Config
-Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
+# from kivy.config import Config
+# Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
+from kivy.core.window import Window
 
+Window.clearcolor = (0, 1, 0, 1)
+# Window.size = (190, 90)  # (608, 288) 19:1 ratio for oppo 3 lite
+# Window.fullscreen = 'auto'  # 'auto' = phonemode, False = devmode
+
+# Config.set('graphics', 'rotation', 90)
 
 class CalendarApp(App):
     def __init__(self, **kwargs):
@@ -26,16 +31,21 @@ class CalendarApp(App):
 
         self.month_name = self.get_month_name(self.current_month)
 
-        self.year_rwd = Button(text="<", height=50)
-        self.year = Label(text=f'{self.current_year}', font_size=20)
-        self.year_fwd = Button(text=">", height=50)
+        self.year_rwd = Button(text="<", height=50, font_size=64)
+        self.year = Label(text=f'{self.current_year}', font_size=64,
+                          color=(1, 0, 1, 1))
+        
+        self.year_fwd = Button(text=">", height=50, font_size=64)
 
         self.spaceholder = Label(text='', font_size=20)
-        self.home_button = Button(text="Home")
+        self.home_button = Button(text="Home", font_size=60,
+                                  color=get_color_from_hex('#ec6613'))
 
-        self.month_rwd = Button(text="<", height=50)
-        self.month = Label(text=f'{self.month_name}', font_size=20)
-        self.month_fwd = Button(text=">", height=50)
+        self.month_rwd = Button(text="<", height=50, font_size=64)
+        self.month = Label(text=f'{self.month_name}', font_size=50,
+                          color=(1, 0, 1, 1))
+        
+        self.month_fwd = Button(text=">", height=50, font_size=64)
 
         # Bindings for buttons
         self.year_rwd.bind(on_press=self.dec_year)
@@ -127,10 +137,10 @@ class CalendarApp(App):
         current_day_visible = self.check_today()
         for i in range(self.month_lenght):
             if current_day_visible and self.current_day == i+1:
-                button = Button(text=str(i+1), font_size=40,
-                                color=get_color_from_hex('#ec6613') )
+                button = Button(text=str(i+1), font_size=80,
+                                color=get_color_from_hex('#ec6613'))
             else:
-                button = Button(text=str(i+1))
+                button = Button(text=str(i+1), font_size=50)
             button.bind(on_press=self.button_pressed)
             self.bottom_row.add_widget(button)
     
@@ -287,7 +297,7 @@ class CalendarApp(App):
         
         labels = []
         for i in day_names:
-            label = Label(text=f'{i}', font_size=15)
+            label = Label(text=f'{i}', font_size=32, color=(1, 0, 1, 1))
             labels.append(label)
 
         return labels
@@ -319,7 +329,8 @@ class CalendarApp(App):
         for i in first_row:
             self.top_row.add_widget(i)
         
-        self.mid_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
+        self.mid_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1),
+                                 spacing=5)
         for i in self.day_labels:
             self.mid_row.add_widget(i)
 
