@@ -6,22 +6,42 @@ from kivy.uix.label import Label
 from kivy.utils import get_color_from_hex
 from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
+from kivy.graphics import Color, RoundedRectangle
 from datetime import datetime
 import calendar
 import json
+
+# Uncomment to block multitouch for mouse in windows version
 # from kivy.config import Config
 # Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
-from kivy.core.window import Window
 
+from kivy.core.window import Window
 Window.clearcolor = (0, 1, 0, 1)
+
 # Window.size = (190, 90)  # (608, 288) 19:1 ratio for oppo 3 lite
 # Window.fullscreen = 'auto'  # 'auto' = phonemode, False = devmode
 
-# Config.set('graphics', 'rotation', 90)
+class RoundedButton(Button):
+    def __init__(self, text="", **kwargs):
+        super(RoundedButton, self).__init__(**kwargs)
+        with self.canvas.before:
+            Color(0, 0.7, 0.2)
+            self._rounded_rect = RoundedRectangle(pos=self.pos, size=self.size, radius=[40])
+
+        self.text = text
+        self.background_color = [0, 0, 0, 0]  # Set background color to transparent
+
+    def on_pos(self, instance, pos):
+        self._rounded_rect.pos = pos
+
+    def on_size(self, instance, size):
+        self._rounded_rect.size = size
+
 
 class CalendarApp(App):
     def __init__(self, **kwargs):
         super(CalendarApp, self).__init__(**kwargs)
+        Window.bind(on_resize=self.detect_orientation)
 
         self.current_year = datetime.now().year
         self.current_month = datetime.now().month
@@ -31,22 +51,22 @@ class CalendarApp(App):
 
         self.month_name = self.get_month_name(self.current_month)
 
-        self.year_rwd = Button(text="<", height=50, font_size=64)
+        self.year_rwd = RoundedButton(text="<", font_size=64)
         self.year = Label(text=f'{self.current_year}', font_size=64,
                           color=(1, 0, 1, 1))
         
-        self.year_fwd = Button(text=">", height=50, font_size=64)
+        self.year_fwd = RoundedButton(text=">", font_size=64)
 
         self.spaceholder = Label(text='', font_size=20)
-        self.home_button = Button(text="Home", font_size=60,
+        self.home_button = RoundedButton(text="Home", font_size=60,
                                   color=get_color_from_hex('#ec6613'))
 
-        self.month_rwd = Button(text="<", height=50, font_size=64)
+        self.month_rwd = RoundedButton(text="<", font_size=64)
         self.month = Label(text=f'{self.month_name}', font_size=50,
                           color=(1, 0, 1, 1))
         
-        self.month_fwd = Button(text=">", height=50, font_size=64)
-
+        self.month_fwd = RoundedButton(text=">", font_size=64)
+        
         # Bindings for buttons
         self.year_rwd.bind(on_press=self.dec_year)
         self.year_fwd.bind(on_press=self.inc_year)
@@ -54,6 +74,7 @@ class CalendarApp(App):
         self.month_fwd.bind(on_press=self.inc_month)
         self.home_button.bind(on_press=self.today_view)
         
+        self.orientation = self.detect_orientation()
         self.day_labels = self.get_day_labels()
         
         # get the weeks with weekdays in lists
@@ -69,6 +90,8 @@ class CalendarApp(App):
                 
     def build(self):
         # Create the top row of buttons and labels: swithch year/month
+        self.orientation = self.detect_orientation()
+
         self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1),
                                  spacing=5)
         first_row = [self.year_rwd, self.year, self.year_fwd, self.home_button,
@@ -103,6 +126,17 @@ class CalendarApp(App):
 
         return self.main_layout
     
+    def detect_orientation(self):
+        # Get the width and height of the window
+        width = Window.width
+        height = Window.height
+        if width < height:
+            # Device is in portrait mode
+            return "portrait_mode"
+        else:
+            # Device is in landscape mode
+            return "landscape_mode"
+
     def mark_entries(self):
         for child in self.bottom_row.children:
             # if isinstance(child, Button):
@@ -127,7 +161,9 @@ class CalendarApp(App):
             data = json.load(file)
             return data
     
+
     def set_buttons(self):
+        # self.orientation = self.detect_orientation()
         # Set the placeholder labels to have buttons start at the correct day
         for i in range(self.week_start):
             label = Label(text="")
@@ -137,12 +173,13 @@ class CalendarApp(App):
         current_day_visible = self.check_today()
         for i in range(self.month_lenght):
             if current_day_visible and self.current_day == i+1:
-                button = Button(text=str(i+1), font_size=80,
-                                color=get_color_from_hex('#ec6613'))
+                button = RoundedButton(text=str(i+1), font_size=80,
+                                    color=get_color_from_hex('#ec6613'))
             else:
-                button = Button(text=str(i+1), font_size=50)
+                button = RoundedButton(text=str(i+1), font_size=50)
             button.bind(on_press=self.button_pressed)
             self.bottom_row.add_widget(button)
+
     
     def button_pressed(self, instance):
         # Create a popup window with a textbox.
@@ -266,41 +303,32 @@ class CalendarApp(App):
         self.close_popup(instance)
         
     def get_month_name(self, value):
-        if value == 1:
-            return "Januar"
-        elif value == 2:
-            return "Februar"
-        elif value == 3:
-            return "März"
-        elif value == 4:
-            return "April"
-        elif value == 5:
-            return "Mai"
-        elif value == 6:
-            return "Juni"
-        elif value == 7:
-            return "Juli"
-        elif value == 8:
-            return "August"
-        elif value == 9:
-            return "September"
-        elif value == 10:
-            return "Oktober"
-        elif value == 11:
-            return "November"
-        elif value == 12:
-            return "Dezember"
-
-    def get_day_labels(self):
-        day_names = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag",
-                     "Samstag", "Sonntag"]
+        months = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli",
+                  "August", "September", "Oktober", "November", "Dezember"]
         
-        labels = []
-        for i in day_names:
-            label = Label(text=f'{i}', font_size=32, color=(1, 0, 1, 1))
-            labels.append(label)
+        return months[value-1]
+       
+    def get_day_labels(self):
+        if self.orientation == "landscape_mode":
+            day_names = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag",
+                        "Samstag", "Sonntag"]
+            labels = []
+            for i in day_names:
+                label = Label(text=f'{i}', font_size=32, color=(1, 0, 1, 1))
+                labels.append(label)
 
-        return labels
+            return labels
+        
+        if self.orientation == "portrait_mode":
+            day_names = ["Mo", "Di", "Mi", "Do", "Fr",
+                        "Sa", "So"]
+        
+            labels = []
+            for i in day_names:
+                label = Label(text=f'{i}', font_size=32, color=(1, 0, 1, 1))
+                labels.append(label)
+
+            return labels
        
     def load_month(self):
         # get the weeks in lists and get the 1. weekday of the month
@@ -309,6 +337,7 @@ class CalendarApp(App):
         return weeks
 
     def update_values(self):
+        # self.orientation = self.detect_orientation()
         self.month.text = self.get_month_name(self.current_month)
         self.year.text = f'{self.current_year}'
         self.weeks = self.load_month()
