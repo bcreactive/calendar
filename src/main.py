@@ -18,7 +18,7 @@ import json
 from kivy.core.window import Window
 Window.clearcolor = (0, 1, 0, 1)
 
-# Window.size = (190, 90)  # (608, 288) 19:1 ratio for oppo 3 lite
+Window.size = (1900, 900)  # (608, 288) 19:1 ratio for oppo 3 lite
 # Window.fullscreen = 'auto'  # 'auto' = phonemode, False = devmode
 
 
@@ -196,11 +196,12 @@ class CalendarApp(App):
         text_input.bind(text=self.on_text_input)
         
         # Create a Button widget to close the popup
-        self.close_button = Button(text='Close')
+        self.close_button = Button(text='Close', background_color=(0, 1, 1, 1))
         self.close_button.bind(on_press=self.close_popup)
-        self.save_button = Button(text='Save')
+        self.save_button = Button(text='Save', background_color=(0, 1, 0, 1))
         self.save_button.bind(on_press=self.save_entry)
-        self.delete_button = Button(text='Delete')
+        self.delete_button = Button(text='Delete', 
+                                background_color=(1, 1, 0, 1))
         self.delete_button.bind(on_press=self.ask_delete)
     
         # Create a layout to hold the TextInput and Button widgets
@@ -220,7 +221,8 @@ class CalendarApp(App):
          # Create the Popup window with customized content
         self.popup = Popup(title=f'{instance.text}. {month}' + 
                            f' {self.current_year}', content=main_box,
-                           size_hint=(0.9, 0.9))
+                           size_hint=(0.9, 0.9), background_color=(
+                               0.8,0.1,0.9,1))
     
         self.popup.open()
     
@@ -255,9 +257,9 @@ class CalendarApp(App):
         self.close_popup(instance)
 
     def ask_delete(self, instance):
-        cancel_button = Button(text='No')
+        cancel_button = Button(text='No', background_color=(0, 1, 1, 1))
         cancel_button.bind(on_press=self.close_ask)
-        ok_button = Button(text='Ok')
+        ok_button = Button(text='Ok', background_color=(0, 1, 0, 1))
         ok_button.bind(on_press=self.delete_entry)
 
         main_box = BoxLayout(orientation='vertical')
@@ -302,31 +304,33 @@ class CalendarApp(App):
         self.close_popup(instance)
         
     def get_month_name(self, value):
-        if self.orientation == "landscape_mode":
-            months = ["Januar", "Februar", "März", "April", "Mai", "Juni",
-                      "Juli", "August", "September", "Oktober", "November",
-                      "Dezember"]
+        # if self.orientation == "landscape_mode":
+            # months = ["Januar", "Februar", "März", "April", "Mai", "Juni",
+            #           "Juli", "August", "September", "Oktober", "November",
+            #           "Dezember"]
             
-            return months[value-1]
+            # return months[value-1]
         
-        if self.orientation == "portrait_mode":
+        # if self.orientation == "portrait_mode":
+        if self.orientation == "landscape_mode":
             months = ["Jan", "Feb", "März", "April", "Mai", "Juni", "Juli",
                     "Aug", "Sept", "Okt", "Nov", "Dez"]
             
             return months[value-1]
        
     def get_day_labels(self):
-        if self.orientation == "landscape_mode":
-            day_names = ["Montag", "Dienstag", "Mittwoch", "Donnerstag",
-                         "Freitag", "Samstag", "Sonntag"]
+        # if self.orientation == "landscape_mode":
+        #     day_names = ["Montag", "Dienstag", "Mittwoch", "Donnerstag",
+        #                  "Freitag", "Samstag", "Sonntag"]
         
-        if self.orientation == "portrait_mode":
+        # if self.orientation == "portrait_mode":
+        if self.orientation == "landscape_mode":
             day_names = ["Mo", "Di", "Mi", "Do", "Fr",
                         "Sa", "So"]
         
         labels = []
         for i in day_names:
-            label = Label(text=f'{i}', font_size=32, color=get_color_from_hex(
+            label = Label(text=f'{i}', font_size=40, color=get_color_from_hex(
                 '#810de4'))
             labels.append(label)
 
