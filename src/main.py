@@ -21,15 +21,17 @@ Window.clearcolor = (0, 1, 0, 1)
 # Window.size = (190, 90)  # (608, 288) 19:1 ratio for oppo 3 lite
 # Window.fullscreen = 'auto'  # 'auto' = phonemode, False = devmode
 
+
 class RoundedButton(Button):
     def __init__(self, text="", **kwargs):
         super(RoundedButton, self).__init__(**kwargs)
         with self.canvas.before:
             Color(0, 0.7, 0.2)
-            self._rounded_rect = RoundedRectangle(pos=self.pos, size=self.size, radius=[40])
+            self._rounded_rect = RoundedRectangle(pos=self.pos, size=self.size,
+                                                  radius=[56])
 
         self.text = text
-        self.background_color = [0, 0, 0, 0]  # Set background color to transparent
+        self.background_color = [0, 0, 0, 0]  # Background color: transparent
 
     def on_pos(self, instance, pos):
         self._rounded_rect.pos = pos
@@ -91,8 +93,6 @@ class CalendarApp(App):
                 
     def build(self):
         # Create the top row of buttons and labels: swithch year/month
-        self.orientation = self.detect_orientation()
-
         self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1),
                                  spacing=5)
         first_row = [self.year_rwd, self.year, self.year_fwd, self.home_button,
@@ -140,7 +140,6 @@ class CalendarApp(App):
 
     def mark_entries(self):
         for child in self.bottom_row.children:
-            # if isinstance(child, Button):
             if len(str(self.current_month)) == 1:
                 if len(str(child.text)) == 1:
                     date = f'{self.current_year}0{self.current_month}0{child.text}'
@@ -162,9 +161,7 @@ class CalendarApp(App):
             data = json.load(file)
             return data
     
-
     def set_buttons(self):
-        # self.orientation = self.detect_orientation()
         # Set the placeholder labels to have buttons start at the correct day
         for i in range(self.week_start):
             label = Label(text="")
@@ -182,7 +179,6 @@ class CalendarApp(App):
             button.bind(on_press=self.button_pressed)
             self.bottom_row.add_widget(button)
 
-    
     def button_pressed(self, instance):
         # Create a popup window with a textbox.
         month = self.get_month_name(self.current_month)
@@ -195,7 +191,7 @@ class CalendarApp(App):
             content = self.save_file[key]
             text_input = TextInput(text=content, multiline=True)
         else:
-            text_input = TextInput(hint_text='Enter your text here...',
+            text_input = TextInput(hint_text='Hier ist Platz für Notizen...',
                                multiline=True)
         text_input.bind(text=self.on_text_input)
         
@@ -206,7 +202,7 @@ class CalendarApp(App):
         self.save_button.bind(on_press=self.save_entry)
         self.delete_button = Button(text='Delete')
         self.delete_button.bind(on_press=self.ask_delete)
-        
+    
         # Create a layout to hold the TextInput and Button widgets
         main_box = BoxLayout(orientation='vertical')
 
@@ -227,7 +223,7 @@ class CalendarApp(App):
                            size_hint=(0.9, 0.9))
     
         self.popup.open()
-
+    
     def check_entry(self, number):
         if len(str(number)) == 1:
             if len(str(self.current_month)) == 1:
@@ -258,10 +254,10 @@ class CalendarApp(App):
         self.update_values()
         self.close_popup(instance)
 
-    def ask_delete(self, x=None):
-        cancel_button = Button(text='Cancel')
+    def ask_delete(self, instance):
+        cancel_button = Button(text='No')
         cancel_button.bind(on_press=self.close_ask)
-        ok_button = Button(text='OK')
+        ok_button = Button(text='Ok')
         ok_button.bind(on_press=self.delete_entry)
 
         main_box = BoxLayout(orientation='vertical')
@@ -271,9 +267,10 @@ class CalendarApp(App):
         main_box.add_widget(button_box)
 
         self.ask_popup = Popup(title=f'erase entry?', content=main_box,
-                               size_hint=(0.3, 0.3))
+                                size_hint=(0.3, 0.3))
     
         self.ask_popup.open()
+        
     
     def close_ask(self, x=None):
         self.ask_popup.dismiss()
@@ -306,8 +303,9 @@ class CalendarApp(App):
         
     def get_month_name(self, value):
         if self.orientation == "landscape_mode":
-            months = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli",
-                    "August", "September", "Oktober", "November", "Dezember"]
+            months = ["Januar", "Februar", "März", "April", "Mai", "Juni",
+                      "Juli", "August", "September", "Oktober", "November",
+                      "Dezember"]
             
             return months[value-1]
         
@@ -319,25 +317,20 @@ class CalendarApp(App):
        
     def get_day_labels(self):
         if self.orientation == "landscape_mode":
-            day_names = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag",
-                        "Samstag", "Sonntag"]
-            labels = []
-            for i in day_names:
-                label = Label(text=f'{i}', font_size=32, color=get_color_from_hex('#810de4'))
-                labels.append(label)
-
-            return labels
+            day_names = ["Montag", "Dienstag", "Mittwoch", "Donnerstag",
+                         "Freitag", "Samstag", "Sonntag"]
         
         if self.orientation == "portrait_mode":
             day_names = ["Mo", "Di", "Mi", "Do", "Fr",
                         "Sa", "So"]
         
-            labels = []
-            for i in day_names:
-                label = Label(text=f'{i}', font_size=32, color=get_color_from_hex('#810de4'))
-                labels.append(label)
+        labels = []
+        for i in day_names:
+            label = Label(text=f'{i}', font_size=32, color=get_color_from_hex(
+                '#810de4'))
+            labels.append(label)
 
-            return labels
+        return labels
        
     def load_month(self):
         # get the weeks in lists and get the 1. weekday of the month
@@ -427,3 +420,18 @@ class CalendarApp(App):
     
 if __name__ == '__main__':
     CalendarApp().run()
+
+
+    # def format_date(self, day):
+    #     month = len(str(self.current_month))
+    #     day = len(day.text)   
+    #     if month == 1 and day == 1:
+    #         date = f'{self.current_year}0{self.current_month}0{self.button_nr}'
+    #     elif month == 1 and day == 2:
+    #         date = f'{self.current_year}0{self.current_month}{self.button_nr}'
+    #     elif month == 2 and day == 1:
+    #         date = f'{self.current_year}{self.current_month}0{self.button_nr}'
+    #     else:
+    #         date = f'{self.current_year}{self.current_month}{self.button_nr}'
+
+    #     return date
