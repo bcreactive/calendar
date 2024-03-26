@@ -42,6 +42,7 @@ class CalendarApp(App):
     def __init__(self, **kwargs):
         super(CalendarApp, self).__init__(**kwargs)
         Window.bind(on_resize=self.detect_orientation)
+        self.orientation = self.detect_orientation()
 
         self.current_year = datetime.now().year
         self.current_month = datetime.now().month
@@ -53,17 +54,17 @@ class CalendarApp(App):
 
         self.year_rwd = RoundedButton(text="<", font_size=64)
         self.year = Label(text=f'{self.current_year}', font_size=64,
-                          color=(1, 0, 1, 1))
+                          color=get_color_from_hex('#810de4'))
         
         self.year_fwd = RoundedButton(text=">", font_size=64)
 
         self.spaceholder = Label(text='', font_size=20)
-        self.home_button = RoundedButton(text="Home", font_size=60,
-                                  color=get_color_from_hex('#ec6613'))
+        self.home_button = RoundedButton(text="\u221A", font_size=60,
+                                  color=get_color_from_hex('#50f2fc'))
 
         self.month_rwd = RoundedButton(text="<", font_size=64)
         self.month = Label(text=f'{self.month_name}', font_size=50,
-                          color=(1, 0, 1, 1))
+                          color=get_color_from_hex('#810de4'))
         
         self.month_fwd = RoundedButton(text=">", font_size=64)
         
@@ -74,7 +75,7 @@ class CalendarApp(App):
         self.month_fwd.bind(on_press=self.inc_month)
         self.home_button.bind(on_press=self.today_view)
         
-        self.orientation = self.detect_orientation()
+        # self.orientation = self.detect_orientation()
         self.day_labels = self.get_day_labels()
         
         # get the weeks with weekdays in lists
@@ -172,6 +173,7 @@ class CalendarApp(App):
         # Set button-grid
         current_day_visible = self.check_today()
         for i in range(self.month_lenght):
+            # Set font color of the "today" button
             if current_day_visible and self.current_day == i+1:
                 button = RoundedButton(text=str(i+1), font_size=80,
                                     color=get_color_from_hex('#ec6613'))
@@ -303,10 +305,17 @@ class CalendarApp(App):
         self.close_popup(instance)
         
     def get_month_name(self, value):
-        months = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli",
-                  "August", "September", "Oktober", "November", "Dezember"]
+        if self.orientation == "landscape_mode":
+            months = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli",
+                    "August", "September", "Oktober", "November", "Dezember"]
+            
+            return months[value-1]
         
-        return months[value-1]
+        if self.orientation == "portrait_mode":
+            months = ["Jan", "Feb", "März", "April", "Mai", "Juni", "Juli",
+                    "Aug", "Sept", "Okt", "Nov", "Dez"]
+            
+            return months[value-1]
        
     def get_day_labels(self):
         if self.orientation == "landscape_mode":
@@ -314,7 +323,7 @@ class CalendarApp(App):
                         "Samstag", "Sonntag"]
             labels = []
             for i in day_names:
-                label = Label(text=f'{i}', font_size=32, color=(1, 0, 1, 1))
+                label = Label(text=f'{i}', font_size=32, color=get_color_from_hex('#810de4'))
                 labels.append(label)
 
             return labels
@@ -325,7 +334,7 @@ class CalendarApp(App):
         
             labels = []
             for i in day_names:
-                label = Label(text=f'{i}', font_size=32, color=(1, 0, 1, 1))
+                label = Label(text=f'{i}', font_size=32, color=get_color_from_hex('#810de4'))
                 labels.append(label)
 
             return labels
