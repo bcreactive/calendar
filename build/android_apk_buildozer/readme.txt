@@ -60,6 +60,9 @@ This are the commands I used to set up the colab notebook to compile the apk suc
 import os
 os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-17-openjdk-amd64"
 
+!sudo apt-get update
+!sudo apt-get install libtool
+
 !buildozer -v android debug
 
 !buildozer android clean
