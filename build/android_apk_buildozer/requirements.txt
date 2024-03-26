@@ -330,7 +330,7 @@ pyerfa==2.0.1.1
 pygame==2.5.2
 Pygments==2.16.1
 PyGObject==3.42.1
-PyJWT==2.3.0
+PyJWT==2.4.0
 pymc==5.10.4
 pymystem3==0.2.0
 PyOpenGL==3.1.7
