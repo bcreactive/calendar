@@ -18,7 +18,7 @@ import json
 from kivy.core.window import Window
 Window.clearcolor = (0, 1, 0, 1)
 
-Window.size = (1900, 900)  # (608, 288) 19:1 ratio for oppo 3 lite
+# Window.size = (1900, 900)  # (608, 288) 19:1 ratio for oppo 3 lite
 # Window.fullscreen = 'auto'  # 'auto' = phonemode, False = devmode
 
 
@@ -43,8 +43,8 @@ class RoundedButton(Button):
 class CalendarApp(App):
     def __init__(self, **kwargs):
         super(CalendarApp, self).__init__(**kwargs)
-        Window.bind(on_resize=self.detect_orientation)
-        self.orientation = self.detect_orientation()
+        # Window.bind(on_resize=self.detect_orientation)
+        # self.orientation = self.detect_orientation()
 
         self.current_year = datetime.now().year
         self.current_month = datetime.now().month
@@ -222,7 +222,7 @@ class CalendarApp(App):
         self.popup = Popup(title=f'{instance.text}. {month}' + 
                            f' {self.current_year}', content=main_box,
                            size_hint=(0.9, 0.9), background_color=(
-                               0.8,0.1,0.9,1))
+                               1.2,0.1,0.9,1))
     
         self.popup.open()
     
@@ -269,7 +269,8 @@ class CalendarApp(App):
         main_box.add_widget(button_box)
 
         self.ask_popup = Popup(title=f'erase entry?', content=main_box,
-                                size_hint=(0.3, 0.3))
+                                size_hint=(0.3, 0.3), background_color=(
+                               1.8,0.1,0.9,1))
     
         self.ask_popup.open()
         
@@ -312,7 +313,7 @@ class CalendarApp(App):
             # return months[value-1]
         
         # if self.orientation == "portrait_mode":
-        if self.orientation == "landscape_mode":
+        # if self.orientation == "landscape_mode":
             months = ["Jan", "Feb", "März", "April", "Mai", "Juni", "Juli",
                     "Aug", "Sept", "Okt", "Nov", "Dez"]
             
@@ -324,8 +325,8 @@ class CalendarApp(App):
         #                  "Freitag", "Samstag", "Sonntag"]
         
         # if self.orientation == "portrait_mode":
-        if self.orientation == "landscape_mode":
-            day_names = ["Mo", "Di", "Mi", "Do", "Fr",
+        # if self.orientation == "landscape_mode":
+        day_names = ["Mo", "Di", "Mi", "Do", "Fr",
                         "Sa", "So"]
         
         labels = []
