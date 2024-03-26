@@ -268,7 +268,7 @@ class CalendarApp(App):
         button_box.add_widget(ok_button)
         main_box.add_widget(button_box)
 
-        self.ask_popup = Popup(title=f'erase entry?', content=main_box,
+        self.ask_popup = Popup(title=f'erase?', content=main_box,
                                 size_hint=(0.3, 0.3), background_color=(
                                1.8,0.1,0.9,1))
     
