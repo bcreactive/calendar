@@ -23,12 +23,12 @@ Window.clearcolor = (0, 1, 0, 1)
 
 
 class RoundedButton(Button):
-    def __init__(self, text="", **kwargs):
+    def __init__(self, text="", background_color=(0, 0.7, 0.2), **kwargs):
         super(RoundedButton, self).__init__(**kwargs)
         with self.canvas.before:
-            Color(0, 0.7, 0.2)
+            Color(*background_color)
             self._rounded_rect = RoundedRectangle(pos=self.pos, size=self.size,
-                                                  radius=[56])
+                                                  radius=[68])
 
         self.text = text
         self.background_color = [0, 0, 0, 0]  # Background color: transparent
@@ -62,7 +62,7 @@ class CalendarApp(App):
 
         self.spaceholder = Label(text='', font_size=20)
         self.home_button = RoundedButton(text="\u221A", font_size=60,
-                                  color=get_color_from_hex('#50f2fc'))
+                                  background_color=get_color_from_hex('#50f2fc'))
 
         self.month_rwd = RoundedButton(text="<", font_size=64)
         self.month = Label(text=f'{self.month_name}', font_size=50,
@@ -196,11 +196,11 @@ class CalendarApp(App):
         text_input.bind(text=self.on_text_input)
         
         # Create a Button widget to close the popup
-        self.close_button = Button(text='Close', background_color=(0, 1, 1, 1))
+        self.close_button = RoundedButton(text='Close', background_color=(0, 1, 1, 1))
         self.close_button.bind(on_press=self.close_popup)
-        self.save_button = Button(text='Save', background_color=(0, 1, 0, 1))
+        self.save_button = RoundedButton(text='Save', background_color=(0, 1, 0, 1))
         self.save_button.bind(on_press=self.save_entry)
-        self.delete_button = Button(text='Delete', 
+        self.delete_button = RoundedButton(text='Delete', 
                                 background_color=(1, 1, 0, 1))
         self.delete_button.bind(on_press=self.ask_delete)
     
@@ -210,7 +210,7 @@ class CalendarApp(App):
         content_box = BoxLayout(orientation='vertical')
         content_box.add_widget(text_input)
 
-        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.15))
+        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.15), spacing=50)
         button_box.add_widget(self.close_button)
         button_box.add_widget(self.delete_button)
         button_box.add_widget(self.save_button)
@@ -221,7 +221,7 @@ class CalendarApp(App):
          # Create the Popup window with customized content
         self.popup = Popup(title=f'{instance.text}. {month}' + 
                            f' {self.current_year}', content=main_box,
-                           size_hint=(0.9, 0.9), background_color=(
+                           size_hint=(0.8, 0.8), background_color=(
                                1.2,0.1,0.9,1))
     
         self.popup.open()
@@ -257,13 +257,13 @@ class CalendarApp(App):
         self.close_popup(instance)
 
     def ask_delete(self, instance):
-        cancel_button = Button(text='No', background_color=(0, 1, 1, 1))
+        cancel_button = RoundedButton(text='No', background_color=(0, 1, 1, 1))
         cancel_button.bind(on_press=self.close_ask)
-        ok_button = Button(text='Ok', background_color=(0, 1, 0, 1))
+        ok_button = RoundedButton(text='Ok', background_color=(0, 1, 0, 1))
         ok_button.bind(on_press=self.delete_entry)
 
         main_box = BoxLayout(orientation='vertical')
-        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.4))      
+        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.4), spacing=10)      
         button_box.add_widget(cancel_button)
         button_box.add_widget(ok_button)
         main_box.add_widget(button_box)
@@ -425,18 +425,3 @@ class CalendarApp(App):
     
 if __name__ == '__main__':
     CalendarApp().run()
-
-
-    # def format_date(self, day):
-    #     month = len(str(self.current_month))
-    #     day = len(day.text)   
-    #     if month == 1 and day == 1:
-    #         date = f'{self.current_year}0{self.current_month}0{self.button_nr}'
-    #     elif month == 1 and day == 2:
-    #         date = f'{self.current_year}0{self.current_month}{self.button_nr}'
-    #     elif month == 2 and day == 1:
-    #         date = f'{self.current_year}{self.current_month}0{self.button_nr}'
-    #     else:
-    #         date = f'{self.current_year}{self.current_month}{self.button_nr}'
-
-    #     return date
