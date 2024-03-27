@@ -54,21 +54,28 @@ class CalendarApp(App):
 
         self.month_name = self.get_month_name(self.current_month)
 
-        self.year_rwd = RoundedButton(text="<", font_size=64)
+        self.year_rwd = RoundedButton(text="<", font_size=64,
+                                      background_color=get_color_from_hex('#0a748a'))
+        
         self.year = Label(text=f'{self.current_year}', font_size=64,
                           color=get_color_from_hex('#810de4'))
         
-        self.year_fwd = RoundedButton(text=">", font_size=64)
+        self.year_fwd = RoundedButton(text=">", font_size=64,
+                                      background_color=get_color_from_hex('#0a748a'))
 
         self.spaceholder = Label(text='', font_size=20)
+
         self.home_button = RoundedButton(text="\u221A", font_size=60,
                                   background_color=get_color_from_hex('#50f2fc'))
 
-        self.month_rwd = RoundedButton(text="<", font_size=64)
+        self.month_rwd = RoundedButton(text="<", font_size=64,
+                                       background_color=get_color_from_hex('#0a748a'))
+        
         self.month = Label(text=f'{self.month_name}', font_size=50,
                           color=get_color_from_hex('#810de4'))
         
-        self.month_fwd = RoundedButton(text=">", font_size=64)
+        self.month_fwd = RoundedButton(text=">", font_size=64,
+                                       background_color=get_color_from_hex('#0a748a'))
         
         # Bindings for buttons
         self.year_rwd.bind(on_press=self.dec_year)
@@ -196,12 +203,12 @@ class CalendarApp(App):
         text_input.bind(text=self.on_text_input)
         
         # Create a Button widget to close the popup
-        self.close_button = RoundedButton(text='Close', background_color=(0, 1, 1, 1))
+        self.close_button = RoundedButton(text='Close', background_color=get_color_from_hex('#0a748a'))
         self.close_button.bind(on_press=self.close_popup)
-        self.save_button = RoundedButton(text='Save', background_color=(0, 1, 0, 1))
+        self.save_button = RoundedButton(text='Save', background_color=get_color_from_hex('#0a748a'))
         self.save_button.bind(on_press=self.save_entry)
         self.delete_button = RoundedButton(text='Delete', 
-                                background_color=(1, 1, 0, 1))
+                                background_color=get_color_from_hex('#0a748a'))
         self.delete_button.bind(on_press=self.ask_delete)
     
         # Create a layout to hold the TextInput and Button widgets
@@ -210,7 +217,7 @@ class CalendarApp(App):
         content_box = BoxLayout(orientation='vertical')
         content_box.add_widget(text_input)
 
-        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.15), spacing=50)
+        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.18), spacing=50)
         button_box.add_widget(self.close_button)
         button_box.add_widget(self.delete_button)
         button_box.add_widget(self.save_button)
@@ -222,7 +229,7 @@ class CalendarApp(App):
         self.popup = Popup(title=f'{instance.text}. {month}' + 
                            f' {self.current_year}', content=main_box,
                            size_hint=(0.8, 0.8), background_color=(
-                               1.2,0.1,0.9,1))
+                               0.80, 1 , 1, 1))
     
         self.popup.open()
     
@@ -257,9 +264,9 @@ class CalendarApp(App):
         self.close_popup(instance)
 
     def ask_delete(self, instance):
-        cancel_button = RoundedButton(text='No', background_color=(0, 1, 1, 1))
+        cancel_button = RoundedButton(text='No', background_color=get_color_from_hex('#0a748a'))
         cancel_button.bind(on_press=self.close_ask)
-        ok_button = RoundedButton(text='Ok', background_color=(0, 1, 0, 1))
+        ok_button = RoundedButton(text='Ok', background_color=get_color_from_hex('#0a748a'))
         ok_button.bind(on_press=self.delete_entry)
 
         main_box = BoxLayout(orientation='vertical')
@@ -270,7 +277,7 @@ class CalendarApp(App):
 
         self.ask_popup = Popup(title=f'erase?', content=main_box,
                                 size_hint=(0.3, 0.3), background_color=(
-                               1.8,0.1,0.9,1))
+                               0.80, 1 , 1, 1))
     
         self.ask_popup.open()
         
