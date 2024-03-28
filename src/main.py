@@ -194,6 +194,7 @@ class CalendarApp(App):
         self.delete_button = RoundedButton(text='Delete', 
                                 background_color=get_color_from_hex('#0a748a'))
         
+        # Close popup without confirmation, if no entry is saved.
         entry = self.check_entry(self.button_nr)
         if entry:
             self.delete_button.bind(on_press=self.ask_delete)
@@ -329,23 +330,102 @@ class CalendarApp(App):
         return weeks
 
     def set_date(self, instance):
-        cancel_button = RoundedButton(text='No',
+        paragraph = Label(text='Select:', font_size=64,
+                          color=get_color_from_hex('#810de4'))
+        
+        y_label = Label(text='Year', font_size=64,
+                          color=get_color_from_hex('#810de4'))
+        m_label = Label(text='Month', font_size=64,
+                          color=get_color_from_hex('#810de4'))
+        d_label = Label(text='Day', font_size=64,
+                          color=get_color_from_hex('#810de4'))
+        
+        year = Label(text=f'{self.current_year}', font_size=64,
+                          color=get_color_from_hex('#810de4'))
+        month = Label(text=f'{self.month_name}', font_size=64,
+                          color=get_color_from_hex('#810de4'))
+        day = Label(text=f'{self.current_day}', font_size=64,
+                          color=get_color_from_hex('#810de4'))
+        
+        y_fwd = RoundedButton(text="^", font_size=64,
                                 background_color=get_color_from_hex('#0a748a'))
-        cancel_button.bind(on_press=self.close_setdate)
-        ok_button = RoundedButton(text='Ok',
+        y_rwd = RoundedButton(text=">", font_size=64,
                                 background_color=get_color_from_hex('#0a748a'))
-        # ok_button.bind(on_press=self.delete_entry)
+        m_fwd = RoundedButton(text="^", font_size=64,
+                                background_color=get_color_from_hex('#0a748a'))
+        m_rwd = RoundedButton(text=">", font_size=64,
+                                background_color=get_color_from_hex('#0a748a'))
+        d_fwd = RoundedButton(text="^", font_size=64,
+                                background_color=get_color_from_hex('#0a748a'))
+        d_rwd = RoundedButton(text=">", font_size=64,
+                                background_color=get_color_from_hex('#0a748a'))
+ 
+        cancel = RoundedButton(text="cancel", font_size=64,
+                                background_color=get_color_from_hex('#0a748a'))
+        ok = RoundedButton(text="ok", font_size=64,
+                                background_color=get_color_from_hex('#0a748a'))
+        
+        spaceholder_1 = Label(text='', font_size=64,
+                          color=get_color_from_hex('#810de4'))
+        spaceholder_2 = Label(text='', font_size=64,
+                          color=get_color_from_hex('#810de4'))
+        spaceholder_3 = Label(text='', font_size=64,
+                          color=get_color_from_hex('#810de4'))
+        
+        # Button bindings..........
+                        
+        # Title for popup
+        title_row = paragraph
 
-        main_box = BoxLayout(orientation='vertical')
-        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.4),
-                               spacing=30)     
-         
-        button_box.add_widget(cancel_button)
-        button_box.add_widget(ok_button)
-        main_box.add_widget(button_box)
+        # Labels for year, month and day
+        label_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        labels = [y_label, m_label, d_label]
+        for i in labels:
+            label_row.add_widget(i)
+        
+        fwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        fwd_buttons = [y_fwd, m_fwd, d_fwd]
+        for i in fwd_buttons:
+            fwd_row.add_widget(i)
 
-        self.setdate_popup = Popup(title=f'go to date:', content=main_box,
-                                size_hint=(0.5, 0.5), background_color=(
+        date_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        date_values = [year, month, day]
+        for i in date_values:
+            date_row.add_widget(i)
+
+        rwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        rwd_buttons = [y_rwd, m_rwd, d_rwd]
+        for i in rwd_buttons:
+            rwd_row.add_widget(i)
+        
+        button_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        buttons = [cancel, ok]
+        for i in buttons:
+            button_row.add_widget(i)
+        
+        placeholder_1 = BoxLayout(orientation='horizontal', size_hint=(1,1))
+        placeholder_1.add_widget(spaceholder_1)
+
+        placeholder_2 = BoxLayout(orientation='horizontal', size_hint=(1,1))
+        placeholder_2.add_widget(spaceholder_2)
+
+        placeholder_3 = BoxLayout(orientation='horizontal', size_hint=(1,1))
+        placeholder_3.add_widget(spaceholder_3)
+
+        # Create the main layout by stacking the top row, middle row, and grid
+        main_layout = BoxLayout(orientation='vertical')
+        main_layout.add_widget(title_row)
+        main_layout.add_widget(placeholder_1)
+        main_layout.add_widget(label_row)
+        main_layout.add_widget(placeholder_2)
+        main_layout.add_widget(fwd_row)
+        main_layout.add_widget(date_row)
+        main_layout.add_widget(rwd_row)
+        main_layout.add_widget(placeholder_3)
+        main_layout.add_widget(button_row)
+
+        self.setdate_popup = Popup(title=f'go to date:', content=main_layout,
+                                size_hint=(0.7, 0.7), background_color=(
                                0.80, 1 , 1, 1))
     
         self.setdate_popup.open()
@@ -353,6 +433,7 @@ class CalendarApp(App):
     def close_setdate(self, x=None):
         self.setdate_popup.dismiss()
 
+    
     def update_values(self):
         self.month.text = self.get_month_name(self.current_month)
         self.year.text = f'{self.current_year}'
