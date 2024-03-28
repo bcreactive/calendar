@@ -334,111 +334,111 @@ class CalendarApp(App):
         self.chose_m = self.current_month
         self.chose_d = self.current_day
 
-        paragraph = Label(text='Select:', font_size=64,
+        self.paragraph = Label(text='Select:', font_size=64,
                           color=get_color_from_hex('#810de4'))
         
-        y_label = Label(text='Year', font_size=64,
+        self.y_label = Label(text='Year', font_size=64,
                           color=get_color_from_hex('#810de4'))
-        m_label = Label(text='Month', font_size=64,
+        self.m_label = Label(text='Month', font_size=64,
                           color=get_color_from_hex('#810de4'))
-        d_label = Label(text='Day', font_size=64,
-                          color=get_color_from_hex('#810de4'))
-        
-        year = Label(text=f'{self.chose_y}', font_size=64,
-                          color=get_color_from_hex('#810de4'))
-        month = Label(text=f'{self.chose_m}', font_size=64,
-                          color=get_color_from_hex('#810de4'))
-        day = Label(text=f'{self.chose_d}', font_size=64,
+        self.d_label = Label(text='Day', font_size=64,
                           color=get_color_from_hex('#810de4'))
         
-        y_fwd = RoundedButton(text="^", font_size=64,
+        self.yr = Label(text=f'{self.chose_y}', font_size=64,
+                          color=get_color_from_hex('#810de4'))
+        self.mnt = Label(text=f'{self.chose_m}', font_size=64,
+                          color=get_color_from_hex('#810de4'))
+        self.dy = Label(text=f'{self.chose_d}', font_size=64,
+                          color=get_color_from_hex('#810de4'))
+        
+        self.y_fwd = RoundedButton(text="^", font_size=64,
                                 background_color=get_color_from_hex('#0a748a'))
-        y_rwd = RoundedButton(text=">", font_size=64,
+        self.y_rwd = RoundedButton(text="v", font_size=46,
                                 background_color=get_color_from_hex('#0a748a'))
-        m_fwd = RoundedButton(text="^", font_size=64,
+        self.m_fwd = RoundedButton(text="^", font_size=64,
                                 background_color=get_color_from_hex('#0a748a'))
-        m_rwd = RoundedButton(text=">", font_size=64,
+        self.m_rwd = RoundedButton(text="v", font_size=46,
                                 background_color=get_color_from_hex('#0a748a'))
-        d_fwd = RoundedButton(text="^", font_size=64,
+        self.d_fwd = RoundedButton(text="^", font_size=64,
                                 background_color=get_color_from_hex('#0a748a'))
-        d_rwd = RoundedButton(text=">", font_size=64,
+        self.d_rwd = RoundedButton(text="v", font_size=46,
                                 background_color=get_color_from_hex('#0a748a'))
  
-        cancel = RoundedButton(text="cancel", font_size=64,
+        self.cancel = RoundedButton(text="cancel", font_size=64,
                                 background_color=get_color_from_hex('#0a748a'))
-        ok = RoundedButton(text="ok", font_size=64,
+        self.ok = RoundedButton(text="ok", font_size=64,
                                 background_color=get_color_from_hex('#0a748a'))
         
-        spaceholder_1 = Label(text='', font_size=64,
+        self.spaceholder_1 = Label(text='', font_size=64,
                           color=get_color_from_hex('#810de4'))
-        spaceholder_2 = Label(text='', font_size=64,
+        self.spaceholder_2 = Label(text='', font_size=64,
                           color=get_color_from_hex('#810de4'))
-        spaceholder_3 = Label(text='', font_size=64,
+        self.spaceholder_3 = Label(text='', font_size=64,
                           color=get_color_from_hex('#810de4'))
         
-        # Button bindings..........
-        y_fwd.bind(on_press=self.inc_y)
-        y_rwd.bind(on_press=self.dec_y)
-        m_fwd.bind(on_press=self.inc_m)
-        m_rwd.bind(on_press=self.dec_m)
-        d_fwd.bind(on_press=self.inc_d)
-        d_rwd.bind(on_press=self.dec_d)
+        # Button bindings
+        self.y_fwd.bind(on_press=self.inc_y)
+        self.y_rwd.bind(on_press=self.dec_y)
+        self.m_fwd.bind(on_press=self.inc_m)
+        self.m_rwd.bind(on_press=self.dec_m)
+        self.d_fwd.bind(on_press=self.inc_d)
+        self.d_rwd.bind(on_press=self.dec_d)
 
-        cancel.bind(on_press=self.close_setdate)
-        ok.bind(on_press=self.jump_to)
+        self.cancel.bind(on_press=self.close_setdate)
+        self.ok.bind(on_press=self.jump_to)
 
         # Title for popup
-        title_row = paragraph
+        self.title_row = self.paragraph
 
         # Labels for year, month and day
-        label_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
-        labels = [y_label, m_label, d_label]
+        self.label_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        labels = [self.y_label, self.m_label, self.d_label]
         for i in labels:
-            label_row.add_widget(i)
+            self.label_row.add_widget(i)
         
-        fwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
-        fwd_buttons = [y_fwd, m_fwd, d_fwd]
+        self.fwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        fwd_buttons = [self.y_fwd, self.m_fwd, self.d_fwd]
         for i in fwd_buttons:
-            fwd_row.add_widget(i)
+            self.fwd_row.add_widget(i)
 
-        date_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
-        date_values = [year, month, day]
+        self.date_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        date_values = [self.yr, self.mnt, self.dy]
         for i in date_values:
-            date_row.add_widget(i)
+            self.date_row.add_widget(i)
 
-        rwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
-        rwd_buttons = [y_rwd, m_rwd, d_rwd]
+        self.rwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        rwd_buttons = [self.y_rwd, self.m_rwd, self.d_rwd]
         for i in rwd_buttons:
-            rwd_row.add_widget(i)
+            self.rwd_row.add_widget(i)
         
-        button_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
-        buttons = [cancel, ok]
+        self.button_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        buttons = [self.cancel, self.ok]
         for i in buttons:
-            button_row.add_widget(i)
+            self.button_row.add_widget(i)
         
-        placeholder_1 = BoxLayout(orientation='horizontal', size_hint=(1,1))
-        placeholder_1.add_widget(spaceholder_1)
+        self.placeholder_1 = BoxLayout(orientation='horizontal', size_hint=(1,1))
+        self.placeholder_1.add_widget(self.spaceholder_1)
 
-        placeholder_2 = BoxLayout(orientation='horizontal', size_hint=(1,1))
-        placeholder_2.add_widget(spaceholder_2)
+        self.placeholder_2 = BoxLayout(orientation='horizontal', size_hint=(1,1))
+        self.placeholder_2.add_widget(self.spaceholder_2)
 
-        placeholder_3 = BoxLayout(orientation='horizontal', size_hint=(1,1))
-        placeholder_3.add_widget(spaceholder_3)
+        self.placeholder_3 = BoxLayout(orientation='horizontal', size_hint=(1,1))
+        self.placeholder_3.add_widget(self.spaceholder_3)
 
         # Create the main layout by stacking the top row, middle row, and grid
-        main_layout = BoxLayout(orientation='vertical')
-        main_layout.add_widget(title_row)
-        main_layout.add_widget(placeholder_1)
-        main_layout.add_widget(label_row)
-        main_layout.add_widget(placeholder_2)
-        main_layout.add_widget(fwd_row)
-        main_layout.add_widget(date_row)
-        main_layout.add_widget(rwd_row)
-        main_layout.add_widget(placeholder_3)
-        main_layout.add_widget(button_row)
+        self.setdate_layout = BoxLayout(orientation='vertical')
+        self.setdate_layout.add_widget(self.title_row)
+        self.setdate_layout.add_widget(self.placeholder_1)
+        self.setdate_layout.add_widget(self.label_row)
+        self.setdate_layout.add_widget(self.placeholder_2)
+        self.setdate_layout.add_widget(self.fwd_row)
+        self.setdate_layout.add_widget(self.date_row)
+        self.setdate_layout.add_widget(self.rwd_row)
+        self.setdate_layout.add_widget(self.placeholder_3)
+        self.setdate_layout.add_widget(self.button_row)
 
-        self.setdate_popup = Popup(title=f'go to date:', content=main_layout,
-                                size_hint=(0.7, 0.7), background_color=(
+        self.setdate_popup = Popup(title=f'go to date:', content=self.setdate_layout,
+                                size_hint=(0.4, 0.7), background_color=(
                                0.80, 1 , 1, 1))
     
         self.setdate_popup.open()
@@ -449,56 +449,122 @@ class CalendarApp(App):
     def inc_y(self, x=None):
         self.chose_y += 1
         self.update_setdate()
-        print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
 
     def dec_y(self, x=None):
         self.chose_y -= 1
-        print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+        self.update_setdate()
         
     def inc_m(self, x=None):
         if self.chose_m == 12:
             self.chose_m = 1
-            print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+            self.update_setdate()
             return
         self.chose_m += 1
-        print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+        self.update_setdate()
     
     def dec_m(self, x=None):
         if self.chose_m == 1:
             self.chose_m = 12
-            print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+            self.update_setdate()
             return
         self.chose_m -= 1
-        print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+        self.update_setdate()
 
     def inc_d(self, x=None):
         days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
         if self.chose_d >= days:
             self.chose_d = 1
-            print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+            self.update_setdate()
             return
         self.chose_d += 1
-        print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+        self.update_setdate()
     
     def dec_d(self, x=None):
         days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
         if self.chose_d <= 1:
             self.chose_d = days
-            
-            print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+            self.update_setdate()
             return
         self.chose_d -= 1
-        print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+        self.update_setdate()
 
     def get_days_in_month(self, year, month):
         days_in_month = calendar.monthrange(year, month)
         return days_in_month
 
     def update_setdate(self):
-        pass
+        self.label_row.clear_widgets()
+        self.fwd_row.clear_widgets()
+        self.date_row.clear_widgets()
+        self.rwd_row.clear_widgets()       
+        self.button_row.clear_widgets()       
+        self.placeholder_1.clear_widgets()
+        self.placeholder_2.clear_widgets()
+        self.placeholder_3.clear_widgets()
+        self.setdate_layout.clear_widgets()
 
-    def jump_to(self, x=None):
-        pass
+        days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
+        if self.chose_d > days or self.chose_d < 1:
+            self.chose_d = 1
+
+        self.yr = Label(text=f'{self.chose_y}', font_size=64,
+                          color=get_color_from_hex('#810de4'))
+        self.mnt = Label(text=f'{self.chose_m}', font_size=64,
+                          color=get_color_from_hex('#810de4'))
+        self.dy = Label(text=f'{self.chose_d}', font_size=64,
+                          color=get_color_from_hex('#810de4'))
+
+        self.label_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        labels = [self.y_label, self.m_label, self.d_label]
+        for i in labels:
+            self.label_row.add_widget(i)
+        
+        self.fwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        fwd_buttons = [self.y_fwd, self.m_fwd, self.d_fwd]
+        for i in fwd_buttons:
+            self.fwd_row.add_widget(i)
+
+        self.date_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        date_values = [self.yr, self.mnt, self.dy]
+        for i in date_values:
+            self.date_row.add_widget(i)
+
+        self.rwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        rwd_buttons = [self.y_rwd, self.m_rwd, self.d_rwd]
+        for i in rwd_buttons:
+            self.rwd_row.add_widget(i)
+        
+        self.button_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        buttons = [self.cancel, self.ok]
+        for i in buttons:
+            self.button_row.add_widget(i)
+        
+        self.placeholder_1 = BoxLayout(orientation='horizontal', size_hint=(1,1))
+        self.placeholder_1.add_widget(self.spaceholder_1)
+
+        self.placeholder_2 = BoxLayout(orientation='horizontal', size_hint=(1,1))
+        self.placeholder_2.add_widget(self.spaceholder_2)
+
+        self.placeholder_3 = BoxLayout(orientation='horizontal', size_hint=(1,1))
+        self.placeholder_3.add_widget(self.spaceholder_3)
+        
+        self.setdate_layout.add_widget(self.title_row)
+        self.setdate_layout.add_widget(self.placeholder_1)
+        self.setdate_layout.add_widget(self.label_row)
+        self.setdate_layout.add_widget(self.placeholder_2)
+        self.setdate_layout.add_widget(self.fwd_row)
+        self.setdate_layout.add_widget(self.date_row)
+        self.setdate_layout.add_widget(self.rwd_row)
+        self.setdate_layout.add_widget(self.placeholder_3)
+        self.setdate_layout.add_widget(self.button_row)
+
+    def jump_to(self,x=None):
+        self.close_setdate()
+        self.current_year = self.chose_y
+        self.current_month = self.chose_m
+        self.update_values()
+        button = Button(text=f"{self.chose_d}")
+        self.button_pressed(button)
 
     def update_values(self):
         self.month.text = self.get_month_name(self.current_month)
