@@ -452,7 +452,7 @@ class CalendarApp(App):
         self.setdate_layout.add_widget(self.button_row)
 
         self.setdate_popup = Popup(title=f'Jump to date', content=self.setdate_layout,
-                                size_hint=(0.4, 0.7))
+                                size_hint=(0.7, 0.7))
         self.setdate_popup.background_color = (0,1,1,1)
         
         self.setdate_popup.open()
