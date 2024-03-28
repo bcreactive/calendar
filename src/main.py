@@ -6,7 +6,7 @@ from kivy.uix.label import Label
 from kivy.utils import get_color_from_hex
 from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
-from kivy.graphics import Color, RoundedRectangle
+from kivy.graphics import Color, RoundedRectangle, Rectangle
 from datetime import datetime
 import calendar
 import json
@@ -16,7 +16,10 @@ import json
 # Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 
 from kivy.core.window import Window
-Window.clearcolor = (0, 1, 0, 1)
+# Window.clearcolor = (0, 1, 0, 1)
+# Window.clearcolor = (0.5, 1, 0.4, 1)
+Window.clearcolor = (0.7, 1, 0.1, 1)
+# Window.clearcolor = (0.8, 1, 0.4, 1)
 # Window.clearcolor = get_color_from_hex('#5cd8f2')
 
 # Window.size = (1900, 900)  # (608, 288) 19:1 ratio for oppo 3 lite
@@ -25,7 +28,7 @@ Window.clearcolor = (0, 1, 0, 1)
 
 class RoundedButton(Button):
     def __init__(self, text="", color=get_color_from_hex('#ec6613'),
-                 background_color=(0, 0.7, 0.2), **kwargs):
+                 background_color=(0, 0.6, 0.3), **kwargs): #(0, 0.7, 0.2)
         
         super(RoundedButton, self).__init__(**kwargs)
         
@@ -59,7 +62,7 @@ class CalendarApp(App):
                                 background_color=get_color_from_hex('#0a748a'))
         
         self.year = Label(text=f'{self.current_year}', font_size=64,
-                          color=get_color_from_hex('#810de4'))
+                          color=get_color_from_hex('#03573b'), bold=True)
         
         self.year_fwd = RoundedButton(text=">", font_size=64,
                                 background_color=get_color_from_hex('#0a748a'))
@@ -73,7 +76,7 @@ class CalendarApp(App):
                                 background_color=get_color_from_hex('#0a748a'))
         
         self.month = Label(text=f'{self.month_name}', font_size=50,
-                          color=get_color_from_hex('#810de4'))
+                          color=get_color_from_hex('#03573b'), bold=True)
         
         self.month_fwd = RoundedButton(text=">", font_size=64,
                                 background_color=get_color_from_hex('#0a748a'))
@@ -144,18 +147,20 @@ class CalendarApp(App):
             label = Label(text="")
             self.bottom_row.add_widget(label)
 
+        self.current_day = datetime.now().day
+
         # Set button-grid
         current_day_visible = self.check_today()
         for i in range(self.month_lenght):
-            # Set font color of the "today" button
+            # Set fontsize and font color of the "today" button
             entry = self.check_entry(i+1)
             if current_day_visible and self.current_day == i+1:
                 if entry:
-                    button = RoundedButton(text=str(i+1), font_size=80,
+                    button = RoundedButton(text=str(i+1), font_size=90,
                                     color=get_color_from_hex('#ec6613'),
                                 background_color=get_color_from_hex('#13ecb9'))
                 else:
-                    button = RoundedButton(text=str(i+1), font_size=80,
+                    button = RoundedButton(text=str(i+1), font_size=90,
                                         color=get_color_from_hex('#ec6613'))
                     
             else:
@@ -184,15 +189,22 @@ class CalendarApp(App):
                                multiline=True)
         text_input.bind(text=self.on_text_input)
         
-        # Create a Button widget to close the popup
+        # Create a Button widgets
         self.close_button = RoundedButton(text='Close', 
-                                background_color=get_color_from_hex('#0a748a'))
+                                background_color=get_color_from_hex('#0a748a'),
+                                font_size=48)
+        
         self.close_button.bind(on_press=self.close_popup)
+
         self.save_button = RoundedButton(text='Save', 
-                                background_color=get_color_from_hex('#0a748a'))
+                                background_color=get_color_from_hex('#0a748a'),
+                                font_size=48)
+        
         self.save_button.bind(on_press=self.save_entry)
+
         self.delete_button = RoundedButton(text='Delete', 
-                                background_color=get_color_from_hex('#0a748a'))
+                                background_color=get_color_from_hex('#0a748a'),
+                                font_size=48)
         
         # Close popup without confirmation, if no entry is saved.
         entry = self.check_entry(self.button_nr)
@@ -220,8 +232,8 @@ class CalendarApp(App):
          # Create the Popup window with customized content
         self.popup = Popup(title=f'{instance.text}. {month}' + 
                            f' {self.current_year}', content=main_box,
-                           size_hint=(0.8, 0.8), background_color=(
-                               0.80, 1 , 1, 1))
+                           size_hint=(0.8, 0.8))
+        self.popup.background_color = (0,1,1,1)
     
         self.popup.open()
     
@@ -257,10 +269,15 @@ class CalendarApp(App):
 
     def ask_delete(self, instance):
         cancel_button = RoundedButton(text='No',
-                                background_color=get_color_from_hex('#0a748a'))
+                                background_color=get_color_from_hex('#0a748a'),
+                                font_size=40)
+        
         cancel_button.bind(on_press=self.close_ask)
+
         ok_button = RoundedButton(text='Ok',
-                                background_color=get_color_from_hex('#0a748a'))
+                                background_color=get_color_from_hex('#0a748a'),
+                                font_size=40)
+        
         ok_button.bind(on_press=self.delete_entry)
 
         main_box = BoxLayout(orientation='vertical')
@@ -272,8 +289,8 @@ class CalendarApp(App):
         main_box.add_widget(button_box)
 
         self.ask_popup = Popup(title=f'erase?', content=main_box,
-                                size_hint=(0.3, 0.3), background_color=(
-                               0.80, 1 , 1, 1))
+                                size_hint=(0.3, 0.3))
+        self.ask_popup.background_color = (0,1,1,1)
     
         self.ask_popup.open()
         
@@ -318,7 +335,7 @@ class CalendarApp(App):
 
         for i in day_names:
             label = Label(text=f'{i}', font_size=40, color=get_color_from_hex(
-                '#810de4'))
+                '#03573b'), bold=True)
             labels.append(label)
 
         return labels
@@ -329,27 +346,27 @@ class CalendarApp(App):
         self.week_start = weeks[0].index(1)
         return weeks
 
-    def set_date(self, instance):
+    def set_date(self, x=None):
         self.chose_y = self.current_year
         self.chose_m = self.current_month
         self.chose_d = self.current_day
 
         self.paragraph = Label(text='Select:', font_size=64,
-                          color=get_color_from_hex('#810de4'))
+                          color=(0.5,0.75,1,1))
         
-        self.y_label = Label(text='Year', font_size=64,
-                          color=get_color_from_hex('#810de4'))
-        self.m_label = Label(text='Month', font_size=64,
-                          color=get_color_from_hex('#810de4'))
-        self.d_label = Label(text='Day', font_size=64,
-                          color=get_color_from_hex('#810de4'))
+        self.y_label = Label(text='Year', font_size=56,
+                          color=(0.5,0.75,1,1))
+        self.m_label = Label(text='Month', font_size=56,
+                          color=(0.5,0.75,1,1))
+        self.d_label = Label(text='Day', font_size=56,
+                          color=(0.5,0.75,1,1))
         
-        self.yr = Label(text=f'{self.chose_y}', font_size=64,
-                          color=get_color_from_hex('#810de4'))
-        self.mnt = Label(text=f'{self.chose_m}', font_size=64,
-                          color=get_color_from_hex('#810de4'))
-        self.dy = Label(text=f'{self.chose_d}', font_size=64,
-                          color=get_color_from_hex('#810de4'))
+        self.yr = Label(text=f'{self.chose_y}', font_size=48,
+                        color=(0.5,0.75,1,1))
+        self.mnt = Label(text=f'{self.chose_m}', font_size=48,
+                        color=(0.5,0.75,1,1))
+        self.dy = Label(text=f'{self.chose_d}', font_size=48,
+                        color=(0.5,0.75,1,1))
         
         self.y_fwd = RoundedButton(text="^", font_size=64,
                                 background_color=get_color_from_hex('#0a748a'))
@@ -364,17 +381,14 @@ class CalendarApp(App):
         self.d_rwd = RoundedButton(text="v", font_size=46,
                                 background_color=get_color_from_hex('#0a748a'))
  
-        self.cancel = RoundedButton(text="cancel", font_size=64,
+        self.cancel = RoundedButton(text="cancel", font_size=56,
                                 background_color=get_color_from_hex('#0a748a'))
-        self.ok = RoundedButton(text="ok", font_size=64,
+        self.ok = RoundedButton(text="ok", font_size=56,
                                 background_color=get_color_from_hex('#0a748a'))
         
-        self.spaceholder_1 = Label(text='', font_size=64,
-                          color=get_color_from_hex('#810de4'))
-        self.spaceholder_2 = Label(text='', font_size=64,
-                          color=get_color_from_hex('#810de4'))
-        self.spaceholder_3 = Label(text='', font_size=64,
-                          color=get_color_from_hex('#810de4'))
+        self.spaceholder_1 = Label(text='', font_size=64, color=(0.5,0.75,1,1))
+        self.spaceholder_2 = Label(text='', font_size=64, color=(0.5,0.75,1,1))
+        self.spaceholder_3 = Label(text='', font_size=64, color=(0.5,0.75,1,1))
         
         # Button bindings
         self.y_fwd.bind(on_press=self.inc_y)
@@ -437,10 +451,10 @@ class CalendarApp(App):
         self.setdate_layout.add_widget(self.placeholder_3)
         self.setdate_layout.add_widget(self.button_row)
 
-        self.setdate_popup = Popup(title=f'go to date:', content=self.setdate_layout,
-                                size_hint=(0.4, 0.7), background_color=(
-                               0.80, 1 , 1, 1))
-    
+        self.setdate_popup = Popup(title=f'Jump to date', content=self.setdate_layout,
+                                size_hint=(0.4, 0.7))
+        self.setdate_popup.background_color = (0,1,1,1)
+        
         self.setdate_popup.open()
     
     def close_setdate(self, x=None):
@@ -507,12 +521,12 @@ class CalendarApp(App):
         if self.chose_d > days or self.chose_d < 1:
             self.chose_d = 1
 
-        self.yr = Label(text=f'{self.chose_y}', font_size=64,
-                          color=get_color_from_hex('#810de4'))
-        self.mnt = Label(text=f'{self.chose_m}', font_size=64,
-                          color=get_color_from_hex('#810de4'))
-        self.dy = Label(text=f'{self.chose_d}', font_size=64,
-                          color=get_color_from_hex('#810de4'))
+        self.yr = Label(text=f'{self.chose_y}', font_size=48,
+                          color=(0.5,0.75,1,1))
+        self.mnt = Label(text=f'{self.chose_m}', font_size=48,
+                          color=(0.5,0.75,1,1))
+        self.dy = Label(text=f'{self.chose_d}', font_size=48,
+                          color=(0.5,0.75,1,1))
 
         self.label_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
         labels = [self.y_label, self.m_label, self.d_label]
