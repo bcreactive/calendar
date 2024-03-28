@@ -64,7 +64,7 @@ class CalendarApp(App):
         self.spaceholder = Label(text='', font_size=20)
 
         self.home_button = RoundedButton(text="\u221A", font_size=60,
-                                background_color=get_color_from_hex('#50f2fc'))
+                                background_color=get_color_from_hex('#50befc'))
 
         self.month_rwd = RoundedButton(text="<", font_size=64,
                                 background_color=get_color_from_hex('#0a748a'))
@@ -98,7 +98,7 @@ class CalendarApp(App):
     def build(self):
         # Create the top row of buttons and labels: swithch year/month
         self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1),
-                                 spacing=5)
+                                 spacing=40)
         first_row = [self.year_rwd, self.year, self.year_fwd, self.home_button,
                      self.month_rwd, self.month, self.month_fwd]
         for i in first_row:
@@ -111,15 +111,15 @@ class CalendarApp(App):
 
         # A grid of enumerated buttons, starting at the correct weekday
         if len(self.weeks) == 4:
-            self.bottom_row = GridLayout(cols=7, rows=4, spacing=5)
+            self.bottom_row = GridLayout(cols=7, rows=4, spacing=10)
             self.set_buttons()
 
         elif len(self.weeks) == 5:
-            self.bottom_row = GridLayout(cols=7, rows=5, spacing=5)
+            self.bottom_row = GridLayout(cols=7, rows=5, spacing=10)
             self.set_buttons()
 
         elif len(self.weeks) == 6:
-            self.bottom_row = GridLayout(cols=7, rows=6, spacing=5)
+            self.bottom_row = GridLayout(cols=7, rows=6, spacing=10)
             self.set_buttons()
 
         # Create the main layout by stacking the top row, middle row, and grid
@@ -157,7 +157,7 @@ class CalendarApp(App):
                     
             else:
                 if entry:
-                    button = RoundedButton(text=str(i+1), font_size=80,
+                    button = RoundedButton(text=str(i+1), font_size=50,
                                 background_color=get_color_from_hex('#13ecb9'))
                 else:
                     button = RoundedButton(text=str(i+1), font_size=50)
@@ -335,25 +335,24 @@ class CalendarApp(App):
 
         # Recreate rows with updated values.
         self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1),
-                                 spacing=5)
+                                 spacing=40)
         first_row = [self.year_rwd, self.year, self.year_fwd, self.home_button,
                      self.month_rwd, self.month, self.month_fwd]
         for i in first_row:
             self.top_row.add_widget(i)
         
-        self.mid_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1),
-                                 spacing=5)
+        self.mid_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
         for i in self.day_labels:
             self.mid_row.add_widget(i)
 
         if len(self.weeks) == 4:
-            self.bottom_row = GridLayout(cols=7, rows=4, spacing=5)
+            self.bottom_row = GridLayout(cols=7, rows=4, spacing=10)
             self.set_buttons()
         elif len(self.weeks) == 5:
-            self.bottom_row = GridLayout(cols=7, rows=6, spacing=5)
+            self.bottom_row = GridLayout(cols=7, rows=6, spacing=10)
             self.set_buttons()
         elif len(self.weeks) == 6:
-            self.bottom_row = GridLayout(cols=7, rows=6, spacing=5)
+            self.bottom_row = GridLayout(cols=7, rows=6, spacing=10)
             self.set_buttons()
 
         self.main_layout.add_widget(self.top_row)
