@@ -157,11 +157,11 @@ class CalendarApp(App):
             if current_day_visible and self.current_day == i+1:
                 if entry:
                     button = RoundedButton(text=str(i+1), font_size=90,
-                                    color=get_color_from_hex('#ec6613'),
-                                background_color=get_color_from_hex('#13ecb9'))
+                                background_color=get_color_from_hex('#13ecb9'))#ff69b4
                 else:
                     button = RoundedButton(text=str(i+1), font_size=90,
-                                        color=get_color_from_hex('#ec6613'))
+                                background_color=get_color_from_hex('#ff69b4'))
+                    
                     
             else:
                 if entry:
@@ -530,38 +530,51 @@ class CalendarApp(App):
         self.dy = Label(text=f'{self.chose_d}', font_size=48,
                           color=(0.5,0.75,1,1))
 
-        self.label_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        self.label_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
+                                   spacing=80)
+        
         labels = [self.y_label, self.m_label, self.d_label]
         for i in labels:
             self.label_row.add_widget(i)
         
-        self.fwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        self.fwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
+                                 spacing=80)
+        
         fwd_buttons = [self.y_fwd, self.m_fwd, self.d_fwd]
         for i in fwd_buttons:
             self.fwd_row.add_widget(i)
 
-        self.date_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        self.date_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
+                                  spacing=80)
+        
         date_values = [self.yr, self.mnt, self.dy]
         for i in date_values:
             self.date_row.add_widget(i)
 
-        self.rwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        self.rwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
+                                 spacing=80)
+        
         rwd_buttons = [self.y_rwd, self.m_rwd, self.d_rwd]
         for i in rwd_buttons:
             self.rwd_row.add_widget(i)
         
-        self.button_row = BoxLayout(orientation='horizontal', size_hint=(1,1), spacing=80)
+        self.button_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
+                                    spacing=80)
+        
         buttons = [self.cancel, self.ok]
         for i in buttons:
             self.button_row.add_widget(i)
         
-        self.placeholder_1 = BoxLayout(orientation='horizontal', size_hint=(1,1))
+        self.placeholder_1 = BoxLayout(orientation='horizontal',
+                                       size_hint=(1,1))
         self.placeholder_1.add_widget(self.spaceholder_1)
 
-        self.placeholder_2 = BoxLayout(orientation='horizontal', size_hint=(1,1))
+        self.placeholder_2 = BoxLayout(orientation='horizontal',
+                                       size_hint=(1,1))
         self.placeholder_2.add_widget(self.spaceholder_2)
 
-        self.placeholder_3 = BoxLayout(orientation='horizontal', size_hint=(1,1))
+        self.placeholder_3 = BoxLayout(orientation='horizontal',
+                                       size_hint=(1,1))
         self.placeholder_3.add_widget(self.spaceholder_3)
         
         self.setdate_layout.add_widget(self.title_row)
