@@ -17,13 +17,14 @@ import json
 
 from kivy.core.window import Window
 Window.clearcolor = (0, 1, 0, 1)
+# Window.clearcolor = get_color_from_hex('#5cd8f2')
 
 # Window.size = (1900, 900)  # (608, 288) 19:1 ratio for oppo 3 lite
 # Window.fullscreen = 'auto'  # 'auto' = phonemode, False = devmode
 
 
 class RoundedButton(Button):
-    def __init__(self, text="", background_color=(0, 0.7, 0.2), **kwargs):
+    def __init__(self, text="", color=get_color_from_hex('#ec6613'), background_color=(0, 0.7, 0.2), **kwargs):
         super(RoundedButton, self).__init__(**kwargs)
         with self.canvas.before:
             Color(*background_color)
@@ -43,9 +44,6 @@ class RoundedButton(Button):
 class CalendarApp(App):
     def __init__(self, **kwargs):
         super(CalendarApp, self).__init__(**kwargs)
-        # Window.bind(on_resize=self.detect_orientation)
-        # self.orientation = self.detect_orientation()
-
         self.current_year = datetime.now().year
         self.current_month = datetime.now().month
         self.current_day = datetime.now().day
@@ -55,27 +53,27 @@ class CalendarApp(App):
         self.month_name = self.get_month_name(self.current_month)
 
         self.year_rwd = RoundedButton(text="<", font_size=64,
-                                      background_color=get_color_from_hex('#0a748a'))
+                                background_color=get_color_from_hex('#0a748a'))
         
         self.year = Label(text=f'{self.current_year}', font_size=64,
                           color=get_color_from_hex('#810de4'))
         
         self.year_fwd = RoundedButton(text=">", font_size=64,
-                                      background_color=get_color_from_hex('#0a748a'))
+                                background_color=get_color_from_hex('#0a748a'))
 
         self.spaceholder = Label(text='', font_size=20)
 
         self.home_button = RoundedButton(text="\u221A", font_size=60,
-                                  background_color=get_color_from_hex('#50f2fc'))
+                                background_color=get_color_from_hex('#50f2fc'))
 
         self.month_rwd = RoundedButton(text="<", font_size=64,
-                                       background_color=get_color_from_hex('#0a748a'))
+                                background_color=get_color_from_hex('#0a748a'))
         
         self.month = Label(text=f'{self.month_name}', font_size=50,
                           color=get_color_from_hex('#810de4'))
         
         self.month_fwd = RoundedButton(text=">", font_size=64,
-                                       background_color=get_color_from_hex('#0a748a'))
+                                background_color=get_color_from_hex('#0a748a'))
         
         # Bindings for buttons
         self.year_rwd.bind(on_press=self.dec_year)
@@ -84,7 +82,6 @@ class CalendarApp(App):
         self.month_fwd.bind(on_press=self.inc_month)
         self.home_button.bind(on_press=self.today_view)
         
-        # self.orientation = self.detect_orientation()
         self.day_labels = self.get_day_labels()
         
         # get the weeks with weekdays in lists
@@ -130,38 +127,8 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.top_row)
         self.main_layout.add_widget(self.mid_row)
         self.main_layout.add_widget(self.bottom_row)
-        self.mark_entries() 
 
         return self.main_layout
-    
-    def detect_orientation(self):
-        # Get the width and height of the window
-        width = Window.width
-        height = Window.height
-        if width < height:
-            # Device is in portrait mode
-            return "portrait_mode"
-        else:
-            # Device is in landscape mode
-            return "landscape_mode"
-
-    def mark_entries(self):
-        for child in self.bottom_row.children:
-            if len(str(self.current_month)) == 1:
-                if len(str(child.text)) == 1:
-                    date = f'{self.current_year}0{self.current_month}0{child.text}'
-                elif len(str(child.text)) == 2:
-                    date = f'{self.current_year}0{self.current_month}{child.text}'
-
-            if len(str(self.current_month)) == 2:
-                if len(str(child.text)) == 1:
-                    date = f'{self.current_year}{self.current_month}0{child.text}'
-                elif len(str(child.text)) == 2:
-                    date = f'{self.current_year}{self.current_month}{child.text}'
-                    
-             # Check if the date key is present in the save file
-            if date in self.save_file:
-                child.background_color = get_color_from_hex('#13ecb9')  
     
     def load_json(self):
         with open('save_file.json', 'r') as file:
@@ -169,7 +136,7 @@ class CalendarApp(App):
             return data
     
     def set_buttons(self):
-        # Set the placeholder labels to have buttons start at the correct day
+        # Set the placeholder labels to have the buttons start at correct day.
         for i in range(self.week_start):
             label = Label(text="")
             self.bottom_row.add_widget(label)
@@ -178,11 +145,23 @@ class CalendarApp(App):
         current_day_visible = self.check_today()
         for i in range(self.month_lenght):
             # Set font color of the "today" button
+            entry = self.check_entry(i+1)
             if current_day_visible and self.current_day == i+1:
-                button = RoundedButton(text=str(i+1), font_size=80,
-                                    color=get_color_from_hex('#ec6613'))
+                if entry:
+                    button = RoundedButton(text=str(i+1), font_size=80,
+                                    color=get_color_from_hex('#ec6613'),
+                                background_color=get_color_from_hex('#13ecb9'))
+                else:
+                    button = RoundedButton(text=str(i+1), font_size=80,
+                                        color=get_color_from_hex('#ec6613'))
+                    
             else:
-                button = RoundedButton(text=str(i+1), font_size=50)
+                if entry:
+                    button = RoundedButton(text=str(i+1), font_size=80,
+                                background_color=get_color_from_hex('#13ecb9'))
+                else:
+                    button = RoundedButton(text=str(i+1), font_size=50)
+                     
             button.bind(on_press=self.button_pressed)
             self.bottom_row.add_widget(button)
 
@@ -203,9 +182,11 @@ class CalendarApp(App):
         text_input.bind(text=self.on_text_input)
         
         # Create a Button widget to close the popup
-        self.close_button = RoundedButton(text='Close', background_color=get_color_from_hex('#0a748a'))
+        self.close_button = RoundedButton(text='Close', 
+                                background_color=get_color_from_hex('#0a748a'))
         self.close_button.bind(on_press=self.close_popup)
-        self.save_button = RoundedButton(text='Save', background_color=get_color_from_hex('#0a748a'))
+        self.save_button = RoundedButton(text='Save', 
+                                background_color=get_color_from_hex('#0a748a'))
         self.save_button.bind(on_press=self.save_entry)
         self.delete_button = RoundedButton(text='Delete', 
                                 background_color=get_color_from_hex('#0a748a'))
@@ -217,7 +198,9 @@ class CalendarApp(App):
         content_box = BoxLayout(orientation='vertical')
         content_box.add_widget(text_input)
 
-        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.18), spacing=50)
+        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.18),
+                               spacing=70)
+        
         button_box.add_widget(self.close_button)
         button_box.add_widget(self.delete_button)
         button_box.add_widget(self.save_button)
@@ -264,13 +247,17 @@ class CalendarApp(App):
         self.close_popup(instance)
 
     def ask_delete(self, instance):
-        cancel_button = RoundedButton(text='No', background_color=get_color_from_hex('#0a748a'))
+        cancel_button = RoundedButton(text='No',
+                                background_color=get_color_from_hex('#0a748a'))
         cancel_button.bind(on_press=self.close_ask)
-        ok_button = RoundedButton(text='Ok', background_color=get_color_from_hex('#0a748a'))
+        ok_button = RoundedButton(text='Ok',
+                                background_color=get_color_from_hex('#0a748a'))
         ok_button.bind(on_press=self.delete_entry)
 
         main_box = BoxLayout(orientation='vertical')
-        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.4), spacing=10)      
+        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.4),
+                               spacing=30)     
+         
         button_box.add_widget(cancel_button)
         button_box.add_widget(ok_button)
         main_box.add_widget(button_box)
@@ -281,7 +268,6 @@ class CalendarApp(App):
     
         self.ask_popup.open()
         
-    
     def close_ask(self, x=None):
         self.ask_popup.dismiss()
 
@@ -308,35 +294,19 @@ class CalendarApp(App):
                 json.dump(self.save_file, file)
 
         self.entered_text = ''
-        self.mark_entries()
+        self.update_values()
         self.close_popup(instance)
         
     def get_month_name(self, value):
-        # if self.orientation == "landscape_mode":
-            # months = ["Januar", "Februar", "März", "April", "Mai", "Juni",
-            #           "Juli", "August", "September", "Oktober", "November",
-            #           "Dezember"]
+        months = ["Jan", "Feb", "März", "April", "Mai", "Juni", "Juli",
+                  "Aug", "Sept", "Okt", "Nov", "Dez"]
             
-            # return months[value-1]
-        
-        # if self.orientation == "portrait_mode":
-        # if self.orientation == "landscape_mode":
-            months = ["Jan", "Feb", "März", "April", "Mai", "Juni", "Juli",
-                    "Aug", "Sept", "Okt", "Nov", "Dez"]
-            
-            return months[value-1]
+        return months[value-1]
        
     def get_day_labels(self):
-        # if self.orientation == "landscape_mode":
-        #     day_names = ["Montag", "Dienstag", "Mittwoch", "Donnerstag",
-        #                  "Freitag", "Samstag", "Sonntag"]
-        
-        # if self.orientation == "portrait_mode":
-        # if self.orientation == "landscape_mode":
-        day_names = ["Mo", "Di", "Mi", "Do", "Fr",
-                        "Sa", "So"]
-        
+        day_names = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
         labels = []
+
         for i in day_names:
             label = Label(text=f'{i}', font_size=40, color=get_color_from_hex(
                 '#810de4'))
@@ -351,7 +321,6 @@ class CalendarApp(App):
         return weeks
 
     def update_values(self):
-        # self.orientation = self.detect_orientation()
         self.month.text = self.get_month_name(self.current_month)
         self.year.text = f'{self.current_year}'
         self.weeks = self.load_month()
@@ -390,8 +359,6 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.top_row)
         self.main_layout.add_widget(self.mid_row)
         self.main_layout.add_widget(self.bottom_row)
-
-        self.mark_entries()
 
     def check_today(self):
         # check, if the current date is visible on screen
