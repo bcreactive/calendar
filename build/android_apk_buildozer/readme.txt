@@ -1,3 +1,5 @@
+use at your own risk!
+
 apk compiled using buildozer
 i used the google colab notebook to compile the apk from my main.py and save_file.json files:
 
