@@ -193,7 +193,12 @@ class CalendarApp(App):
         self.save_button.bind(on_press=self.save_entry)
         self.delete_button = RoundedButton(text='Delete', 
                                 background_color=get_color_from_hex('#0a748a'))
-        self.delete_button.bind(on_press=self.ask_delete)
+        
+        entry = self.check_entry(self.button_nr)
+        if entry:
+            self.delete_button.bind(on_press=self.ask_delete)
+        else:
+           self.delete_button.bind(on_press=self.close_popup)
     
         # Create a layout to hold the TextInput and Button widgets
         main_box = BoxLayout(orientation='vertical')
