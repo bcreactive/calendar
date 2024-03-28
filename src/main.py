@@ -330,6 +330,10 @@ class CalendarApp(App):
         return weeks
 
     def set_date(self, instance):
+        self.chose_y = self.current_year
+        self.chose_m = self.current_month
+        self.chose_d = self.current_day
+
         paragraph = Label(text='Select:', font_size=64,
                           color=get_color_from_hex('#810de4'))
         
@@ -340,11 +344,11 @@ class CalendarApp(App):
         d_label = Label(text='Day', font_size=64,
                           color=get_color_from_hex('#810de4'))
         
-        year = Label(text=f'{self.current_year}', font_size=64,
+        year = Label(text=f'{self.chose_y}', font_size=64,
                           color=get_color_from_hex('#810de4'))
-        month = Label(text=f'{self.month_name}', font_size=64,
+        month = Label(text=f'{self.chose_m}', font_size=64,
                           color=get_color_from_hex('#810de4'))
-        day = Label(text=f'{self.current_day}', font_size=64,
+        day = Label(text=f'{self.chose_d}', font_size=64,
                           color=get_color_from_hex('#810de4'))
         
         y_fwd = RoundedButton(text="^", font_size=64,
@@ -373,7 +377,16 @@ class CalendarApp(App):
                           color=get_color_from_hex('#810de4'))
         
         # Button bindings..........
-                        
+        y_fwd.bind(on_press=self.inc_y)
+        y_rwd.bind(on_press=self.dec_y)
+        m_fwd.bind(on_press=self.inc_m)
+        m_rwd.bind(on_press=self.dec_m)
+        d_fwd.bind(on_press=self.inc_d)
+        d_rwd.bind(on_press=self.dec_d)
+
+        cancel.bind(on_press=self.close_setdate)
+        ok.bind(on_press=self.jump_to)
+
         # Title for popup
         title_row = paragraph
 
@@ -433,7 +446,60 @@ class CalendarApp(App):
     def close_setdate(self, x=None):
         self.setdate_popup.dismiss()
 
+    def inc_y(self, x=None):
+        self.chose_y += 1
+        self.update_setdate()
+        print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+
+    def dec_y(self, x=None):
+        self.chose_y -= 1
+        print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+        
+    def inc_m(self, x=None):
+        if self.chose_m == 12:
+            self.chose_m = 1
+            print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+            return
+        self.chose_m += 1
+        print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
     
+    def dec_m(self, x=None):
+        if self.chose_m == 1:
+            self.chose_m = 12
+            print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+            return
+        self.chose_m -= 1
+        print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+
+    def inc_d(self, x=None):
+        days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
+        if self.chose_d >= days:
+            self.chose_d = 1
+            print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+            return
+        self.chose_d += 1
+        print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+    
+    def dec_d(self, x=None):
+        days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
+        if self.chose_d <= 1:
+            self.chose_d = days
+            
+            print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+            return
+        self.chose_d -= 1
+        print(f"{self.chose_y} {self.chose_m} {self.chose_d}")
+
+    def get_days_in_month(self, year, month):
+        days_in_month = calendar.monthrange(year, month)
+        return days_in_month
+
+    def update_setdate(self):
+        pass
+
+    def jump_to(self, x=None):
+        pass
+
     def update_values(self):
         self.month.text = self.get_month_name(self.current_month)
         self.year.text = f'{self.current_year}'
