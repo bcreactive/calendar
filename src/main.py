@@ -363,7 +363,7 @@ class CalendarApp(App):
         
         self.yr = Label(text=f'{self.chose_y}', font_size=48,
                         color=(0.5,0.75,1,1))
-        self.mnt = Label(text=f'{self.chose_m}', font_size=48,
+        self.mnt = Label(text=f'{self.month_name}', font_size=48,
                         color=(0.5,0.75,1,1))
         self.dy = Label(text=f'{self.chose_d}', font_size=48,
                         color=(0.5,0.75,1,1))
@@ -520,10 +520,12 @@ class CalendarApp(App):
         days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
         if self.chose_d > days or self.chose_d < 1:
             self.chose_d = 1
+        
+        self.month_name = self.get_month_name(self.chose_m)
 
         self.yr = Label(text=f'{self.chose_y}', font_size=48,
                           color=(0.5,0.75,1,1))
-        self.mnt = Label(text=f'{self.chose_m}', font_size=48,
+        self.mnt = Label(text=f'{self.month_name}', font_size=48,
                           color=(0.5,0.75,1,1))
         self.dy = Label(text=f'{self.chose_d}', font_size=48,
                           color=(0.5,0.75,1,1))
