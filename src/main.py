@@ -8,15 +8,18 @@ from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
 from kivy.graphics import Color, RoundedRectangle
 from kivy.core.window import Window
+# from plyer import notification
 
 from datetime import datetime
+# import threading
 import calendar
+# import time
 import json
 
 # Uncomment to block multitouch for mouse in windows version:
 
-from kivy.config import Config
-Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
+# from kivy.config import Config
+# Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 
 
 class CalendarApp(App):
@@ -137,7 +140,7 @@ class CalendarApp(App):
         self.main_win_col = (0.7, 1, 0.1, 1)
         # Default color for day-buttons in class RoundedButton().
         self.entry_col = get_color_from_hex('#13ecb9')
-        self.today_col = get_color_from_hex('#ff69b4')
+        self.today_col = get_color_from_hex('#ee23fa')#ff69b4
         self.today_entry_col = get_color_from_hex('#9523fa')
         self.navi_btn_col = get_color_from_hex('#0a748a')
         self.home_btn_col = get_color_from_hex('#50befc')
@@ -158,7 +161,7 @@ class CalendarApp(App):
         self.current_day = datetime.now().day
 
         # Set button-grid for the days.
-        current_day_visible = self.check_today()
+        current_day_visible = self.check_today_visible()
 
         for i in range(self.month_lenght):
             # Set fontsize and color of the "today" button to stand out.
@@ -279,7 +282,7 @@ class CalendarApp(App):
             self.current_month -= 1
         self.update_values()
     
-    def check_today(self):
+    def check_today_visible(self):
         # Check, if the current date is visible on screen.
         if (self.current_year == datetime.now().year and
             self.current_month == datetime.now().month):
@@ -301,7 +304,7 @@ class CalendarApp(App):
         self.main_layout.clear_widgets()
 
         # Update the home-buttons text and binding.
-        today = self.check_today()
+        today = self.check_today_visible()
         if today:
             self.home_button = RoundedButton(text="^", font_size=60,
                                 background_color=self.home_btn_col)
@@ -727,6 +730,35 @@ class CalendarApp(App):
         button = Button(text=f"{self.chose_d}")
         self.button_pressed(button)
 
+    # # Thread method to check for saved entries if day changes
+    # def check_notification(self):
+    #     self.current_year = datetime.now().year
+    #     self.current_month = datetime.now().month
+    #     current_day = datetime.now().day
+
+    #     # Set max length of displayed string.
+    #     max_chars = 56
+
+    #     # Check, if an entry exists at the chosen date.
+    #     entry = self.check_entry(current_day)
+        
+    #     # If saved entry: load the text
+    #     if entry:
+    #         text = self.save_file[entry]
+    #         text = text[:max_chars]
+            
+    #         msg = text
+    #         print(msg)
+
+    #     while True:
+    #         if entry:
+    #             # Set up notification if saved info is available for today.
+    #             notification.notify(title='Calendar',
+    #                         message=msg,
+    #                         app_name='calendar',
+    #                         timeout=10)
+    #         time.sleep(3600)  # Check every hour
+
 
 class RoundedButton(Button):
     """This class creates buttons with rounded edges."""
@@ -750,3 +782,5 @@ class RoundedButton(Button):
 
 if __name__ == '__main__':
     CalendarApp().run()
+    # threading.Thread(target=calendar_app.check_notification).start()
+    # calendar_app.run()
