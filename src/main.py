@@ -13,15 +13,10 @@ from datetime import datetime
 import calendar
 import json
 
-# Uncomment to block multitouch for mouse in windows version
-# from kivy.config import Config
-# Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
+# Uncomment to block multitouch for mouse in windows version:
 
-# Window.clearcolor = (0, 1, 0, 1)
-# Window.clearcolor = (0.5, 1, 0.4, 1)
-# Window.clearcolor = (0.7, 1, 0.1, 1)
-# Window.clearcolor = (0.8, 1, 0.4, 1)
-# Window.clearcolor = get_color_from_hex('#5cd8f2')
+from kivy.config import Config
+Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 
 
 class CalendarApp(App):
@@ -143,7 +138,7 @@ class CalendarApp(App):
         # Default color for day-buttons in class RoundedButton().
         self.entry_col = get_color_from_hex('#13ecb9')
         self.today_col = get_color_from_hex('#ff69b4')
-        self.today_entry_col = get_color_from_hex('#13ecb9')
+        self.today_entry_col = get_color_from_hex('#9523fa')
         self.navi_btn_col = get_color_from_hex('#0a748a')
         self.home_btn_col = get_color_from_hex('#50befc')
         self.main_text_col = get_color_from_hex('#03573b')
@@ -179,7 +174,7 @@ class CalendarApp(App):
             else:
                 if entry:
                     button = RoundedButton(text=str(i+1), font_size=50,
-                                background_color=self.today_entry_col)
+                                background_color=self.entry_col)
                 else:
                     button = RoundedButton(text=str(i+1), font_size=50)
                      
@@ -247,7 +242,7 @@ class CalendarApp(App):
         # Create the Popup window with customized content
         self.popup = Popup(title=f'{instance.text}. {month}' + 
                            f' {self.current_year}', content=main_box,
-                           size_hint=(0.8, 0.8))
+                           size_hint=(0.8, 0.8), title_align='center')
         
         self.popup.background_color = self.bg_popups
     
@@ -315,7 +310,7 @@ class CalendarApp(App):
         else:
             self.home_button = RoundedButton(text="\u221A", font_size=60,
                                 background_color=self.home_btn_col)
-            self.home_button.bind(on_press=self.today_view)
+            self.home_button.bind(on_press=self.show_today)
 
         # Recreate rows with updated values.
         self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1),
@@ -344,7 +339,7 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.mid_row)
         self.main_layout.add_widget(self.bottom_row)
     
-    def today_view(self, x=None):
+    def show_today(self, x=None):
         # Set the current year and month and update the view.
         self.current_year = datetime.now().year
         self.current_month = datetime.now().month
@@ -404,7 +399,7 @@ class CalendarApp(App):
         main_box.add_widget(button_box)
 
         self.ask_popup = Popup(title=f'erase?', content=main_box,
-                                size_hint=(0.5, 0.3))
+                                size_hint=(0.5, 0.3), title_align='center')
         self.ask_popup.background_color = self.bg_popups
     
         self.ask_popup.open()
@@ -575,8 +570,10 @@ class CalendarApp(App):
         self.setdate_layout.add_widget(self.placeholder_3)
         self.setdate_layout.add_widget(self.button_row)
 
-        self.setdate_popup = Popup(title=f'Jump to date', content=self.setdate_layout,
-                                size_hint=(0.7, 0.8))
+        self.setdate_popup = Popup(title=f'Jump to date',
+                                   content=self.setdate_layout,
+                                   size_hint=(0.7, 0.85), title_align='center')
+
         self.setdate_popup.background_color = self.bg_popups
         
         self.setdate_popup.open()
