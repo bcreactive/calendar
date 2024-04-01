@@ -16,8 +16,18 @@ import calendar
 # import time
 import json
 
+# Uncomment to block multitouch for mouse in windows version:
+# from kivy.config import Config
+# Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
+
 
 class CalendarApp(App):
+    """This class creates a simple kivy calendar-app for android. When clicking
+    on a day-button, users can write, edit, save and delete an entry in the 
+    'today-view'. To jump to a specific date click the '^'-button to set a 
+    date using the up and down buttons. If the displayed month is not the 
+    current one, the '^'-button becomes a home-button to switch to the actual
+    month."""
 
     def __init__(self, **kwargs):
         """Initalizing attributes."""
@@ -57,10 +67,10 @@ class CalendarApp(App):
     def on_touch_up(self, instance, touch):
         self.touch_end = touch.spos
         distance = abs(self.touch_end[0] - self.touch_start[0])
-        print(distance)
-        if touch.x < self.touch_x - 50:
+        # print(distance)
+        if touch.x < self.touch_x + 50:
             self.dec_month()
-        elif touch.x > self.touch_x + 50:
+        elif touch.x > self.touch_x - 50:
             self.inc_month()
         elif touch.y > self.touch_y + 50:
             self.set_date()
@@ -214,7 +224,7 @@ class CalendarApp(App):
                 content = self.save_file[key]
                 text_input = TextInput(text=content, multiline=True)
             else:
-                text_input = TextInput(hint_text='Hier ist Platz für Notizen...',
+                text_input = TextInput(hint_text='Platz für Notizen...',
                                 multiline=True)
             text_input.bind(text=self.on_text_input)
             
@@ -248,8 +258,8 @@ class CalendarApp(App):
             content_box = BoxLayout(orientation='vertical')
             content_box.add_widget(text_input)
 
-            button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.18),
-                                spacing=70)
+            button_box = BoxLayout(orientation='horizontal',
+                                   size_hint=(1,0.18), spacing=70)
             
             button_box.add_widget(self.close_button)
             button_box.add_widget(self.delete_button)
