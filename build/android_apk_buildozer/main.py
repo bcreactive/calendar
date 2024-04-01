@@ -17,7 +17,6 @@ import calendar
 import json
 
 # Uncomment to block multitouch for mouse in windows version:
-
 # from kivy.config import Config
 # Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 
@@ -25,7 +24,8 @@ import json
 class CalendarApp(App):
     """This class creates a simple kivy calendar-app for android. When clicking
     on a day-button, users can write, edit, save and delete an entry in the 
-    'today-view'. To jump to a specific date click the '^'-button to set a 
+    'today-view'. Swipe motions left or right increase/decrease the displayed
+    month. To jump to a specific date swipe up or click the '^'-button to set a 
     date using the up and down buttons. If the displayed month is not the 
     current one, the '^'-button becomes a home-button to switch to the actual
     month."""
@@ -55,11 +55,40 @@ class CalendarApp(App):
 
         self.entered_text = ''
         self.day_entry = ''  
-                
+
+        self.touch_start = (0, 0)
+        self.touch_end = (0, 0)
+        self.click_threshold = 2
+        self.button_click = False
+
+    def on_touch_down(self, instance, touch):
+        self.touch_x = touch.x
+        self.touch_y = touch.y
+
+    def on_touch_up(self, instance, touch):
+        self.touch_end = touch.spos
+        distance = abs(self.touch_end[0] - self.touch_start[0])
+        # Check for swipe action.
+        if touch.x > self.touch_x + 50:
+            self.dec_month()
+        elif touch.x < self.touch_x - 50:
+            self.inc_month()
+        elif touch.y > self.touch_y + 50:
+            self.set_date()
+
+        # Enable buttonpress, if input is not a swipe gesture.
+        elif distance <= self.click_threshold:
+            self.button_click = True
+        else:
+            self.button_click = False
+
     def build(self):
-        """Create the main view if the app is launched."""
-        main_window = self.main_window()
-        return main_window
+        """Create the main view when the app is launched."""
+
+        main_layout = self.main_window()
+        main_layout.bind(on_touch_down=self.on_touch_down, 
+                         on_touch_up=self.on_touch_up)
+        return main_layout
     
     def main_window(self):
         """Main view with buttons to navigate and to chose a day."""
@@ -140,8 +169,8 @@ class CalendarApp(App):
         self.main_win_col = (0.7, 1, 0.1, 1)
         # Default color for day-buttons in class RoundedButton().
         self.entry_col = get_color_from_hex('#13ecb9')
-        self.today_col = get_color_from_hex('#ee23fa')#ff69b4
-        self.today_entry_col = get_color_from_hex('#9523fa')
+        self.today_col = get_color_from_hex('#9523fa')#ff69b4
+        self.today_entry_col = get_color_from_hex('#ee23fa')
         self.navi_btn_col = get_color_from_hex('#0a748a')
         self.home_btn_col = get_color_from_hex('#50befc')
         self.main_text_col = get_color_from_hex('#03573b')
@@ -186,70 +215,71 @@ class CalendarApp(App):
 
     def button_pressed(self, instance):
         """Create the day-view with a textbox and buttons."""
-        
-        month = self.get_month_name(self.current_month)
-        self.button_nr = instance.text
+        if self.button_click:
+            month = self.get_month_name(self.current_month)
+            self.button_nr = instance.text
 
-        # Check, if an entry exists at the chosen date.
-        key = self.check_entry(self.button_nr)
+            # Check, if an entry exists at the chosen date.
+            key = self.check_entry(self.button_nr)
 
-        # If saved entry: load the text in the textbox.
-        if key:
-            content = self.save_file[key]
-            text_input = TextInput(text=content, multiline=True)
-        else:
-            text_input = TextInput(hint_text='Hier ist Platz für Notizen...',
-                               multiline=True)
-        text_input.bind(text=self.on_text_input)
-        
-        # Create and bind the cancel, delete and save buttons.
-        self.close_button = RoundedButton(text='Close', 
-                                background_color=self.popup_btn_col,
-                                font_size=48)
-        
-        self.close_button.bind(on_press=self.close_popup)
+            # If saved entry: load the text in the textbox.
+            if key:
+                content = self.save_file[key]
+                text_input = TextInput(text=content, multiline=True)
+            else:
+                text_input = TextInput(hint_text='Platz für Notizen...',
+                                multiline=True)
+            text_input.bind(text=self.on_text_input)
+            
+            # Create and bind the cancel, delete and save buttons.
+            self.close_button = RoundedButton(text='Close', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+            
+            self.close_button.bind(on_press=self.close_popup)
 
-        self.save_button = RoundedButton(text='Save', 
-                                background_color=self.popup_btn_col,
-                                font_size=48)
-        
-        self.save_button.bind(on_press=self.save_entry)
+            self.save_button = RoundedButton(text='Save', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+            
+            self.save_button.bind(on_press=self.save_entry)
 
-        self.delete_button = RoundedButton(text='Delete', 
-                                background_color=self.popup_btn_col,
-                                font_size=48)
+            self.delete_button = RoundedButton(text='Delete', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+            
+            # Close popup without confirmation, if no entry is saved.
+            entry = self.check_entry(self.button_nr)
+            if entry:
+                self.delete_button.bind(on_press=self.ask_delete)
+            else:
+                self.delete_button.bind(on_press=self.close_popup)
         
-        # Close popup without confirmation, if no entry is saved.
-        entry = self.check_entry(self.button_nr)
-        if entry:
-            self.delete_button.bind(on_press=self.ask_delete)
-        else:
-           self.delete_button.bind(on_press=self.close_popup)
-    
-        # Create the layout of the 'today-view' by stacking the widgets.
-        main_box = BoxLayout(orientation='vertical')
+            # Create the layout of the 'today-view' by stacking the widgets.
+            main_box = BoxLayout(orientation='vertical')
 
-        content_box = BoxLayout(orientation='vertical')
-        content_box.add_widget(text_input)
+            content_box = BoxLayout(orientation='vertical')
+            content_box.add_widget(text_input)
 
-        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.18),
-                               spacing=70)
-        
-        button_box.add_widget(self.close_button)
-        button_box.add_widget(self.delete_button)
-        button_box.add_widget(self.save_button)
-        
-        main_box.add_widget(content_box)
-        main_box.add_widget(button_box)
+            button_box = BoxLayout(orientation='horizontal',
+                                   size_hint=(1,0.18), spacing=70)
+            
+            button_box.add_widget(self.close_button)
+            button_box.add_widget(self.delete_button)
+            button_box.add_widget(self.save_button)
+            
+            main_box.add_widget(content_box)
+            main_box.add_widget(button_box)
 
-        # Create the Popup window with customized content
-        self.popup = Popup(title=f'{instance.text}. {month}' + 
-                           f' {self.current_year}', content=main_box,
-                           size_hint=(0.8, 0.8), title_align='center')
+            # Create the Popup window with customized content
+            self.popup = Popup(title=f'{instance.text}. {month}' + 
+                            f' {self.current_year}', content=main_box,
+                            size_hint=(0.8, 0.8), title_align='center')
+            
+            self.popup.background_color = self.bg_popups
         
-        self.popup.background_color = self.bg_popups
-    
-        self.popup.open()
+            self.popup.open()
+            self.button_click = False
     
     def on_text_input(self, instance, x=None):
         self.entered_text = instance.text
@@ -341,6 +371,11 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.top_row)
         self.main_layout.add_widget(self.mid_row)
         self.main_layout.add_widget(self.bottom_row)
+        # self.button_click = False
+        # self.chose_d = datetime.now().day
+        # self.chose_m = datetime.now().month
+        # self.chose_y = datetime.now().year
+
     
     def show_today(self, x=None):
         # Set the current year and month and update the view.
@@ -459,10 +494,14 @@ class CalendarApp(App):
 
     def set_date(self, x=None):
         """Create the set-date view to chose a date and jump to day-view."""
-
-        self.chose_y = self.current_year
-        self.chose_m = self.current_month
-        self.chose_d = self.current_day
+        self.button_click = False
+        # self.chose_y = self.current_year
+        # self.chose_m = self.current_month
+        # self.chose_d = self.current_day
+        self.chose_d = datetime.now().day
+        self.chose_m = datetime.now().month
+        self.chose_y = datetime.now().year
+        month_name = self.get_month_name(self.chose_m)
 
         # Setting up the buttons and labels.
         self.paragraph = Label(text='Select:', font_size=64,
@@ -477,7 +516,7 @@ class CalendarApp(App):
         
         self.yr = Label(text=f'{self.chose_y}', font_size=48,
                         color=self.setdate_text_col)
-        self.mnt = Label(text=f'{self.month_name}', font_size=48,
+        self.mnt = Label(text=f'{month_name}', font_size=48,
                         color=self.setdate_text_col)
         self.dy = Label(text=f'{self.chose_d}', font_size=48,
                         color=self.setdate_text_col)
@@ -726,39 +765,14 @@ class CalendarApp(App):
         self.close_setdate()
         self.current_year = self.chose_y
         self.current_month = self.chose_m
-        self.update_values()
+        self.current_day = self.chose_d
+        # self.update_values()
         button = Button(text=f"{self.chose_d}")
+        self.button_click = True
         self.button_pressed(button)
-
-    # # Thread method to check for saved entries if day changes
-    # def check_notification(self):
-    #     self.current_year = datetime.now().year
-    #     self.current_month = datetime.now().month
-    #     current_day = datetime.now().day
-
-    #     # Set max length of displayed string.
-    #     max_chars = 56
-
-    #     # Check, if an entry exists at the chosen date.
-    #     entry = self.check_entry(current_day)
-        
-    #     # If saved entry: load the text
-    #     if entry:
-    #         text = self.save_file[entry]
-    #         text = text[:max_chars]
-            
-    #         msg = text
-    #         print(msg)
-
-    #     while True:
-    #         if entry:
-    #             # Set up notification if saved info is available for today.
-    #             notification.notify(title='Calendar',
-    #                         message=msg,
-    #                         app_name='calendar',
-    #                         timeout=10)
-    #         time.sleep(3600)  # Check every hour
-
+        # self.button_click = False
+        self.update_setdate()
+        self.update_values()
 
 class RoundedButton(Button):
     """This class creates buttons with rounded edges."""
