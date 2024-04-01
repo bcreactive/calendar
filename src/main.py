@@ -58,12 +58,17 @@ class CalendarApp(App):
 
         self.touch_start = (0, 0)
         self.touch_end = (0, 0)
-        self.click_threshold = 2
+        self.click_threshold = 5
         self.button_click = False
+        self.btns = []
+        self.nr = 0
 
     def on_touch_down(self, instance, touch):
         self.touch_x = touch.x
         self.touch_y = touch.y
+        # for i in self.btns:
+        #     if i.collide_point(touch.x, touch.y):
+        #         self.nr = int(i.text)
 
     def on_touch_up(self, instance, touch):
         self.touch_end = touch.spos
@@ -79,6 +84,7 @@ class CalendarApp(App):
         # Enable buttonpress, if input is not a swipe gesture.
         elif distance <= self.click_threshold:
             self.button_click = True
+            # self.button_pressed(self.nr)
         else:
             self.button_click = False
 
@@ -192,6 +198,7 @@ class CalendarApp(App):
         # Set button-grid for the days.
         current_day_visible = self.check_today_visible()
 
+        self.btns = []
         for i in range(self.month_lenght):
             # Set fontsize and color of the "today" button to stand out.
             entry = self.check_entry(i+1)
@@ -212,12 +219,17 @@ class CalendarApp(App):
                      
             button.bind(on_press=self.button_pressed)
             self.bottom_row.add_widget(button)
+            self.btns.append(button)
 
     def button_pressed(self, instance):
         """Create the day-view with a textbox and buttons."""
+
         if self.button_click:
             month = self.get_month_name(self.current_month)
-            self.button_nr = instance.text
+            if isinstance(instance, int):
+                self.button_nr = instance
+            else:
+                self.button_nr = instance.text
 
             # Check, if an entry exists at the chosen date.
             key = self.check_entry(self.button_nr)
@@ -272,7 +284,7 @@ class CalendarApp(App):
             main_box.add_widget(button_box)
 
             # Create the Popup window with customized content
-            self.popup = Popup(title=f'{instance.text}. {month}' + 
+            self.popup = Popup(title=f'{self.button_nr}. {month}' + 
                             f' {self.current_year}', content=main_box,
                             size_hint=(0.8, 0.8), title_align='center')
             
@@ -793,6 +805,11 @@ class RoundedButton(Button):
     def on_size(self, instance, size):
         self._rounded_rect.size = size
 
+    # def on_touch_down(self, touch):
+    #     if self.collide_point(*touch.pos):
+    #         self.hover_nr = self.text
+
+    #         print(self.hover_nr)
 
 if __name__ == '__main__':
     CalendarApp().run()
