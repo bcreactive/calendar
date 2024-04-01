@@ -24,7 +24,8 @@ import json
 class CalendarApp(App):
     """This class creates a simple kivy calendar-app for android. When clicking
     on a day-button, users can write, edit, save and delete an entry in the 
-    'today-view'. To jump to a specific date click the '^'-button to set a 
+    'today-view'. Swipe motions left or right increase/decrease the displayed
+    month. To jump to a specific date swipe up or click the '^'-button to set a 
     date using the up and down buttons. If the displayed month is not the 
     current one, the '^'-button becomes a home-button to switch to the actual
     month."""
@@ -57,7 +58,7 @@ class CalendarApp(App):
 
         self.touch_start = (0, 0)
         self.touch_end = (0, 0)
-        self.click_threshold = 20
+        self.click_threshold = 2
         self.button_click = False
 
     def on_touch_down(self, instance, touch):
@@ -67,21 +68,23 @@ class CalendarApp(App):
     def on_touch_up(self, instance, touch):
         self.touch_end = touch.spos
         distance = abs(self.touch_end[0] - self.touch_start[0])
-        # print(distance)
-        if touch.x < self.touch_x + 50:
+        # Check for swipe action.
+        if touch.x > self.touch_x + 50:
             self.dec_month()
-        elif touch.x > self.touch_x - 50:
+        elif touch.x < self.touch_x - 50:
             self.inc_month()
         elif touch.y > self.touch_y + 50:
             self.set_date()
 
+        # Enable buttonpress, if input is not a swipe gesture.
         elif distance <= self.click_threshold:
             self.button_click = True
         else:
             self.button_click = False
 
     def build(self):
-        """Create the main view if the app is launched."""
+        """Create the main view when the app is launched."""
+
         main_layout = self.main_window()
         main_layout.bind(on_touch_down=self.on_touch_down, 
                          on_touch_up=self.on_touch_up)
@@ -166,8 +169,8 @@ class CalendarApp(App):
         self.main_win_col = (0.7, 1, 0.1, 1)
         # Default color for day-buttons in class RoundedButton().
         self.entry_col = get_color_from_hex('#13ecb9')
-        self.today_col = get_color_from_hex('#ee23fa')#ff69b4
-        self.today_entry_col = get_color_from_hex('#9523fa')
+        self.today_col = get_color_from_hex('#9523fa')#ff69b4
+        self.today_entry_col = get_color_from_hex('#ee23fa')
         self.navi_btn_col = get_color_from_hex('#0a748a')
         self.home_btn_col = get_color_from_hex('#50befc')
         self.main_text_col = get_color_from_hex('#03573b')
