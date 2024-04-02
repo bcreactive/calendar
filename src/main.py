@@ -50,6 +50,8 @@ class CalendarApp(App):
         self.day_labels = self.get_day_labels()
 
         self.save_file = self.load_json()
+
+        self.color_set = 1
         self.load_colors()
         Window.clearcolor = self.main_win_col
 
@@ -83,6 +85,10 @@ class CalendarApp(App):
                 
             elif touch.y > self.touch_y + 50:
                 self.set_date()
+            
+            elif touch.y < self.touch_y - 50:
+                self.menu_popup()
+
             self.input = ""
             self.buttons_locked = True
             return
@@ -191,19 +197,23 @@ class CalendarApp(App):
             return data
     
     def load_colors(self):
-        self.main_win_col = (0.7, 1, 0.1, 1)
-        # Default color for day-buttons in class RoundedButton().
-        self.entry_col = get_color_from_hex('#13ecb9')
-        self.today_col = get_color_from_hex('#9523fa')#ff69b4
-        self.today_entry_col = get_color_from_hex('#ee23fa')
-        self.navi_btn_col = get_color_from_hex('#0a748a')
-        self.home_btn_col = get_color_from_hex('#50befc')
-        self.main_text_col = get_color_from_hex('#03573b')
+        if self.color_set == 1:
+            self.main_win_col = (0.7, 1, 0.1, 1)
+            # Default color for day-buttons in class RoundedButton().
+            self.entry_col = get_color_from_hex('#13ecb9')
+            self.today_col = get_color_from_hex('#9523fa')#ff69b4
+            self.today_entry_col = get_color_from_hex('#ee23fa')
+            self.navi_btn_col = get_color_from_hex('#0a748a')
+            self.home_btn_col = get_color_from_hex('#50befc')
+            self.main_text_col = get_color_from_hex('#03573b')
 
-        # Colors for popups.
-        self.bg_popups = (0,1,1,1)
-        self.popup_btn_col = get_color_from_hex('#0a748a')
-        self.setdate_text_col = (0.5,0.75,1,1)
+            # Colors for popups.
+            self.bg_popups = (0,1,1,1)
+            self.popup_btn_col = get_color_from_hex('#0a748a')
+            self.setdate_text_col = (0.5,0.75,1,1)
+
+        elif self.color_set == 2:
+            pass
 
     def set_buttons(self):
         """Setting up the day-buttongrid."""
@@ -796,11 +806,37 @@ class CalendarApp(App):
         self.input = ""
         self.day_popup(self.nr)
 
+    def menu_popup(self, x=None):
+        """Popup to change settings."""
+        
+        b = Label(text=f'salüü!', font_size=64,
+                          color=self.main_text_col, bold=True)
+        
+        # Building the layout:
+        # Create the top row of buttons and labels: swithch year/month.
+        top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1),
+                                 spacing=40)
+        
+        top_row.add_widget(b)
+        
+        # Create the main layout by stacking the top row, middle row and grid.
+        self.menu_layout = BoxLayout(orientation='vertical')
+        self.menu_layout.add_widget(top_row)
+
+        self.menu_popup = Popup(title=f'Settings',
+                                   content=self.menu_layout,
+                                   size_hint=(0.7, 0.7), title_align='center')
+
+        self.menu_popup.background_color = self.bg_popups
+
+        self.menu_popup.open()
+
 
 class RoundedButton(Button):
     """This class creates buttons with rounded edges."""
     
     def __init__(self, text="", background_color=(0, 0.6, 0.3), **kwargs):
+
         super(RoundedButton, self).__init__(**kwargs)
         with self.canvas.before:
             Color(*background_color)
@@ -818,6 +854,6 @@ class RoundedButton(Button):
 
 
 if __name__ == '__main__':
-    CalendarApp().run()
+    calendar_app = CalendarApp()
     # threading.Thread(target=calendar_app.check_notification).start()
-    # calendar_app.run()
+    calendar_app.run()
