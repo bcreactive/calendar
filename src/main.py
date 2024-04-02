@@ -469,6 +469,7 @@ class CalendarApp(App):
         
     def close_ask(self, x=None):
         self.ask_popup.dismiss()
+        self.update_values()
 
     def save_entry(self, instance):
         # Format the date and save the entered text in json safefile.
@@ -644,6 +645,7 @@ class CalendarApp(App):
     
     def close_setdate(self, x=None):
         self.setdate_popup.dismiss()
+        self.update_values()
 
     def inc_y(self, x=None):
         # Increase set-date year.
@@ -699,7 +701,6 @@ class CalendarApp(App):
 
     def update_setdate(self):
         """Update the values and the view for the set-date popup."""
-
         # Remove the existing widgets to load the actualized content.
         self.label_row.clear_widgets()
         self.fwd_row.clear_widgets()
