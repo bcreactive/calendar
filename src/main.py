@@ -8,6 +8,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
 from kivy.graphics import Color, RoundedRectangle
 from kivy.core.window import Window
+from kivy.uix.dropdown import DropDown
 # from plyer import notification
 
 from datetime import datetime
@@ -87,7 +88,7 @@ class CalendarApp(App):
                 self.set_date()
             
             elif touch.y < self.touch_y - 50:
-                self.menu_popup()
+                self.open_menu_popup()
 
             self.input = ""
             self.buttons_locked = True
@@ -213,7 +214,19 @@ class CalendarApp(App):
             self.setdate_text_col = (0.5,0.75,1,1)
 
         elif self.color_set == 2:
-            pass
+            self.main_win_col = (1.2, 0.1, 0.5, 1)
+            # Default color for day-buttons in class RoundedButton().
+            self.entry_col = get_color_from_hex('#23fca9')
+            self.today_col = get_color_from_hex('#94b3fb')#ff69b4
+            self.today_entry_col = get_color_from_hex('#e4e2fa')
+            self.navi_btn_col = get_color_from_hex('#0af48a')
+            self.home_btn_col = get_color_from_hex('#508e9c')
+            self.main_text_col = get_color_from_hex('#03803b')
+
+            # Colors for popups.
+            self.bg_popups = (0.9,1.4,1.1,1)
+            self.popup_btn_col = get_color_from_hex('#08a98a')
+            self.setdate_text_col = (1,0.3,1.1,1)
 
     def set_buttons(self):
         """Setting up the day-buttongrid."""
@@ -367,6 +380,9 @@ class CalendarApp(App):
                                            self.current_month)[1]
         self.input = ""
 
+        self.load_colors()
+        Window.clearcolor = self.main_win_col
+        
         # Remove the existing widgets to load the actualized content.
         self.top_row.clear_widgets()
         self.mid_row.clear_widgets()
@@ -411,6 +427,8 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.top_row)
         self.main_layout.add_widget(self.mid_row)
         self.main_layout.add_widget(self.bottom_row)
+
+        
     
     def show_today(self, x=None):
         # Set the current year and month and update the view.
@@ -806,30 +824,51 @@ class CalendarApp(App):
         self.input = ""
         self.day_popup(self.nr)
 
-    def menu_popup(self, x=None):
+    def open_menu_popup(self, x=None):
         """Popup to change settings."""
+
+        def handle_option1(instance):
+            self.color_set = 1
+            self.update_values()
+
+        def handle_option2(instance):
+            self.color_set = 2
+            self.update_values()
+
+        def handle_option3(instance):
+            self.color_set = 3
+            self.update_values()
+
+        title = Label(text='Color:', font_size=40, color=self.setdate_text_col)
+
+        button1 = RoundedButton(text='Set 1')
+        button1.bind(on_release=handle_option1)
+
+        button2 = RoundedButton(text='Set 2')
+        button2.bind(on_release=handle_option2)
+
+        button3 = RoundedButton(text='Set 3')
+        button3.bind(on_release=handle_option3)
+
         
-        b = Label(text=f'salüü!', font_size=64,
-                          color=self.main_text_col, bold=True)
-        
-        # Building the layout:
-        # Create the top row of buttons and labels: swithch year/month.
-        top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1),
-                                 spacing=40)
-        
-        top_row.add_widget(b)
-        
-        # Create the main layout by stacking the top row, middle row and grid.
+        self.menu_color = BoxLayout(orientation='horizontal', spacing=30)
+        self.menu_color.add_widget(title)
+        self.menu_color.add_widget(button1)
+        self.menu_color.add_widget(button2)
+        self.menu_color.add_widget(button3)
+
         self.menu_layout = BoxLayout(orientation='vertical')
-        self.menu_layout.add_widget(top_row)
+        self.menu_layout.add_widget(self.menu_color)
 
-        self.menu_popup = Popup(title=f'Settings',
-                                   content=self.menu_layout,
-                                   size_hint=(0.7, 0.7), title_align='center')
-
+        self.menu_popup = Popup(title='Settings', content=self.menu_layout, 
+                                size_hint=(0.7, 0.7), title_align="center")
+        
         self.menu_popup.background_color = self.bg_popups
 
         self.menu_popup.open()
+
+    def close_menu(self, x=None):
+        self.menu_popup.dismiss()
 
 
 class RoundedButton(Button):
