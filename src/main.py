@@ -57,22 +57,17 @@ class CalendarApp(App):
         self.day_entry = ''  
 
         self.start_pos = (0, 0)
-        # self.end_pos = (0, 0)
-        # self.click_threshold = 5
-        self.button_click = False
         self.btns = []
         self.nr = 0
         self.input = ""
 
     def on_touch_down(self, instance, touch):
         self.start_pos = touch.pos
-        # print(self.input)
         self.touch_x = touch.x
         self.touch_y = touch.y
         for i in self.btns:
             if i.collide_point(touch.x, touch.y):
                 self.nr = int(i.text)
-                # print(self.nr)
         
     def on_touch_up(self, instance, touch):
         if abs(touch.x - self.start_pos[0]) > 20 or abs(
@@ -88,7 +83,6 @@ class CalendarApp(App):
                 
             elif touch.y > self.touch_y + 50:
                 self.set_date()
-            print(self.input)
             self.input = ""
             self.buttons_locked = True
             return
@@ -98,7 +92,6 @@ class CalendarApp(App):
             self.buttons_locked = False
             self.day_popup(self.nr)
             self.buttons_locked = True
-            # print(self.input)
             self.input = ""
         self.input = ""
 
@@ -435,7 +428,6 @@ class CalendarApp(App):
 
     def close_popup(self, x=None):
         self.popup.dismiss()
-        # self.input = ""
 
     def delete_entry(self, instance):
         self.close_ask()
@@ -474,11 +466,9 @@ class CalendarApp(App):
         self.ask_popup.background_color = self.bg_popups
     
         self.ask_popup.open()
-        # self.input = ""
         
     def close_ask(self, x=None):
         self.ask_popup.dismiss()
-        # self.input = ""
 
     def save_entry(self, instance):
         # Format the date and save the entered text in json safefile.
@@ -500,7 +490,6 @@ class CalendarApp(App):
             with open('save_file.json', 'w') as file:
                 json.dump(self.save_file, file)
 
-        self.entered_text = ''
         self.update_values()
         self.close_popup(instance)
         
@@ -655,23 +644,19 @@ class CalendarApp(App):
     
     def close_setdate(self, x=None):
         self.setdate_popup.dismiss()
-        # self.input = ""
 
     def inc_y(self, x=None):
         # Increase set-date year.
-        # self.input = ""
         self.chose_y += 1
         self.update_setdate()
 
     def dec_y(self, x=None):
         # Decrease set-date year.
-        # self.input = ""
         self.chose_y -= 1
         self.update_setdate()
         
     def inc_m(self, x=None):
         # Increase set-date month.
-        # self.input = ""
         if self.chose_m == 12:
             self.chose_m = 1
             self.update_setdate()
@@ -681,7 +666,6 @@ class CalendarApp(App):
     
     def dec_m(self, x=None):
         # Decrease set-date month.
-        # self.input = ""
         if self.chose_m == 1:
             self.chose_m = 12
             self.update_setdate()
@@ -691,7 +675,6 @@ class CalendarApp(App):
 
     def inc_d(self, x=None):
         # Increase set-date day.
-        # self.input = ""
         days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
         if self.chose_d >= days:
             self.chose_d = 1
@@ -702,7 +685,6 @@ class CalendarApp(App):
     
     def dec_d(self, x=None):
         # Decrease set-date day.
-        # self.input = ""
         days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
         if self.chose_d <= 1:
             self.chose_d = days
