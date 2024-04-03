@@ -240,7 +240,7 @@ class CalendarApp(App):
             return data
     
     def load_colors(self):
-        if self.color_set == 1:
+        if self.color_set == 1: #green
             self.main_win_col = (0.7, 1, 0.1, 1)
             self.empty_col = (0, 0.6, 0.3)
             self.entry_col = get_color_from_hex('#13ecb9')
@@ -256,7 +256,7 @@ class CalendarApp(App):
             self.chosen_btn_col = (1,0.3,1.1,1)
             self.setdate_text_col = (0.5,0.75,1,1)
 
-        elif self.color_set == 2:
+        elif self.color_set == 2: #sepia
             self.main_win_col = get_color_from_hex('#87738f')
             self.empty_col = get_color_from_hex('#d4b8b8')
             self.entry_col = get_color_from_hex('#c090a9')
@@ -271,6 +271,22 @@ class CalendarApp(App):
             self.popup_btn_col = get_color_from_hex('#88a3bc')
             self.chosen_btn_col = get_color_from_hex('#d4b8b8')
             self.setdate_text_col = get_color_from_hex('#bda499')
+
+        elif self.color_set == 3: #b/w
+            self.main_win_col = get_color_from_hex('#ffffff')
+            self.empty_col = get_color_from_hex('#c1b9b9')
+            self.entry_col = get_color_from_hex('#6c6767')
+            self.today_col = get_color_from_hex('#000000')
+            self.today_entry_col = get_color_from_hex('#424242')
+            self.navi_btn_col = get_color_from_hex('#4f4f4f')
+            self.home_btn_col = get_color_from_hex('#000000')
+            self.main_text_col = get_color_from_hex('#818181')
+
+            # Colors for popups.
+            self.bg_popups = get_color_from_hex('#ffffff')
+            self.popup_btn_col = get_color_from_hex('#4f4f4f')
+            self.chosen_btn_col = get_color_from_hex('#a09d9d')
+            self.setdate_text_col = get_color_from_hex('#9f9f9f')
 
     def set_buttons(self):
         """Setting up the day-buttongrid."""
@@ -687,9 +703,9 @@ class CalendarApp(App):
         self.ok = RoundedButton(text="ok", font_size=56,
                                 background_color=self.popup_btn_col)
         
-        self.spaceholder_1 = Label(text='', font_size=64, color=(0.5,0.75,1,1))
-        self.spaceholder_2 = Label(text='', font_size=64, color=(0.5,0.75,1,1))
-        self.spaceholder_3 = Label(text='', font_size=64, color=(0.5,0.75,1,1))
+        self.spaceholder_1 = Label(text='', font_size=64)
+        self.spaceholder_2 = Label(text='', font_size=64)
+        self.spaceholder_3 = Label(text='', font_size=64)
         
         # Button bindings.
         self.y_fwd.bind(on_press=self.inc_y)
