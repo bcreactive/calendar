@@ -29,7 +29,8 @@ class CalendarApp(App):
     month. To jump to a specific date swipe up or click the '^'-button to set a 
     date using the up and down buttons. If the displayed month is not the 
     current one, the '^'-button becomes a home-button to switch to the actual
-    month."""
+    month. Swipe up to display the settings-popup where you can chose a
+    colorset, change swipe-directions and disable/enable buttonsounds."""
 
     def __init__(self, **kwargs):
         """Initalizing attributes."""
@@ -223,9 +224,6 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.top_row)
         self.main_layout.add_widget(self.mid_row)
         self.main_layout.add_widget(self.bottom_row)
-
-        # self.nav_btns = [self.year_rwd, self.year_fwd, self.month_rwd,
-        #                  self.month_fwd, self.home_button]
         
         return self.main_layout
 
@@ -604,7 +602,6 @@ class CalendarApp(App):
         self.ask_popup.dismiss()
         self.update_values()
         
-
     def save_entry(self, instance):
         # Format the date and save the entered text in json safefile.
         month = len(str(self.current_month))
@@ -1031,11 +1028,23 @@ class CalendarApp(App):
         self.sound_off.add_widget(self.sound_title)
         self.sound_off.add_widget(self.sound_btn)
 
+        self.about_btn = RoundedButton(text='About', font_size=40,
+                                          background_color=self.popup_btn_col)
+        
+        self.about_btn.bind(on_release=self.open_credits)
+
+        self.close_btn = RoundedButton(text='Close', font_size=40,
+                                          background_color=self.popup_btn_col)
+        
+        self.close_btn.bind(on_release=self.close_menu)
+        
         # Main layoutbox for the settings.
         self.menu_layout = BoxLayout(orientation='vertical', spacing=20)
         self.menu_layout.add_widget(self.menu_color)
         self.menu_layout.add_widget(self.invert_axis)
         self.menu_layout.add_widget(self.sound_off)
+        self.menu_layout.add_widget(self.about_btn)
+        self.menu_layout.add_widget(self.close_btn)
 
         self.menu_popup = Popup(title='Settings', content=self.menu_layout, 
                                 size_hint=(0.7, 0.7), title_align="center")
@@ -1174,11 +1183,13 @@ class CalendarApp(App):
         self.menu_layout.add_widget(self.menu_color)
         self.menu_layout.add_widget(self.invert_axis)
         self.menu_layout.add_widget(self.sound_off)
+        self.menu_layout.add_widget(self.about_btn)
+        self.menu_layout.add_widget(self.close_btn)
 
-        self.save_settings()
+        self.save_setting()
         self.input = ""
 
-    def save_settings(self):
+    def save_setting(self):
         color = {"color": self.color_set}
         inv_x = {"inv_x": self.swipe_x_default}
         inv_y = {"inv_y": self.swipe_y_default}
@@ -1190,6 +1201,35 @@ class CalendarApp(App):
 
         with open('save_file.json', 'w') as file:
                 json.dump(self.save_file, file)
+
+    def open_credits(self, instance):
+        # Creates a popup to show creators credits.
+        title = Label(text='', font_size=40, size_hint=(1, 0.05),
+                             color=self.setdate_text_col)
+         
+        close_button = RoundedButton(
+            text="""Made with kivy/python by bc-reactive:\n
+            github.com/bcreactive\n\nCheck out my music:\n\n
+            soundcloud.com/awtomatsupabreakz\n\nThanks for testing!""",
+                                background_color=self.popup_btn_col,
+                                font_size=20)
+        
+        close_button.bind(on_press=self.close_credits)
+
+        credits_box = BoxLayout(orientation='vertical', spacing=30)
+        
+        credits_box.add_widget(title)
+        credits_box.add_widget(close_button)
+
+        self.credits_popup = Popup(title=f'Credits', content=credits_box,
+                                size_hint=(0.6, 0.6), title_align='center')
+        
+        self.credits_popup.background_color = self.bg_popups
+    
+        self.credits_popup.open()
+    
+    def close_credits(self, instance):
+        self.credits_popup.dismiss()
 
 
 class RoundedButton(Button):
