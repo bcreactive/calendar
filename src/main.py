@@ -70,7 +70,6 @@ class CalendarApp(App):
         self.swipe_r_sound = SoundLoader.load('swipe_r.mp3')
         self.swipe_l_sound = SoundLoader.load('swipe_l.mp3')
         self.ok_sound = SoundLoader.load('ok.mp3')
-        self.cancel_sound = SoundLoader.load('cancel.mp3')
         self.btn_sound = SoundLoader.load('btn.mp3')
 
     def on_touch_down(self, instance, touch):
@@ -557,7 +556,7 @@ class CalendarApp(App):
     def close_popup(self, x=None):
         self.popup.dismiss()
         if self.sound:
-            self.cancel_sound.play()
+            self.btn_sound.play()
 
     def delete_entry(self, instance):
         self.close_ask()
@@ -600,10 +599,11 @@ class CalendarApp(App):
         self.ask_popup.open()
         
     def close_ask(self, x=None):
+        if self.sound:
+            self.btn_sound.play()
         self.ask_popup.dismiss()
         self.update_values()
-        if self.sound:
-            self.cancel_sound.play()
+        
 
     def save_entry(self, instance):
         # Format the date and save the entered text in json safefile.
@@ -790,11 +790,15 @@ class CalendarApp(App):
         # Increase set-date year.
         self.chose_y += 1
         self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
 
     def dec_y(self, x=None):
         # Decrease set-date year.
         self.chose_y -= 1
         self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
         
     def inc_m(self, x=None):
         # Increase set-date month.
@@ -804,6 +808,8 @@ class CalendarApp(App):
             return
         self.chose_m += 1
         self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
     
     def dec_m(self, x=None):
         # Decrease set-date month.
@@ -813,6 +819,8 @@ class CalendarApp(App):
             return
         self.chose_m -= 1
         self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
 
     def inc_d(self, x=None):
         # Increase set-date day.
@@ -823,6 +831,8 @@ class CalendarApp(App):
             return
         self.chose_d += 1
         self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
     
     def dec_d(self, x=None):
         # Decrease set-date day.
@@ -833,6 +843,8 @@ class CalendarApp(App):
             return
         self.chose_d -= 1
         self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
 
     def get_days_in_month(self, year, month):
         days_in_month = calendar.monthrange(year, month)
@@ -1072,7 +1084,7 @@ class CalendarApp(App):
     def close_menu(self, x=None):
         self.menu_popup.dismiss()
         if self.sound:
-            self.cancel_sound.play()
+            self.btn_sound.play()
 
     def update_menu(self, instance):
         # Update the colors of the chosen options.
