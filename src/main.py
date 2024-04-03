@@ -200,7 +200,7 @@ class CalendarApp(App):
     def load_colors(self):
         if self.color_set == 1:
             self.main_win_col = (0.7, 1, 0.1, 1)
-            # Default color for day-buttons in class RoundedButton().
+            self.empty_col = (0, 0.6, 0.3)
             self.entry_col = get_color_from_hex('#13ecb9')
             self.today_col = get_color_from_hex('#9523fa')#ff69b4
             self.today_entry_col = get_color_from_hex('#ee23fa')
@@ -215,7 +215,7 @@ class CalendarApp(App):
 
         elif self.color_set == 2:
             self.main_win_col = (1.2, 0.1, 0.5, 1)
-            # Default color for day-buttons in class RoundedButton().
+            self.empty_col = (0.8, 1.6, 0.36)
             self.entry_col = get_color_from_hex('#23fca9')
             self.today_col = get_color_from_hex('#94b3fb')#ff69b4
             self.today_entry_col = get_color_from_hex('#e4e2fa')
@@ -257,7 +257,8 @@ class CalendarApp(App):
                     button = RoundedButton(text=str(i+1), font_size=50,
                                 background_color=self.entry_col)
                 else:
-                    button = RoundedButton(text=str(i+1), font_size=50)
+                    button = RoundedButton(text=str(i+1), font_size=50,
+                                background_color=self.empty_col)
                      
             button.bind(on_press=self.check_day_popup)
             self.bottom_row.add_widget(button)
@@ -428,8 +429,6 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.mid_row)
         self.main_layout.add_widget(self.bottom_row)
 
-        
-    
     def show_today(self, x=None):
         # Set the current year and month and update the view.
         self.current_year = datetime.now().year
@@ -827,28 +826,28 @@ class CalendarApp(App):
     def open_menu_popup(self, x=None):
         """Popup to change settings."""
 
-        def handle_option1(instance):
+        def colorset_1(instance):
             self.color_set = 1
             self.update_values()
 
-        def handle_option2(instance):
+        def colorset_2(instance):
             self.color_set = 2
             self.update_values()
 
-        def handle_option3(instance):
+        def colorset_3(instance):
             self.color_set = 3
             self.update_values()
 
         title = Label(text='Color:', font_size=40, color=self.setdate_text_col)
 
         button1 = RoundedButton(text='Set 1')
-        button1.bind(on_release=handle_option1)
+        button1.bind(on_release=colorset_1)
 
         button2 = RoundedButton(text='Set 2')
-        button2.bind(on_release=handle_option2)
+        button2.bind(on_release=colorset_2)
 
         button3 = RoundedButton(text='Set 3')
-        button3.bind(on_release=handle_option3)
+        button3.bind(on_release=colorset_3)
 
         
         self.menu_color = BoxLayout(orientation='horizontal', spacing=30)
