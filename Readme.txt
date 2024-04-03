@@ -5,10 +5,12 @@ Wischen nach links oder rechts blättert die Monate vor-/rückwärts.
 Mit dem Set-Button (oder mittels Wischen nach oben) öffnet sich ein Auswahlfenster: 
 Hier kann ein beliebiger Tag gewählt werden und die jeweilige Tagesansicht öffnet sich.
 Wird nicht der aktuelle Monat angezeigt, ändert sich der Set-Button zu einem Home-Button.
-Damit kann direkt auf den aktuellen Monat gewechselt werden.
+Damit kann direkt auf den aktuellen Monat gewechselt werden. Wischen nach unten öffnet in 
+der Standardeinstellung die Einstellungen: Es können die Farbpalette und die X/Y-Achsen für
+das swiping geändert werden, sowie die Button-Sounds an-/ausgeschaltet werden.
 
-builds: Benutzung auf eigenes Risiko!/Use at your own risk!)
------------------------------------------------------------
+Builds: Benutzung auf eigenes Risiko!/Use builds at your own risk!)
+-------------------------------------------------------------------
 
 Windows: exe mit Pyinstaller erstellt. Wichtig ist, dass
 die Datei save_file.json im gleichen Verzeichnis liegt wie die calendar.exe.
