@@ -47,8 +47,8 @@ class CalendarApp(App):
         self.month_lenght = calendar.monthrange(self.current_year,
                                            self.current_month)[1]
        
-        self.month_name = self.get_month_name(self.current_month)       
-        self.day_labels = self.get_day_labels()
+        # self.month_name = self.get_month_name(self.current_month)       
+        # self.day_labels = self.get_day_labels()
 
         self.save_file = self.load_json()
 
@@ -56,6 +56,8 @@ class CalendarApp(App):
         self.load_colors()
         Window.clearcolor = self.main_win_col
 
+        self.month_name = self.get_month_name(self.current_month)       
+        self.day_labels = self.get_day_labels()
         self.entered_text = ''
         self.day_entry = ''  
 
@@ -255,20 +257,20 @@ class CalendarApp(App):
             self.setdate_text_col = (0.5,0.75,1,1)
 
         elif self.color_set == 2:
-            self.main_win_col = (1.2, 0.1, 0.5, 1)
-            self.empty_col = (0.8, 1.6, 0.36)
-            self.entry_col = get_color_from_hex('#23fca9')
-            self.today_col = get_color_from_hex('#94b3fb')#ff69b4
-            self.today_entry_col = get_color_from_hex('#e4e2fa')
-            self.navi_btn_col = get_color_from_hex('#0af48a')
-            self.home_btn_col = get_color_from_hex('#508e9c')
-            self.main_text_col = get_color_from_hex('#03803b')
+            self.main_win_col = get_color_from_hex('#87738f')
+            self.empty_col = get_color_from_hex('#d4b8b8')
+            self.entry_col = get_color_from_hex('#c090a9')
+            self.today_col = get_color_from_hex('#966888')
+            self.today_entry_col = get_color_from_hex('#88a3bc')
+            self.navi_btn_col = get_color_from_hex('#88a3bc')
+            self.home_btn_col = get_color_from_hex('#bda499')
+            self.main_text_col = get_color_from_hex('#bda499')
 
             # Colors for popups.
-            self.bg_popups = (0.9,1.4,1.1,1)
-            self.popup_btn_col = get_color_from_hex('#08a98a')
-            self.chosen_btn_col = (1,0.3,1.1,1)
-            self.setdate_text_col = (1,0.3,1.1,1)
+            self.bg_popups = get_color_from_hex('#966888')
+            self.popup_btn_col = get_color_from_hex('#88a3bc')
+            self.chosen_btn_col = get_color_from_hex('#d4b8b8')
+            self.setdate_text_col = get_color_from_hex('#bda499')
 
     def set_buttons(self):
         """Setting up the day-buttongrid."""
@@ -457,15 +459,47 @@ class CalendarApp(App):
             self.home_button.bind(on_press=self.show_today)
 
         # Recreate rows with updated values.
+        self.year_rwd = RoundedButton(text="<", font_size=64,
+                                background_color=self.navi_btn_col)
+        
+        self.year = Label(text=f'{self.current_year}', font_size=64,
+                          color=self.main_text_col, bold=True)
+        
+        self.year_fwd = RoundedButton(text=">", font_size=64,
+                                background_color=self.navi_btn_col)
+
+        self.spaceholder = Label(text='', font_size=20)
+
+        self.home_button = RoundedButton(text="^", font_size=60,
+                                background_color=self.home_btn_col)
+
+        self.month_rwd = RoundedButton(text="<", font_size=64,
+                                background_color=self.navi_btn_col)
+        
+        self.month_name = self.get_month_name(self.current_month)
+        self.month = Label(text=f'{self.month_name}', font_size=50,
+                          color=self.main_text_col, bold=True)
+        
+        self.month_fwd = RoundedButton(text=">", font_size=64,
+                                background_color=self.navi_btn_col)
+        
+        # Bindings for buttons.
+        self.year_rwd.bind(on_press=self.dec_year)
+        self.year_fwd.bind(on_press=self.inc_year)
+        self.month_rwd.bind(on_press=self.dec_month)
+        self.month_fwd.bind(on_press=self.inc_month)
+        self.home_button.bind(on_press=self.set_date)
+
         self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1),
                                  spacing=40)
-
+        
         first_row = [self.year_rwd, self.year, self.year_fwd, self.home_button,
                      self.month_rwd, self.month, self.month_fwd]
         for i in first_row:
             self.top_row.add_widget(i)
         
         self.mid_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
+        self.day_labels = self.get_day_labels()
         for i in self.day_labels:
             self.mid_row.add_widget(i)
 
@@ -594,8 +628,8 @@ class CalendarApp(App):
         labels = []
 
         for i in day_names:
-            label = Label(text=f'{i}', font_size=40, color=get_color_from_hex(
-                '#03573b'), bold=True)
+            label = Label(text=f'{i}', color=self.main_text_col, font_size=40,
+                          bold=True)
             labels.append(label)
 
         return labels
@@ -738,8 +772,6 @@ class CalendarApp(App):
     def close_setdate(self, x=None):
         self.setdate_popup.dismiss()
         self.update_values()
-        # if self.sound:
-        #     self.cancel_sound.play()
 
     def inc_y(self, x=None):
         # Increase set-date year.
@@ -896,6 +928,7 @@ class CalendarApp(App):
         if self.sound:
             self.btn_sound.play()
 
+        # Labels, buttons, bindings for color settings.
         self.col_title = Label(text='Color:', font_size=40, 
                           color=self.setdate_text_col)
 
@@ -929,6 +962,7 @@ class CalendarApp(App):
         self.menu_color.add_widget(self.col_select_2)
         self.menu_color.add_widget(self.col_select_3)
 
+        # Labels, buttons, bindings for axis inversion settings.
         self.invert_title = Label(text='Invert\naxis:', font_size=40,
                              color=self.setdate_text_col)
 
@@ -955,6 +989,7 @@ class CalendarApp(App):
         self.invert_axis.add_widget(self.invert_x_btn)
         self.invert_axis.add_widget(self.invert_y_btn)
 
+        # Labels, buttons, bindings for sound settings.
         self.sound_title = Label(text='Sound:', font_size=40,
                              color=self.setdate_text_col)
         
@@ -1028,11 +1063,13 @@ class CalendarApp(App):
 
     def update_menu(self, instance):
         # Update the colors of the chosen options.
+        
         self.menu_color.clear_widgets()
         self.invert_axis.clear_widgets()
         self.sound_off.clear_widgets()
         self.menu_layout.clear_widgets()
 
+        # Update labels, buttons, bindings for color settings.
         self.col_title = Label(text='Color:', font_size=40, 
                           color=self.setdate_text_col)
         
@@ -1065,6 +1102,7 @@ class CalendarApp(App):
         self.menu_color.add_widget(self.col_select_2)
         self.menu_color.add_widget(self.col_select_3)
 
+        # Update labels, buttons, bindings for axis inversion settings.
         self.invert_title = Label(text='Invert\naxis:', font_size=40,
                              color=self.setdate_text_col)
 
@@ -1090,6 +1128,7 @@ class CalendarApp(App):
         self.invert_axis.add_widget(self.invert_x_btn)
         self.invert_axis.add_widget(self.invert_y_btn)
 
+        # Update labels, buttons, bindings for sound settings.
         self.sound_title = Label(text='Sound:', font_size=40,
                              color=self.setdate_text_col)
         
@@ -1106,6 +1145,7 @@ class CalendarApp(App):
         self.sound_off.add_widget(self.sound_title)
         self.sound_off.add_widget(self.sound_btn)
 
+        # Adding layouts in main layoutbox.
         self.menu_layout.add_widget(self.menu_color)
         self.menu_layout.add_widget(self.invert_axis)
         self.menu_layout.add_widget(self.sound_off)
