@@ -8,7 +8,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
 from kivy.graphics import Color, RoundedRectangle
 from kivy.core.window import Window
-from kivy.uix.dropdown import DropDown
+from kivy.core.audio import SoundLoader
 # from plyer import notification
 
 from datetime import datetime
@@ -66,6 +66,13 @@ class CalendarApp(App):
         
         self.swipe_x_default = self.save_file["inv_x"]
         self.swipe_y_default = self.save_file["inv_y"]
+        self.sound = self.save_file["sound"]
+
+        self.swipe_r_sound = SoundLoader.load('swipe_r.mp3')
+        self.swipe_l_sound = SoundLoader.load('swipe_l.mp3')
+        self.ok_sound = SoundLoader.load('ok.mp3')
+        self.cancel_sound = SoundLoader.load('cancel.mp3')
+        self.btn_sound = SoundLoader.load('btn.mp3')
 
     def on_touch_down(self, instance, touch):
         self.start_pos = touch.pos
@@ -302,6 +309,9 @@ class CalendarApp(App):
     def day_popup(self, instance):
         """Create the day-view with a textbox and buttons."""
 
+        if self.sound:
+            self.btn_sound.play()
+
         month = self.get_month_name(self.current_month)
         if isinstance(instance, int):
             self.button_nr = instance
@@ -376,11 +386,15 @@ class CalendarApp(App):
         # Increase year in main-window.
         self.current_year += 1
         self.update_values()
+        if self.sound:
+            self.swipe_l_sound.play()
     
     def dec_year(self, x=None):
         # Decrease year in main-window.
         self.current_year -= 1
         self.update_values()
+        if self.sound:
+            self.swipe_r_sound.play()
 
     def inc_month(self, x=None):
         # Increase month in main-window.
@@ -390,6 +404,8 @@ class CalendarApp(App):
         else:
             self.current_month += 1
         self.update_values()
+        if self.sound:
+            self.swipe_l_sound.play()
 
     def dec_month(self, x=None):
         # Decrease month in main-window.
@@ -399,6 +415,8 @@ class CalendarApp(App):
         else:
             self.current_month -= 1
         self.update_values()
+        if self.sound:
+            self.swipe_r_sound.play()
     
     def check_today_visible(self):
         # Check, if the current date is visible on screen.
@@ -415,6 +433,7 @@ class CalendarApp(App):
         self.month_lenght = calendar.monthrange(self.current_year,
                                            self.current_month)[1]
         self.input = ""
+        self.entered_text = ""
 
         self.load_colors()
         Window.clearcolor = self.main_win_col
@@ -490,6 +509,8 @@ class CalendarApp(App):
 
     def close_popup(self, x=None):
         self.popup.dismiss()
+        if self.sound:
+            self.cancel_sound.play()
 
     def delete_entry(self, instance):
         self.close_ask()
@@ -500,6 +521,8 @@ class CalendarApp(App):
                 json.dump(self.save_file, file)
         self.update_values()
         self.close_popup(instance)
+        if self.sound:
+            self.ok_sound.play()
 
     def ask_delete(self, instance):
         # Creates a popup to confirm to delete the entry.
@@ -532,6 +555,8 @@ class CalendarApp(App):
     def close_ask(self, x=None):
         self.ask_popup.dismiss()
         self.update_values()
+        if self.sound:
+            self.cancel_sound.play()
 
     def save_entry(self, instance):
         # Format the date and save the entered text in json safefile.
@@ -555,6 +580,8 @@ class CalendarApp(App):
 
         self.update_values()
         self.close_popup(instance)
+        if self.sound:
+            self.ok_sound.play()
         
     def get_month_name(self, value):
         months = ["Jan", "Feb", "März", "April", "Mai", "Juni", "Juli",
@@ -581,6 +608,9 @@ class CalendarApp(App):
 
     def set_date(self, x=None):
         """Create the set-date view to chose a date and jump to day-view."""
+        if self.sound:
+            self.btn_sound.play()
+
         self.chose_d = datetime.now().day
         self.chose_m = datetime.now().month
         self.chose_y = datetime.now().year
@@ -708,6 +738,8 @@ class CalendarApp(App):
     def close_setdate(self, x=None):
         self.setdate_popup.dismiss()
         self.update_values()
+        # if self.sound:
+        #     self.cancel_sound.play()
 
     def inc_y(self, x=None):
         # Increase set-date year.
@@ -861,6 +893,9 @@ class CalendarApp(App):
     def open_menu_popup(self, x=None):
         """Popup to change settings."""
 
+        if self.sound:
+            self.btn_sound.play()
+
         self.col_title = Label(text='Color:', font_size=40, 
                           color=self.setdate_text_col)
 
@@ -920,10 +955,27 @@ class CalendarApp(App):
         self.invert_axis.add_widget(self.invert_x_btn)
         self.invert_axis.add_widget(self.invert_y_btn)
 
+        self.sound_title = Label(text='Sound:', font_size=40,
+                             color=self.setdate_text_col)
+        
+        if self.sound:
+            self.sound_btn = RoundedButton(text='On', font_size=40,
+                                          background_color=self.chosen_btn_col)
+        else:
+            self.sound_btn = RoundedButton(text='Off', font_size=40,
+                                          background_color=self.popup_btn_col)
+        
+        self.sound_btn.bind(on_release=self.set_sound)
+        
+        self.sound_off = BoxLayout(orientation='horizontal', spacing=30)
+        self.sound_off.add_widget(self.sound_title)
+        self.sound_off.add_widget(self.sound_btn)
+
         # Main layoutbox for the settings.
         self.menu_layout = BoxLayout(orientation='vertical', spacing=20)
         self.menu_layout.add_widget(self.menu_color)
         self.menu_layout.add_widget(self.invert_axis)
+        self.menu_layout.add_widget(self.sound_off)
 
         self.menu_popup = Popup(title='Settings', content=self.menu_layout, 
                                 size_hint=(0.7, 0.7), title_align="center")
@@ -962,13 +1014,23 @@ class CalendarApp(App):
             self.swipe_y_default = True
         self.update_menu(instance)
 
+    def set_sound(self, instance):
+        if self.sound:
+            self.sound = False
+        else:
+            self.sound = True
+        self.update_menu(instance)
+
     def close_menu(self, x=None):
         self.menu_popup.dismiss()
+        if self.sound:
+            self.cancel_sound.play()
 
     def update_menu(self, instance):
         # Update the colors of the chosen options.
         self.menu_color.clear_widgets()
         self.invert_axis.clear_widgets()
+        self.sound_off.clear_widgets()
         self.menu_layout.clear_widgets()
 
         self.col_title = Label(text='Color:', font_size=40, 
@@ -1028,8 +1090,25 @@ class CalendarApp(App):
         self.invert_axis.add_widget(self.invert_x_btn)
         self.invert_axis.add_widget(self.invert_y_btn)
 
+        self.sound_title = Label(text='Sound:', font_size=40,
+                             color=self.setdate_text_col)
+        
+        if self.sound:
+            self.sound_btn = RoundedButton(text='On', font_size=40,
+                                          background_color=self.chosen_btn_col)
+        else:
+            self.sound_btn = RoundedButton(text='Off', font_size=40,
+                                          background_color=self.popup_btn_col)
+        
+        self.sound_btn.bind(on_release=self.set_sound)
+        
+        self.sound_off = BoxLayout(orientation='horizontal', spacing=30)
+        self.sound_off.add_widget(self.sound_title)
+        self.sound_off.add_widget(self.sound_btn)
+
         self.menu_layout.add_widget(self.menu_color)
         self.menu_layout.add_widget(self.invert_axis)
+        self.menu_layout.add_widget(self.sound_off)
 
         self.save_settings()
         self.input = ""
@@ -1038,9 +1117,11 @@ class CalendarApp(App):
         color = {"color": self.color_set}
         inv_x = {"inv_x": self.swipe_x_default}
         inv_y = {"inv_y": self.swipe_y_default}
+        sound = {"sound": self.sound}
         self.save_file.update(color)
         self.save_file.update(inv_x)
         self.save_file.update(inv_y)
+        self.save_file.update(sound)
 
         with open('save_file.json', 'w') as file:
                 json.dump(self.save_file, file)
