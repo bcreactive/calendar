@@ -52,7 +52,7 @@ class CalendarApp(App):
 
         self.save_file = self.load_json()
 
-        self.color_set = 1
+        self.color_set = self.save_file["color"]
         self.load_colors()
         Window.clearcolor = self.main_win_col
 
@@ -64,8 +64,8 @@ class CalendarApp(App):
         self.nr = 0
         self.input = ""
         
-        self.swipe_x_default = True
-        self.swipe_y_default = True
+        self.swipe_x_default = self.save_file["inv_x"]
+        self.swipe_y_default = self.save_file["inv_y"]
 
     def on_touch_down(self, instance, touch):
         self.start_pos = touch.pos
@@ -877,11 +877,11 @@ class CalendarApp(App):
             col_2_bg_color = self.popup_btn_col
             col_3_bg_color = self.chosen_btn_col
 
-        self.col_select_1 = RoundedButton(text='Set 1',
+        self.col_select_1 = RoundedButton(text='Set 1', font_size=40,
                                           background_color=col_1_bg_color)
-        self.col_select_2 = RoundedButton(text='Set 2',
+        self.col_select_2 = RoundedButton(text='Set 2', font_size=40,
                                           background_color=col_2_bg_color)
-        self.col_select_3 = RoundedButton(text='Set 3',
+        self.col_select_3 = RoundedButton(text='Set 3', font_size=40,
                                           background_color=col_3_bg_color)
 
         self.col_select_1.bind(on_release=self.colorset_1)
@@ -907,9 +907,9 @@ class CalendarApp(App):
         else:
             invert_y_bg_color = self.chosen_btn_col
 
-        self.invert_x_btn = RoundedButton(text='X',
+        self.invert_x_btn = RoundedButton(text='X', font_size=40,
                                           background_color=invert_x_bg_color)
-        self.invert_y_btn = RoundedButton(text='Y',
+        self.invert_y_btn = RoundedButton(text='Y', font_size=40,
                                           background_color=invert_y_bg_color)
 
         self.invert_x_btn.bind(on_release=self.invert_x)
@@ -932,6 +932,17 @@ class CalendarApp(App):
 
         self.menu_popup.open()
         self.input = ""
+
+    def save_settings(self):
+        color = {"color": self.color_set}
+        inv_x = {"inv_x": self.swipe_x_default}
+        inv_y = {"inv_y": self.swipe_y_default}
+        self.save_file.update(color)
+        self.save_file.update(inv_x)
+        self.save_file.update(inv_y)
+
+        with open('save_file.json', 'w') as file:
+                json.dump(self.save_file, file)
 
     def colorset_1(self, instance):
         self.color_set = 1
@@ -984,11 +995,11 @@ class CalendarApp(App):
             col_2_bg_color = self.popup_btn_col
             col_3_bg_color = self.chosen_btn_col
 
-        self.col_select_1 = RoundedButton(text='Set 1',
+        self.col_select_1 = RoundedButton(text='Set 1', font_size=40,
                                           background_color=col_1_bg_color)
-        self.col_select_2 = RoundedButton(text='Set 2',
+        self.col_select_2 = RoundedButton(text='Set 2', font_size=40,
                                           background_color=col_2_bg_color)
-        self.col_select_3 = RoundedButton(text='Set 3',
+        self.col_select_3 = RoundedButton(text='Set 3', font_size=40,
                                           background_color=col_3_bg_color)
 
         self.col_select_1.bind(on_release=self.colorset_1)
@@ -1010,9 +1021,9 @@ class CalendarApp(App):
         else:
             invert_y_bg_color = self.chosen_btn_col
 
-        self.invert_x_btn = RoundedButton(text='X',
+        self.invert_x_btn = RoundedButton(text='X', font_size=40,
                                           background_color=invert_x_bg_color)
-        self.invert_y_btn = RoundedButton(text='Y',
+        self.invert_y_btn = RoundedButton(text='Y', font_size=40,
                                           background_color=invert_y_bg_color)
 
         self.invert_x_btn.bind(on_release=self.invert_x)
@@ -1025,6 +1036,7 @@ class CalendarApp(App):
         self.menu_layout.add_widget(self.menu_color)
         self.menu_layout.add_widget(self.invert_axis)
 
+        self.save_settings()
         self.input = ""
 
 
