@@ -63,6 +63,9 @@ class CalendarApp(App):
         self.btns = []
         self.nr = 0
         self.input = ""
+        
+        self.swipe_x_default = True
+        self.swipe_y_default = True
 
     def on_touch_down(self, instance, touch):
         self.start_pos = touch.pos
@@ -78,17 +81,47 @@ class CalendarApp(App):
             self.input = "swipe"
             self.buttons_locked = True
 
-            if touch.x > self.touch_x + 50:
-                self.dec_month()
+            if self.swipe_x_default:
+                if touch.x > self.touch_x + 50:
+                    self.dec_month()       
+
+                elif touch.x < self.touch_x - 50:
+                    self.inc_month()
                 
-            elif touch.x < self.touch_x - 50:
-                self.inc_month()
-                
-            elif touch.y > self.touch_y + 50:
-                self.set_date()
+                if self.swipe_y_default:
+                    if touch.y > self.touch_y + 50:
+                        self.set_date()   
+
+                    elif touch.y < self.touch_y - 50:
+                        self.open_menu_popup()
+
+                else:
+                    if touch.y < self.touch_y - 50:
+                        self.set_date()
+
+                    elif touch.y > self.touch_y + 50:
+                        self.open_menu_popup()
             
-            elif touch.y < self.touch_y - 50:
-                self.open_menu_popup()
+            else:
+                if touch.x < self.touch_x - 50:
+                    self.dec_month()
+                    
+                elif touch.x > self.touch_x + 50:
+                    self.inc_month()
+
+                if self.swipe_y_default:   
+                    if touch.y > self.touch_y + 50:
+                        self.set_date()
+
+                    elif touch.y < self.touch_y - 50:
+                        self.open_menu_popup()
+
+                else:
+                    if touch.y < self.touch_y - 50:
+                        self.set_date()
+                    
+                    elif touch.y > self.touch_y + 50:
+                        self.open_menu_popup()
 
             self.input = ""
             self.buttons_locked = True
@@ -211,6 +244,7 @@ class CalendarApp(App):
             # Colors for popups.
             self.bg_popups = (0,1,1,1)
             self.popup_btn_col = get_color_from_hex('#0a748a')
+            self.chosen_btn_col = (1,0.3,1.1,1)
             self.setdate_text_col = (0.5,0.75,1,1)
 
         elif self.color_set == 2:
@@ -226,6 +260,7 @@ class CalendarApp(App):
             # Colors for popups.
             self.bg_popups = (0.9,1.4,1.1,1)
             self.popup_btn_col = get_color_from_hex('#08a98a')
+            self.chosen_btn_col = (1,0.3,1.1,1)
             self.setdate_text_col = (1,0.3,1.1,1)
 
     def set_buttons(self):
@@ -826,38 +861,69 @@ class CalendarApp(App):
     def open_menu_popup(self, x=None):
         """Popup to change settings."""
 
-        def colorset_1(instance):
-            self.color_set = 1
-            self.update_values()
+        self.col_title = Label(text='Color:', font_size=40, 
+                          color=self.setdate_text_col)
 
-        def colorset_2(instance):
-            self.color_set = 2
-            self.update_values()
+        if self.color_set == 1:
+            col_1_bg_color = self.chosen_btn_col
+            col_2_bg_color = self.popup_btn_col
+            col_3_bg_color = self.popup_btn_col
+        elif self.color_set == 2:
+            col_1_bg_color = self.popup_btn_col
+            col_2_bg_color = self.chosen_btn_col
+            col_3_bg_color = self.popup_btn_col
+        elif self.color_set == 3:
+            col_1_bg_color = self.popup_btn_col
+            col_2_bg_color = self.popup_btn_col
+            col_3_bg_color = self.chosen_btn_col
 
-        def colorset_3(instance):
-            self.color_set = 3
-            self.update_values()
+        self.col_select_1 = RoundedButton(text='Set 1',
+                                          background_color=col_1_bg_color)
+        self.col_select_2 = RoundedButton(text='Set 2',
+                                          background_color=col_2_bg_color)
+        self.col_select_3 = RoundedButton(text='Set 3',
+                                          background_color=col_3_bg_color)
 
-        title = Label(text='Color:', font_size=40, color=self.setdate_text_col)
+        self.col_select_1.bind(on_release=self.colorset_1)
+        self.col_select_2.bind(on_release=self.colorset_2)
+        self.col_select_3.bind(on_release=self.colorset_3)
 
-        button1 = RoundedButton(text='Set 1')
-        button1.bind(on_release=colorset_1)
-
-        button2 = RoundedButton(text='Set 2')
-        button2.bind(on_release=colorset_2)
-
-        button3 = RoundedButton(text='Set 3')
-        button3.bind(on_release=colorset_3)
-
-        
         self.menu_color = BoxLayout(orientation='horizontal', spacing=30)
-        self.menu_color.add_widget(title)
-        self.menu_color.add_widget(button1)
-        self.menu_color.add_widget(button2)
-        self.menu_color.add_widget(button3)
+        self.menu_color.add_widget(self.col_title)
+        self.menu_color.add_widget(self.col_select_1)
+        self.menu_color.add_widget(self.col_select_2)
+        self.menu_color.add_widget(self.col_select_3)
 
-        self.menu_layout = BoxLayout(orientation='vertical')
+        self.invert_title = Label(text='Invert\naxis:', font_size=40,
+                             color=self.setdate_text_col)
+
+        if self.swipe_x_default:
+            invert_x_bg_color = self.popup_btn_col
+        else:
+            invert_x_bg_color = self.chosen_btn_col
+
+        if self.swipe_y_default:
+            invert_y_bg_color = self.popup_btn_col
+        else:
+            invert_y_bg_color = self.chosen_btn_col
+
+        self.invert_x_btn = RoundedButton(text='X',
+                                          background_color=invert_x_bg_color)
+        self.invert_y_btn = RoundedButton(text='Y',
+                                          background_color=invert_y_bg_color)
+
+        self.invert_x_btn.bind(on_release=self.invert_x)
+        self.invert_y_btn.bind(on_release=self.invert_y)
+        
+        self.invert_axis = BoxLayout(orientation='horizontal', spacing=30)
+        self.invert_axis.add_widget(self.invert_title)
+        self.invert_axis.add_widget(self.invert_x_btn)
+        self.invert_axis.add_widget(self.invert_y_btn)
+
+        # Main layoutbox for the settings.
+        self.menu_layout = BoxLayout(orientation='vertical', spacing=20)
         self.menu_layout.add_widget(self.menu_color)
+        self.menu_layout.add_widget(self.invert_axis)
 
         self.menu_popup = Popup(title='Settings', content=self.menu_layout, 
                                 size_hint=(0.7, 0.7), title_align="center")
@@ -865,9 +931,101 @@ class CalendarApp(App):
         self.menu_popup.background_color = self.bg_popups
 
         self.menu_popup.open()
+        self.input = ""
+
+    def colorset_1(self, instance):
+        self.color_set = 1
+        self.update_values()
+        self.update_menu(instance)
+
+    def colorset_2(self, instance):
+        self.color_set = 2
+        self.update_values()
+        self.update_menu(instance)
+
+    def colorset_3(self, instance):
+        self.color_set = 3
+        self.update_values()
+        self.update_menu(instance)
+
+    def invert_x(self, instance):
+        if self.swipe_x_default:
+            self.swipe_x_default = False
+        else:
+            self.swipe_x_default = True
+        self.update_menu(instance)
+
+    def invert_y(self, instance):
+        if self.swipe_y_default:
+            self.swipe_y_default = False
+        else:
+            self.swipe_y_default = True
+        self.update_menu(instance)
 
     def close_menu(self, x=None):
         self.menu_popup.dismiss()
+
+    def update_menu(self, instance):
+        # Update the colors of the chosen options.
+        self.menu_color.clear_widgets()
+        self.invert_axis.clear_widgets()
+        self.menu_layout.clear_widgets()
+
+        if self.color_set == 1:
+            col_1_bg_color = self.chosen_btn_col
+            col_2_bg_color = self.popup_btn_col
+            col_3_bg_color = self.popup_btn_col
+        elif self.color_set == 2:
+            col_1_bg_color = self.popup_btn_col
+            col_2_bg_color = self.chosen_btn_col
+            col_3_bg_color = self.popup_btn_col
+        elif self.color_set == 3:
+            col_1_bg_color = self.popup_btn_col
+            col_2_bg_color = self.popup_btn_col
+            col_3_bg_color = self.chosen_btn_col
+
+        self.col_select_1 = RoundedButton(text='Set 1',
+                                          background_color=col_1_bg_color)
+        self.col_select_2 = RoundedButton(text='Set 2',
+                                          background_color=col_2_bg_color)
+        self.col_select_3 = RoundedButton(text='Set 3',
+                                          background_color=col_3_bg_color)
+
+        self.col_select_1.bind(on_release=self.colorset_1)
+        self.col_select_2.bind(on_release=self.colorset_2)
+        self.col_select_3.bind(on_release=self.colorset_3)
+
+        self.menu_color.add_widget(self.col_title)
+        self.menu_color.add_widget(self.col_select_1)
+        self.menu_color.add_widget(self.col_select_2)
+        self.menu_color.add_widget(self.col_select_3)
+
+        if self.swipe_x_default:
+            invert_x_bg_color = self.popup_btn_col
+        else:
+            invert_x_bg_color = self.chosen_btn_col
+
+        if self.swipe_y_default:
+            invert_y_bg_color = self.popup_btn_col
+        else:
+            invert_y_bg_color = self.chosen_btn_col
+
+        self.invert_x_btn = RoundedButton(text='X',
+                                          background_color=invert_x_bg_color)
+        self.invert_y_btn = RoundedButton(text='Y',
+                                          background_color=invert_y_bg_color)
+
+        self.invert_x_btn.bind(on_release=self.invert_x)
+        self.invert_y_btn.bind(on_release=self.invert_y)
+
+        self.invert_axis.add_widget(self.invert_title)
+        self.invert_axis.add_widget(self.invert_x_btn)
+        self.invert_axis.add_widget(self.invert_y_btn)
+
+        self.menu_layout.add_widget(self.menu_color)
+        self.menu_layout.add_widget(self.invert_axis)
+
+        self.input = ""
 
 
 class RoundedButton(Button):
