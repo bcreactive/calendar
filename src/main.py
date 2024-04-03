@@ -933,17 +933,6 @@ class CalendarApp(App):
         self.menu_popup.open()
         self.input = ""
 
-    def save_settings(self):
-        color = {"color": self.color_set}
-        inv_x = {"inv_x": self.swipe_x_default}
-        inv_y = {"inv_y": self.swipe_y_default}
-        self.save_file.update(color)
-        self.save_file.update(inv_x)
-        self.save_file.update(inv_y)
-
-        with open('save_file.json', 'w') as file:
-                json.dump(self.save_file, file)
-
     def colorset_1(self, instance):
         self.color_set = 1
         self.update_values()
@@ -982,6 +971,9 @@ class CalendarApp(App):
         self.invert_axis.clear_widgets()
         self.menu_layout.clear_widgets()
 
+        self.col_title = Label(text='Color:', font_size=40, 
+                          color=self.setdate_text_col)
+        
         if self.color_set == 1:
             col_1_bg_color = self.chosen_btn_col
             col_2_bg_color = self.popup_btn_col
@@ -1011,6 +1003,9 @@ class CalendarApp(App):
         self.menu_color.add_widget(self.col_select_2)
         self.menu_color.add_widget(self.col_select_3)
 
+        self.invert_title = Label(text='Invert\naxis:', font_size=40,
+                             color=self.setdate_text_col)
+
         if self.swipe_x_default:
             invert_x_bg_color = self.popup_btn_col
         else:
@@ -1038,6 +1033,17 @@ class CalendarApp(App):
 
         self.save_settings()
         self.input = ""
+
+    def save_settings(self):
+        color = {"color": self.color_set}
+        inv_x = {"inv_x": self.swipe_x_default}
+        inv_y = {"inv_y": self.swipe_y_default}
+        self.save_file.update(color)
+        self.save_file.update(inv_x)
+        self.save_file.update(inv_y)
+
+        with open('save_file.json', 'w') as file:
+                json.dump(self.save_file, file)
 
 
 class RoundedButton(Button):
