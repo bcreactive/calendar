@@ -46,9 +46,6 @@ class CalendarApp(App):
         # Get the amount of days for a month.
         self.month_lenght = calendar.monthrange(self.current_year,
                                            self.current_month)[1]
-       
-        # self.month_name = self.get_month_name(self.current_month)       
-        # self.day_labels = self.get_day_labels()
 
         self.save_file = self.load_json()
 
@@ -85,51 +82,51 @@ class CalendarApp(App):
                 self.nr = int(i.text)
         
     def on_touch_up(self, instance, touch):
-        if abs(touch.x - self.start_pos[0]) > 20 or abs(
-            touch.y - self.start_pos[1]) > 20:
+        if abs(touch.x - self.start_pos[0]) > 40 or abs(
+            touch.y - self.start_pos[1]) > 40:
             self.input = "swipe"
             self.buttons_locked = True
 
             if self.swipe_x_default:
-                if touch.x > self.touch_x + 50:
+                if touch.x > self.touch_x + 80:
                     self.dec_month()       
 
-                elif touch.x < self.touch_x - 50:
+                elif touch.x < self.touch_x - 80:
                     self.inc_month()
                 
                 if self.swipe_y_default:
-                    if touch.y > self.touch_y + 50:
+                    if touch.y > self.touch_y + 150:
                         self.set_date()   
 
-                    elif touch.y < self.touch_y - 50:
+                    elif touch.y < self.touch_y - 150:
                         self.open_menu_popup()
 
                 else:
-                    if touch.y < self.touch_y - 50:
+                    if touch.y < self.touch_y - 150:
                         self.set_date()
 
-                    elif touch.y > self.touch_y + 50:
+                    elif touch.y > self.touch_y + 150:
                         self.open_menu_popup()
             
             else:
-                if touch.x < self.touch_x - 50:
+                if touch.x < self.touch_x - 80:
                     self.dec_month()
                     
-                elif touch.x > self.touch_x + 50:
+                elif touch.x > self.touch_x + 80:
                     self.inc_month()
 
                 if self.swipe_y_default:   
-                    if touch.y > self.touch_y + 50:
+                    if touch.y > self.touch_y + 150:
                         self.set_date()
 
-                    elif touch.y < self.touch_y - 50:
+                    elif touch.y < self.touch_y - 150:
                         self.open_menu_popup()
 
                 else:
-                    if touch.y < self.touch_y - 50:
+                    if touch.y < self.touch_y - 150:
                         self.set_date()
                     
-                    elif touch.y > self.touch_y + 50:
+                    elif touch.y > self.touch_y + 150:
                         self.open_menu_popup()
 
             self.input = ""
