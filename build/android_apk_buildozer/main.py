@@ -8,6 +8,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
 from kivy.graphics import Color, RoundedRectangle
 from kivy.core.window import Window
+from kivy.core.audio import SoundLoader
 # from plyer import notification
 
 from datetime import datetime
@@ -28,7 +29,8 @@ class CalendarApp(App):
     month. To jump to a specific date swipe up or click the '^'-button to set a 
     date using the up and down buttons. If the displayed month is not the 
     current one, the '^'-button becomes a home-button to switch to the actual
-    month."""
+    month. Swipe up to display the settings-popup where you can chose a
+    colorset, change swipe-directions and disable/enable buttonsounds."""
 
     def __init__(self, **kwargs):
         """Initalizing attributes."""
@@ -45,50 +47,91 @@ class CalendarApp(App):
         # Get the amount of days for a month.
         self.month_lenght = calendar.monthrange(self.current_year,
                                            self.current_month)[1]
-       
-        self.month_name = self.get_month_name(self.current_month)       
-        self.day_labels = self.get_day_labels()
 
         self.save_file = self.load_json()
+
+        # Load settings.
+        self.swipe_x_default = self.save_file["inv_x"]
+        self.swipe_y_default = self.save_file["inv_y"]
+        self.sound = self.save_file["sound"]
+        self.color_set = self.save_file["color"]
+
         self.load_colors()
         Window.clearcolor = self.main_win_col
 
+        self.month_name = self.get_month_name(self.current_month)       
+        self.day_labels = self.get_day_labels()
         self.entered_text = ''
         self.day_entry = ''  
+        self.input = ""
 
         self.start_pos = (0, 0)
-        # self.end_pos = (0, 0)
-        # self.click_threshold = 5
-        self.button_click = False
         self.btns = []
         self.nr = 0
-        self.input = ""
+
+        # Load sounds.
+        self.swipe_r_sound = SoundLoader.load('swipe_r.mp3')
+        self.swipe_l_sound = SoundLoader.load('swipe_l.mp3')
+        self.ok_sound = SoundLoader.load('ok.mp3')
+        self.btn_sound = SoundLoader.load('btn.mp3')
+        self.credits_sound = SoundLoader.load('credits.mp3')
 
     def on_touch_down(self, instance, touch):
         self.start_pos = touch.pos
-        # print(self.input)
         self.touch_x = touch.x
         self.touch_y = touch.y
         for i in self.btns:
             if i.collide_point(touch.x, touch.y):
                 self.nr = int(i.text)
-                # print(self.nr)
         
     def on_touch_up(self, instance, touch):
-        if abs(touch.x - self.start_pos[0]) > 20 or abs(
-            touch.y - self.start_pos[1]) > 20:
+        if abs(touch.x - self.start_pos[0]) > 40 or abs(
+            touch.y - self.start_pos[1]) > 40:
             self.input = "swipe"
             self.buttons_locked = True
 
-            if touch.x > self.touch_x + 50:
-                self.dec_month()
+            if self.swipe_x_default:
+                if touch.x > self.touch_x + 80:
+                    self.dec_month()       
+
+                elif touch.x < self.touch_x - 80:
+                    self.inc_month()
                 
-            elif touch.x < self.touch_x - 50:
-                self.inc_month()
-                
-            elif touch.y > self.touch_y + 50:
-                self.set_date()
-            print(self.input)
+                if self.swipe_y_default:
+                    if touch.y > self.touch_y + 150:
+                        self.set_date()   
+
+                    elif touch.y < self.touch_y - 150:
+                        self.open_menu_popup()
+
+                else:
+                    if touch.y < self.touch_y - 150:
+                        self.set_date()
+
+                    elif touch.y > self.touch_y + 150:
+                        self.open_menu_popup()
+            
+            else:
+                if touch.x < self.touch_x - 80:
+                    self.dec_month()
+                    
+                elif touch.x > self.touch_x + 80:
+                    self.inc_month()
+
+                if self.swipe_y_default:   
+                    if touch.y > self.touch_y + 150:
+                        self.set_date()
+
+                    elif touch.y < self.touch_y - 150:
+                        self.open_menu_popup()
+
+                else:
+                    if touch.y < self.touch_y - 150:
+                        self.set_date()
+                    
+                    elif touch.y > self.touch_y + 150:
+                        self.open_menu_popup()
+
             self.input = ""
             self.buttons_locked = True
             return
@@ -98,7 +141,6 @@ class CalendarApp(App):
             self.buttons_locked = False
             self.day_popup(self.nr)
             self.buttons_locked = True
-            # print(self.input)
             self.input = ""
         self.input = ""
 
@@ -185,9 +227,6 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.top_row)
         self.main_layout.add_widget(self.mid_row)
         self.main_layout.add_widget(self.bottom_row)
-
-        # self.nav_btns = [self.year_rwd, self.year_fwd, self.month_rwd,
-        #                  self.month_fwd, self.home_button]
         
         return self.main_layout
 
@@ -198,19 +237,53 @@ class CalendarApp(App):
             return data
     
     def load_colors(self):
-        self.main_win_col = (0.7, 1, 0.1, 1)
-        # Default color for day-buttons in class RoundedButton().
-        self.entry_col = get_color_from_hex('#13ecb9')
-        self.today_col = get_color_from_hex('#9523fa')#ff69b4
-        self.today_entry_col = get_color_from_hex('#ee23fa')
-        self.navi_btn_col = get_color_from_hex('#0a748a')
-        self.home_btn_col = get_color_from_hex('#50befc')
-        self.main_text_col = get_color_from_hex('#03573b')
+        if self.color_set == 1: #green
+            self.main_win_col = (0.7, 1, 0.1, 1)
+            self.empty_col = (0, 0.6, 0.3)
+            self.entry_col = get_color_from_hex('#13ecb9')
+            self.today_col = get_color_from_hex('#9523fa')#ff69b4
+            self.today_entry_col = get_color_from_hex('#ee23fa')
+            self.navi_btn_col = get_color_from_hex('#0a748a')
+            self.home_btn_col = get_color_from_hex('#50befc')
+            self.main_text_col = get_color_from_hex('#03573b')
 
-        # Colors for popups.
-        self.bg_popups = (0,1,1,1)
-        self.popup_btn_col = get_color_from_hex('#0a748a')
-        self.setdate_text_col = (0.5,0.75,1,1)
+            # Colors for popups.
+            self.bg_popups = (0,1,1,1)
+            self.popup_btn_col = get_color_from_hex('#0a748a')
+            self.chosen_btn_col = (1,0.3,1.1,1)
+            self.setdate_text_col = (0.5,0.75,1,1)
+
+        elif self.color_set == 2: #sepia
+            self.main_win_col = get_color_from_hex('#87738f')
+            self.empty_col = get_color_from_hex('#d4b8b8')
+            self.entry_col = get_color_from_hex('#c090a9')
+            self.today_col = get_color_from_hex('#966888')
+            self.today_entry_col = get_color_from_hex('#88a3bc')
+            self.navi_btn_col = get_color_from_hex('#88a3bc')
+            self.home_btn_col = get_color_from_hex('#bda499')
+            self.main_text_col = get_color_from_hex('#bda499')
+
+            # Colors for popups.
+            self.bg_popups = get_color_from_hex('#966888')
+            self.popup_btn_col = get_color_from_hex('#88a3bc')
+            self.chosen_btn_col = get_color_from_hex('#d4b8b8')
+            self.setdate_text_col = get_color_from_hex('#bda499')
+
+        elif self.color_set == 3: #b/w
+            self.main_win_col = get_color_from_hex('#ffffff')
+            self.empty_col = get_color_from_hex('#c1b9b9')
+            self.entry_col = get_color_from_hex('#6c6767')
+            self.today_col = get_color_from_hex('#000000')
+            self.today_entry_col = get_color_from_hex('#424242')
+            self.navi_btn_col = get_color_from_hex('#4f4f4f')
+            self.home_btn_col = get_color_from_hex('#000000')
+            self.main_text_col = get_color_from_hex('#818181')
+
+            # Colors for popups.
+            self.bg_popups = get_color_from_hex('#ffffff')
+            self.popup_btn_col = get_color_from_hex('#4f4f4f')
+            self.chosen_btn_col = get_color_from_hex('#a09d9d')
+            self.setdate_text_col = get_color_from_hex('#9f9f9f')
 
     def set_buttons(self):
         """Setting up the day-buttongrid."""
@@ -241,7 +314,8 @@ class CalendarApp(App):
                     button = RoundedButton(text=str(i+1), font_size=50,
                                 background_color=self.entry_col)
                 else:
-                    button = RoundedButton(text=str(i+1), font_size=50)
+                    button = RoundedButton(text=str(i+1), font_size=50,
+                                background_color=self.empty_col)
                      
             button.bind(on_press=self.check_day_popup)
             self.bottom_row.add_widget(button)
@@ -249,6 +323,9 @@ class CalendarApp(App):
     
     def day_popup(self, instance):
         """Create the day-view with a textbox and buttons."""
+
+        if self.sound:
+            self.btn_sound.play()
 
         month = self.get_month_name(self.current_month)
         if isinstance(instance, int):
@@ -324,11 +401,15 @@ class CalendarApp(App):
         # Increase year in main-window.
         self.current_year += 1
         self.update_values()
+        if self.sound:
+            self.swipe_l_sound.play()
     
     def dec_year(self, x=None):
         # Decrease year in main-window.
         self.current_year -= 1
         self.update_values()
+        if self.sound:
+            self.swipe_r_sound.play()
 
     def inc_month(self, x=None):
         # Increase month in main-window.
@@ -338,6 +419,8 @@ class CalendarApp(App):
         else:
             self.current_month += 1
         self.update_values()
+        if self.sound:
+            self.swipe_l_sound.play()
 
     def dec_month(self, x=None):
         # Decrease month in main-window.
@@ -347,6 +430,8 @@ class CalendarApp(App):
         else:
             self.current_month -= 1
         self.update_values()
+        if self.sound:
+            self.swipe_r_sound.play()
     
     def check_today_visible(self):
         # Check, if the current date is visible on screen.
@@ -363,7 +448,11 @@ class CalendarApp(App):
         self.month_lenght = calendar.monthrange(self.current_year,
                                            self.current_month)[1]
         self.input = ""
+        self.entered_text = ""
 
+        self.load_colors()
+        Window.clearcolor = self.main_win_col
+        
         # Remove the existing widgets to load the actualized content.
         self.top_row.clear_widgets()
         self.mid_row.clear_widgets()
@@ -372,6 +461,7 @@ class CalendarApp(App):
 
         # Update the home-buttons text and binding.
         today = self.check_today_visible()
+
         if today:
             self.home_button = RoundedButton(text="^", font_size=60,
                                 background_color=self.home_btn_col)
@@ -383,15 +473,43 @@ class CalendarApp(App):
             self.home_button.bind(on_press=self.show_today)
 
         # Recreate rows with updated values.
+        self.year_rwd = RoundedButton(text="<", font_size=64,
+                                background_color=self.navi_btn_col)
+        
+        self.year = Label(text=f'{self.current_year}', font_size=64,
+                          color=self.main_text_col, bold=True)
+        
+        self.year_fwd = RoundedButton(text=">", font_size=64,
+                                background_color=self.navi_btn_col)
+
+        self.spaceholder = Label(text='', font_size=20)
+
+        self.month_rwd = RoundedButton(text="<", font_size=64,
+                                background_color=self.navi_btn_col)
+        
+        self.month_name = self.get_month_name(self.current_month)
+        self.month = Label(text=f'{self.month_name}', font_size=50,
+                          color=self.main_text_col, bold=True)
+        
+        self.month_fwd = RoundedButton(text=">", font_size=64,
+                                background_color=self.navi_btn_col)
+        
+        # Bindings for buttons.
+        self.year_rwd.bind(on_press=self.dec_year)
+        self.year_fwd.bind(on_press=self.inc_year)
+        self.month_rwd.bind(on_press=self.dec_month)
+        self.month_fwd.bind(on_press=self.inc_month)
+
         self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1),
                                  spacing=40)
-
+        
         first_row = [self.year_rwd, self.year, self.year_fwd, self.home_button,
                      self.month_rwd, self.month, self.month_fwd]
         for i in first_row:
             self.top_row.add_widget(i)
         
         self.mid_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
+        self.day_labels = self.get_day_labels()
         for i in self.day_labels:
             self.mid_row.add_widget(i)
 
@@ -408,7 +526,7 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.top_row)
         self.main_layout.add_widget(self.mid_row)
         self.main_layout.add_widget(self.bottom_row)
-    
+
     def show_today(self, x=None):
         # Set the current year and month and update the view.
         self.current_year = datetime.now().year
@@ -435,7 +553,8 @@ class CalendarApp(App):
 
     def close_popup(self, x=None):
         self.popup.dismiss()
-        # self.input = ""
+        if self.sound:
+            self.btn_sound.play()
 
     def delete_entry(self, instance):
         self.close_ask()
@@ -446,6 +565,8 @@ class CalendarApp(App):
                 json.dump(self.save_file, file)
         self.update_values()
         self.close_popup(instance)
+        if self.sound:
+            self.ok_sound.play()
 
     def ask_delete(self, instance):
         # Creates a popup to confirm to delete the entry.
@@ -474,12 +595,13 @@ class CalendarApp(App):
         self.ask_popup.background_color = self.bg_popups
     
         self.ask_popup.open()
-        # self.input = ""
         
     def close_ask(self, x=None):
+        if self.sound:
+            self.btn_sound.play()
         self.ask_popup.dismiss()
-        # self.input = ""
-
+        self.update_values()
+        
     def save_entry(self, instance):
         # Format the date and save the entered text in json safefile.
         month = len(str(self.current_month))
@@ -500,9 +622,10 @@ class CalendarApp(App):
             with open('save_file.json', 'w') as file:
                 json.dump(self.save_file, file)
 
-        self.entered_text = ''
         self.update_values()
         self.close_popup(instance)
+        if self.sound:
+            self.ok_sound.play()
         
     def get_month_name(self, value):
         months = ["Jan", "Feb", "März", "April", "Mai", "Juni", "Juli",
@@ -515,8 +638,8 @@ class CalendarApp(App):
         labels = []
 
         for i in day_names:
-            label = Label(text=f'{i}', font_size=40, color=get_color_from_hex(
-                '#03573b'), bold=True)
+            label = Label(text=f'{i}', color=self.main_text_col, font_size=40,
+                          bold=True)
             labels.append(label)
 
         return labels
@@ -529,6 +652,9 @@ class CalendarApp(App):
 
     def set_date(self, x=None):
         """Create the set-date view to chose a date and jump to day-view."""
+        if self.sound:
+            self.btn_sound.play()
+
         self.chose_d = datetime.now().day
         self.chose_m = datetime.now().month
         self.chose_y = datetime.now().year
@@ -571,9 +697,9 @@ class CalendarApp(App):
         self.ok = RoundedButton(text="ok", font_size=56,
                                 background_color=self.popup_btn_col)
         
-        self.spaceholder_1 = Label(text='', font_size=64, color=(0.5,0.75,1,1))
-        self.spaceholder_2 = Label(text='', font_size=64, color=(0.5,0.75,1,1))
-        self.spaceholder_3 = Label(text='', font_size=64, color=(0.5,0.75,1,1))
+        self.spaceholder_1 = Label(text='', font_size=64)
+        self.spaceholder_2 = Label(text='', font_size=64)
+        self.spaceholder_3 = Label(text='', font_size=64)
         
         # Button bindings.
         self.y_fwd.bind(on_press=self.inc_y)
@@ -655,43 +781,46 @@ class CalendarApp(App):
     
     def close_setdate(self, x=None):
         self.setdate_popup.dismiss()
-        # self.input = ""
+        self.update_values()
 
     def inc_y(self, x=None):
         # Increase set-date year.
-        # self.input = ""
         self.chose_y += 1
         self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
 
     def dec_y(self, x=None):
         # Decrease set-date year.
-        # self.input = ""
         self.chose_y -= 1
         self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
         
     def inc_m(self, x=None):
         # Increase set-date month.
-        # self.input = ""
         if self.chose_m == 12:
             self.chose_m = 1
             self.update_setdate()
             return
         self.chose_m += 1
         self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
     
     def dec_m(self, x=None):
         # Decrease set-date month.
-        # self.input = ""
         if self.chose_m == 1:
             self.chose_m = 12
             self.update_setdate()
             return
         self.chose_m -= 1
         self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
 
     def inc_d(self, x=None):
         # Increase set-date day.
-        # self.input = ""
         days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
         if self.chose_d >= days:
             self.chose_d = 1
@@ -699,10 +828,11 @@ class CalendarApp(App):
             return
         self.chose_d += 1
         self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
     
     def dec_d(self, x=None):
         # Decrease set-date day.
-        # self.input = ""
         days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
         if self.chose_d <= 1:
             self.chose_d = days
@@ -710,6 +840,8 @@ class CalendarApp(App):
             return
         self.chose_d -= 1
         self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
 
     def get_days_in_month(self, year, month):
         days_in_month = calendar.monthrange(year, month)
@@ -717,7 +849,6 @@ class CalendarApp(App):
 
     def update_setdate(self):
         """Update the values and the view for the set-date popup."""
-
         # Remove the existing widgets to load the actualized content.
         self.label_row.clear_widgets()
         self.fwd_row.clear_widgets()
@@ -813,11 +944,327 @@ class CalendarApp(App):
         self.input = ""
         self.day_popup(self.nr)
 
+    def open_menu_popup(self, x=None):
+        """Popup to change settings."""
+
+        if self.sound:
+            self.btn_sound.play()
+
+        # Labels, buttons, bindings for color settings.
+        self.col_title = Label(text='Color:', font_size=40, 
+                          color=self.setdate_text_col)
+
+        if self.color_set == 1:
+            col_1_bg_color = self.chosen_btn_col
+            col_2_bg_color = self.popup_btn_col
+            col_3_bg_color = self.popup_btn_col
+        elif self.color_set == 2:
+            col_1_bg_color = self.popup_btn_col
+            col_2_bg_color = self.chosen_btn_col
+            col_3_bg_color = self.popup_btn_col
+        elif self.color_set == 3:
+            col_1_bg_color = self.popup_btn_col
+            col_2_bg_color = self.popup_btn_col
+            col_3_bg_color = self.chosen_btn_col
+
+        self.col_select_1 = RoundedButton(text='Set 1', font_size=40,
+                                          background_color=col_1_bg_color)
+        self.col_select_2 = RoundedButton(text='Set 2', font_size=40,
+                                          background_color=col_2_bg_color)
+        self.col_select_3 = RoundedButton(text='Set 3', font_size=40,
+                                          background_color=col_3_bg_color)
+
+        self.col_select_1.bind(on_release=self.colorset_1)
+        self.col_select_2.bind(on_release=self.colorset_2)
+        self.col_select_3.bind(on_release=self.colorset_3)
+
+        self.menu_color = BoxLayout(orientation='horizontal', spacing=30)
+        self.menu_color.add_widget(self.col_title)
+        self.menu_color.add_widget(self.col_select_1)
+        self.menu_color.add_widget(self.col_select_2)
+        self.menu_color.add_widget(self.col_select_3)
+
+        # Labels, buttons, bindings for axis inversion settings.
+        self.invert_title = Label(text='Invert\naxis:', font_size=40,
+                             color=self.setdate_text_col)
+
+        if self.swipe_x_default:
+            invert_x_bg_color = self.popup_btn_col
+        else:
+            invert_x_bg_color = self.chosen_btn_col
+
+        if self.swipe_y_default:
+            invert_y_bg_color = self.popup_btn_col
+        else:
+            invert_y_bg_color = self.chosen_btn_col
+
+        self.invert_x_btn = RoundedButton(text='X', font_size=40,
+                                          background_color=invert_x_bg_color)
+        self.invert_y_btn = RoundedButton(text='Y', font_size=40,
+                                          background_color=invert_y_bg_color)
+
+        self.invert_x_btn.bind(on_release=self.invert_x)
+        self.invert_y_btn.bind(on_release=self.invert_y)
+        
+        self.invert_axis = BoxLayout(orientation='horizontal', spacing=30)
+        self.invert_axis.add_widget(self.invert_title)
+        self.invert_axis.add_widget(self.invert_x_btn)
+        self.invert_axis.add_widget(self.invert_y_btn)
+
+        # Labels, buttons, bindings for sound settings.
+        self.sound_title = Label(text='Sound:', font_size=40,
+                             color=self.setdate_text_col)
+        
+        if self.sound:
+            self.sound_btn = RoundedButton(text='On', font_size=40,
+                                          background_color=self.chosen_btn_col)
+        else:
+            self.sound_btn = RoundedButton(text='Off', font_size=40,
+                                          background_color=self.popup_btn_col)
+        
+        self.sound_btn.bind(on_release=self.set_sound)
+        
+        self.sound_off = BoxLayout(orientation='horizontal', spacing=30)
+        self.sound_off.add_widget(self.sound_title)
+        self.sound_off.add_widget(self.sound_btn)
+
+        self.about_btn = RoundedButton(text='About', font_size=10,
+                                          background_color=self.popup_btn_col)
+        
+        self.about_btn.bind(on_release=self.open_credits)
+
+        self.close_btn = RoundedButton(text='Close', font_size=40,
+                                          background_color=self.popup_btn_col)
+        
+        self.close_btn.bind(on_release=self.close_menu)
+
+        self.button_box = BoxLayout(orientation='horizontal', size_hint=(1, 0.1))
+        self.button_box.add_widget(self.about_btn)
+       
+        
+        # Main layoutbox for the settings.
+        self.menu_layout = BoxLayout(orientation='vertical', spacing=20)
+        self.menu_layout.add_widget(self.menu_color)
+        self.menu_layout.add_widget(self.invert_axis)
+        self.menu_layout.add_widget(self.sound_off)
+        self.menu_layout.add_widget(self.close_btn)
+        self.menu_layout.add_widget(self.button_box)
+
+        self.menu_popup = Popup(title='Settings', content=self.menu_layout, 
+                                size_hint=(0.7, 0.7), title_align="center")
+        
+        self.menu_popup.background_color = self.bg_popups
+
+        self.menu_popup.open()
+        self.input = ""
+
+    def colorset_1(self, instance):
+        self.color_set = 1
+        self.update_values()
+        self.update_menu(instance)
+
+    def colorset_2(self, instance):
+        self.color_set = 2
+        self.update_values()
+        self.update_menu(instance)
+
+    def colorset_3(self, instance):
+        self.color_set = 3
+        self.update_values()
+        self.update_menu(instance)
+
+    def invert_x(self, instance):
+        if self.swipe_x_default:
+            self.swipe_x_default = False
+        else:
+            self.swipe_x_default = True
+        self.update_menu(instance)
+
+    def invert_y(self, instance):
+        if self.swipe_y_default:
+            self.swipe_y_default = False
+        else:
+            self.swipe_y_default = True
+        self.update_menu(instance)
+
+    def set_sound(self, instance):
+        if self.sound:
+            self.sound = False
+        else:
+            self.sound = True
+        self.update_menu(instance)
+
+    def close_menu(self, x=None):
+        self.menu_popup.dismiss()
+        if self.sound:
+            self.btn_sound.play()
+
+    def update_menu(self, instance):
+        # Update the colors of the chosen options.
+        
+        self.menu_color.clear_widgets()
+        self.invert_axis.clear_widgets()
+        self.sound_off.clear_widgets()
+        self.button_box.clear_widgets()
+        self.menu_layout.clear_widgets()
+        
+        # Update labels, buttons, bindings for color settings.
+        self.col_title = Label(text='Color:', font_size=40, 
+                          color=self.setdate_text_col)
+        
+        if self.color_set == 1:
+            col_1_bg_color = self.chosen_btn_col
+            col_2_bg_color = self.popup_btn_col
+            col_3_bg_color = self.popup_btn_col
+        elif self.color_set == 2:
+            col_1_bg_color = self.popup_btn_col
+            col_2_bg_color = self.chosen_btn_col
+            col_3_bg_color = self.popup_btn_col
+        elif self.color_set == 3:
+            col_1_bg_color = self.popup_btn_col
+            col_2_bg_color = self.popup_btn_col
+            col_3_bg_color = self.chosen_btn_col
+
+        self.col_select_1 = RoundedButton(text='Set 1', font_size=40,
+                                          background_color=col_1_bg_color)
+        self.col_select_2 = RoundedButton(text='Set 2', font_size=40,
+                                          background_color=col_2_bg_color)
+        self.col_select_3 = RoundedButton(text='Set 3', font_size=40,
+                                          background_color=col_3_bg_color)
+
+        self.col_select_1.bind(on_release=self.colorset_1)
+        self.col_select_2.bind(on_release=self.colorset_2)
+        self.col_select_3.bind(on_release=self.colorset_3)
+
+        self.menu_color.add_widget(self.col_title)
+        self.menu_color.add_widget(self.col_select_1)
+        self.menu_color.add_widget(self.col_select_2)
+        self.menu_color.add_widget(self.col_select_3)
+
+        # Update labels, buttons, bindings for axis inversion settings.
+        self.invert_title = Label(text='Invert\naxis:', font_size=40,
+                             color=self.setdate_text_col)
+
+        if self.swipe_x_default:
+            invert_x_bg_color = self.popup_btn_col
+        else:
+            invert_x_bg_color = self.chosen_btn_col
+
+        if self.swipe_y_default:
+            invert_y_bg_color = self.popup_btn_col
+        else:
+            invert_y_bg_color = self.chosen_btn_col
+
+        self.invert_x_btn = RoundedButton(text='X', font_size=40,
+                                          background_color=invert_x_bg_color)
+        self.invert_y_btn = RoundedButton(text='Y', font_size=40,
+                                          background_color=invert_y_bg_color)
+
+        self.invert_x_btn.bind(on_release=self.invert_x)
+        self.invert_y_btn.bind(on_release=self.invert_y)
+
+        self.invert_axis.add_widget(self.invert_title)
+        self.invert_axis.add_widget(self.invert_x_btn)
+        self.invert_axis.add_widget(self.invert_y_btn)
+
+        # Update labels, buttons, bindings for sound settings.
+        self.sound_title = Label(text='Sound:', font_size=40,
+                             color=self.setdate_text_col)
+        
+        if self.sound:
+            self.sound_btn = RoundedButton(text='On', font_size=40,
+                                          background_color=self.chosen_btn_col)
+        else:
+            self.sound_btn = RoundedButton(text='Off', font_size=40,
+                                          background_color=self.popup_btn_col)
+        
+        self.sound_btn.bind(on_release=self.set_sound)
+        
+        self.sound_off = BoxLayout(orientation='horizontal', spacing=30)
+        self.sound_off.add_widget(self.sound_title)
+        self.sound_off.add_widget(self.sound_btn)
+
+        self.about_btn = RoundedButton(text='About', font_size=10,
+                                          background_color=self.popup_btn_col)
+        
+        self.about_btn.bind(on_release=self.open_credits)
+
+        self.close_btn = RoundedButton(text='Close', font_size=40,
+                                          background_color=self.popup_btn_col)
+        
+        self.close_btn.bind(on_release=self.close_menu)
+
+        self.button_box = BoxLayout(orientation='horizontal', 
+                                    size_hint=(1, 0.1))
+        
+        self.button_box.add_widget(self.about_btn)
+
+        # Adding layouts in main layoutbox.
+        self.menu_layout.add_widget(self.menu_color)
+        self.menu_layout.add_widget(self.invert_axis)
+        self.menu_layout.add_widget(self.sound_off)
+        self.menu_layout.add_widget(self.close_btn)
+        self.menu_layout.add_widget(self.button_box)
+        self.save_setting()
+        self.input = ""
+
+    def save_setting(self):
+        color = {"color": self.color_set}
+        inv_x = {"inv_x": self.swipe_x_default}
+        inv_y = {"inv_y": self.swipe_y_default}
+        sound = {"sound": self.sound}
+        self.save_file.update(color)
+        self.save_file.update(inv_x)
+        self.save_file.update(inv_y)
+        self.save_file.update(sound)
+
+        with open('save_file.json', 'w') as file:
+                json.dump(self.save_file, file)
+
+    def open_credits(self, instance):
+        # Creates a popup to show creators credits.
+        title = Label(text='', font_size=40, size_hint=(1, 0.05),
+                             color=self.setdate_text_col)
+         
+        close_button = RoundedButton(
+            text="""made with kivy/python
+
+            by bc-reactive:\ngithub.com/bcreactive
+
+            check out my music:\nsoundcloud.com/awtomatsupabreakz
+
+            thanks for testing!""",
+
+            background_color=self.popup_btn_col,
+                                font_size=20, bold=True)
+        
+        close_button.bind(on_press=self.close_credits)
+
+        credits_box = BoxLayout(orientation='vertical', spacing=30)
+        
+        credits_box.add_widget(title)
+        credits_box.add_widget(close_button)
+
+        self.credits_popup = Popup(title=f'Credits', content=credits_box,
+                                size_hint=(0.65, 0.65), title_align='center')
+        
+        self.credits_popup.background_color = self.bg_popups
+    
+        self.credits_popup.open()
+        self.sound = True
+        self.credits_sound.play()
+    
+    def close_credits(self, instance):
+        self.credits_popup.dismiss()
+        self.sound = False
+        self.credits_sound.stop()
+
 
 class RoundedButton(Button):
     """This class creates buttons with rounded edges."""
     
     def __init__(self, text="", background_color=(0, 0.6, 0.3), **kwargs):
+
         super(RoundedButton, self).__init__(**kwargs)
         with self.canvas.before:
             Color(*background_color)
@@ -825,7 +1272,7 @@ class RoundedButton(Button):
                                                   radius=[68])
 
         self.text = text
-        self.background_color = [0, 0, 0, 0]  # Background color: transparent
+        self.background_color = [0, 0, 0, 0] # Background color: transparent
 
     def on_pos(self, instance, pos):
         self._rounded_rect.pos = pos
@@ -835,6 +1282,6 @@ class RoundedButton(Button):
 
 
 if __name__ == '__main__':
-    CalendarApp().run()
+    calendar_app = CalendarApp()
     # threading.Thread(target=calendar_app.check_notification).start()
-    # calendar_app.run()
+    calendar_app.run()
