@@ -951,7 +951,7 @@ class CalendarApp(App):
             self.btn_sound.play()
 
         # Labels, buttons, bindings for color settings.
-        self.col_title = Label(text='Color:', font_size=40, 
+        self.col_title = Label(text='Color:', font_size=48, 
                           color=self.setdate_text_col)
 
         if self.color_set == 1:
@@ -967,11 +967,11 @@ class CalendarApp(App):
             col_2_bg_color = self.popup_btn_col
             col_3_bg_color = self.chosen_btn_col
 
-        self.col_select_1 = RoundedButton(text='Set 1', font_size=40,
+        self.col_select_1 = RoundedButton(text='Set 1', font_size=46,
                                           background_color=col_1_bg_color)
-        self.col_select_2 = RoundedButton(text='Set 2', font_size=40,
+        self.col_select_2 = RoundedButton(text='Set 2', font_size=46,
                                           background_color=col_2_bg_color)
-        self.col_select_3 = RoundedButton(text='Set 3', font_size=40,
+        self.col_select_3 = RoundedButton(text='Set 3', font_size=46,
                                           background_color=col_3_bg_color)
 
         self.col_select_1.bind(on_release=self.colorset_1)
@@ -985,7 +985,7 @@ class CalendarApp(App):
         self.menu_color.add_widget(self.col_select_3)
 
         # Labels, buttons, bindings for axis inversion settings.
-        self.invert_title = Label(text='Invert\naxis:', font_size=40,
+        self.invert_title = Label(text='Invert\naxis:', font_size=48,
                              color=self.setdate_text_col)
 
         if self.swipe_x_default:
@@ -998,9 +998,9 @@ class CalendarApp(App):
         else:
             invert_y_bg_color = self.chosen_btn_col
 
-        self.invert_x_btn = RoundedButton(text='X', font_size=40,
+        self.invert_x_btn = RoundedButton(text='X', font_size=48,
                                           background_color=invert_x_bg_color)
-        self.invert_y_btn = RoundedButton(text='Y', font_size=40,
+        self.invert_y_btn = RoundedButton(text='Y', font_size=48,
                                           background_color=invert_y_bg_color)
 
         self.invert_x_btn.bind(on_release=self.invert_x)
@@ -1012,14 +1012,14 @@ class CalendarApp(App):
         self.invert_axis.add_widget(self.invert_y_btn)
 
         # Labels, buttons, bindings for sound settings.
-        self.sound_title = Label(text='Sound:', font_size=40,
+        self.sound_title = Label(text='Sound:', font_size=48,
                              color=self.setdate_text_col)
         
         if self.sound:
-            self.sound_btn = RoundedButton(text='On', font_size=40,
+            self.sound_btn = RoundedButton(text='On', font_size=48,
                                           background_color=self.chosen_btn_col)
         else:
-            self.sound_btn = RoundedButton(text='Off', font_size=40,
+            self.sound_btn = RoundedButton(text='Off', font_size=48,
                                           background_color=self.popup_btn_col)
         
         self.sound_btn.bind(on_release=self.set_sound)
@@ -1028,17 +1028,18 @@ class CalendarApp(App):
         self.sound_off.add_widget(self.sound_title)
         self.sound_off.add_widget(self.sound_btn)
 
-        self.about_btn = RoundedButton(text='About', font_size=10,
+        self.about_btn = RoundedButton(text='About', font_size=12,
                                           background_color=self.popup_btn_col)
         
         self.about_btn.bind(on_release=self.open_credits)
 
-        self.close_btn = RoundedButton(text='Close', font_size=40,
+        self.close_btn = RoundedButton(text='Close', font_size=48,
                                           background_color=self.popup_btn_col)
         
         self.close_btn.bind(on_release=self.close_menu)
 
-        self.button_box = BoxLayout(orientation='horizontal', size_hint=(1, 0.1))
+        self.button_box = BoxLayout(orientation='horizontal',
+                                    size_hint=(1, 0.3))
         self.button_box.add_widget(self.about_btn)
        
         
@@ -1109,7 +1110,7 @@ class CalendarApp(App):
         self.menu_layout.clear_widgets()
         
         # Update labels, buttons, bindings for color settings.
-        self.col_title = Label(text='Color:', font_size=40, 
+        self.col_title = Label(text='Color:', font_size=48, 
                           color=self.setdate_text_col)
         
         if self.color_set == 1:
@@ -1125,11 +1126,11 @@ class CalendarApp(App):
             col_2_bg_color = self.popup_btn_col
             col_3_bg_color = self.chosen_btn_col
 
-        self.col_select_1 = RoundedButton(text='Set 1', font_size=40,
+        self.col_select_1 = RoundedButton(text='Set 1', font_size=46,
                                           background_color=col_1_bg_color)
-        self.col_select_2 = RoundedButton(text='Set 2', font_size=40,
+        self.col_select_2 = RoundedButton(text='Set 2', font_size=46,
                                           background_color=col_2_bg_color)
-        self.col_select_3 = RoundedButton(text='Set 3', font_size=40,
+        self.col_select_3 = RoundedButton(text='Set 3', font_size=46,
                                           background_color=col_3_bg_color)
 
         self.col_select_1.bind(on_release=self.colorset_1)
@@ -1142,7 +1143,7 @@ class CalendarApp(App):
         self.menu_color.add_widget(self.col_select_3)
 
         # Update labels, buttons, bindings for axis inversion settings.
-        self.invert_title = Label(text='Invert\naxis:', font_size=40,
+        self.invert_title = Label(text='Invert\naxis:', font_size=48,
                              color=self.setdate_text_col)
 
         if self.swipe_x_default:
@@ -1155,9 +1156,9 @@ class CalendarApp(App):
         else:
             invert_y_bg_color = self.chosen_btn_col
 
-        self.invert_x_btn = RoundedButton(text='X', font_size=40,
+        self.invert_x_btn = RoundedButton(text='X', font_size=48,
                                           background_color=invert_x_bg_color)
-        self.invert_y_btn = RoundedButton(text='Y', font_size=40,
+        self.invert_y_btn = RoundedButton(text='Y', font_size=48,
                                           background_color=invert_y_bg_color)
 
         self.invert_x_btn.bind(on_release=self.invert_x)
@@ -1168,14 +1169,14 @@ class CalendarApp(App):
         self.invert_axis.add_widget(self.invert_y_btn)
 
         # Update labels, buttons, bindings for sound settings.
-        self.sound_title = Label(text='Sound:', font_size=40,
+        self.sound_title = Label(text='Sound:', font_size=48,
                              color=self.setdate_text_col)
         
         if self.sound:
-            self.sound_btn = RoundedButton(text='On', font_size=40,
+            self.sound_btn = RoundedButton(text='On', font_size=48,
                                           background_color=self.chosen_btn_col)
         else:
-            self.sound_btn = RoundedButton(text='Off', font_size=40,
+            self.sound_btn = RoundedButton(text='Off', font_size=48,
                                           background_color=self.popup_btn_col)
         
         self.sound_btn.bind(on_release=self.set_sound)
@@ -1184,18 +1185,18 @@ class CalendarApp(App):
         self.sound_off.add_widget(self.sound_title)
         self.sound_off.add_widget(self.sound_btn)
 
-        self.about_btn = RoundedButton(text='About', font_size=10,
+        self.about_btn = RoundedButton(text='About', font_size=12,
                                           background_color=self.popup_btn_col)
         
         self.about_btn.bind(on_release=self.open_credits)
 
-        self.close_btn = RoundedButton(text='Close', font_size=40,
+        self.close_btn = RoundedButton(text='Close', font_size=48,
                                           background_color=self.popup_btn_col)
         
         self.close_btn.bind(on_release=self.close_menu)
 
         self.button_box = BoxLayout(orientation='horizontal', 
-                                    size_hint=(1, 0.1))
+                                    size_hint=(1, 0.3))
         
         self.button_box.add_widget(self.about_btn)
 
