@@ -659,7 +659,6 @@ class CalendarApp(App):
         self.chose_m = datetime.now().month
         self.chose_y = datetime.now().year
         month_name = self.get_month_name(self.chose_m)
-        # self.input = ""
 
         # Setting up the buttons and labels.
         self.paragraph = Label(text='Select:', font_size=64,
@@ -717,57 +716,41 @@ class CalendarApp(App):
 
         # Setting up the Layoutboxes for the set-date view.
         self.label_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                   spacing=80)
+                                   spacing=30)
         labels = [self.d_label, self.m_label, self.y_label]
         for i in labels:
             self.label_row.add_widget(i)
         
         self.fwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                 spacing=80)
+                                 spacing=30)
         fwd_buttons = [self.d_fwd, self.m_fwd, self.y_fwd]
         for i in fwd_buttons:
             self.fwd_row.add_widget(i)
 
         self.date_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                  spacing=80)
+                                  spacing=30)
         date_values = [self.dy, self.mnt, self.yr]
         for i in date_values:
             self.date_row.add_widget(i)
 
         self.rwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                 spacing=80)
+                                 spacing=30)
         rwd_buttons = [self.d_rwd, self.m_rwd, self.y_rwd]
         for i in rwd_buttons:
             self.rwd_row.add_widget(i)
         
         self.button_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                    spacing=80)
+                                    spacing=30)
         buttons = [self.cancel, self.ok]
         for i in buttons:
             self.button_row.add_widget(i)
-        
-        self.placeholder_1 = BoxLayout(orientation='horizontal',
-                                       size_hint=(1,1))
-        self.placeholder_1.add_widget(self.spaceholder_1)
-
-        self.placeholder_2 = BoxLayout(orientation='horizontal',
-                                       size_hint=(1,1))
-        self.placeholder_2.add_widget(self.spaceholder_2)
-
-        self.placeholder_3 = BoxLayout(orientation='horizontal',
-                                       size_hint=(1,1))
-        self.placeholder_3.add_widget(self.spaceholder_3)
 
         # Create the main set-date layout by stacking the Layoutboxes.
-        self.setdate_layout = BoxLayout(orientation='vertical')
-        self.setdate_layout.add_widget(self.title_row)
-        self.setdate_layout.add_widget(self.placeholder_1)
+        self.setdate_layout = BoxLayout(orientation='vertical', spacing=20)
         self.setdate_layout.add_widget(self.label_row)
-        self.setdate_layout.add_widget(self.placeholder_2)
         self.setdate_layout.add_widget(self.fwd_row)
         self.setdate_layout.add_widget(self.date_row)
         self.setdate_layout.add_widget(self.rwd_row)
-        self.setdate_layout.add_widget(self.placeholder_3)
         self.setdate_layout.add_widget(self.button_row)
 
         self.setdate_popup = Popup(title=f'Jump to date',
@@ -855,9 +838,6 @@ class CalendarApp(App):
         self.date_row.clear_widgets()
         self.rwd_row.clear_widgets()       
         self.button_row.clear_widgets()       
-        self.placeholder_1.clear_widgets()
-        self.placeholder_2.clear_widgets()
-        self.placeholder_3.clear_widgets()
         self.setdate_layout.clear_widgets()
 
         # Check, if day value is possible and correct if not so.
@@ -875,60 +855,44 @@ class CalendarApp(App):
                           color=self.setdate_text_col)
 
         self.label_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                   spacing=80)
+                                   spacing=30)
         
         labels = [self.d_label, self.m_label, self.y_label]
         for i in labels:
             self.label_row.add_widget(i)
         
         self.fwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                 spacing=80)
+                                 spacing=30)
         
         fwd_buttons = [self.d_fwd, self.m_fwd, self.y_fwd]
         for i in fwd_buttons:
             self.fwd_row.add_widget(i)
 
         self.date_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                  spacing=80)
+                                  spacing=30)
         
         date_values = [self.dy, self.mnt, self.yr]
         for i in date_values:
             self.date_row.add_widget(i)
 
         self.rwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                 spacing=80)
+                                 spacing=30)
         
         rwd_buttons = [self.d_rwd, self.m_rwd, self.y_rwd]
         for i in rwd_buttons:
             self.rwd_row.add_widget(i)
         
         self.button_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                    spacing=80)
+                                    spacing=30)
         
         buttons = [self.cancel, self.ok]
         for i in buttons:
             self.button_row.add_widget(i)
-        
-        self.placeholder_1 = BoxLayout(orientation='horizontal',
-                                       size_hint=(1,1))
-        self.placeholder_1.add_widget(self.spaceholder_1)
 
-        self.placeholder_2 = BoxLayout(orientation='horizontal',
-                                       size_hint=(1,1))
-        self.placeholder_2.add_widget(self.spaceholder_2)
-
-        self.placeholder_3 = BoxLayout(orientation='horizontal',
-                                       size_hint=(1,1))
-        self.placeholder_3.add_widget(self.spaceholder_3)
-        
-        self.setdate_layout.add_widget(self.title_row)
-        self.setdate_layout.add_widget(self.placeholder_1)
         self.setdate_layout.add_widget(self.label_row)
-        self.setdate_layout.add_widget(self.placeholder_2)
         self.setdate_layout.add_widget(self.fwd_row)
         self.setdate_layout.add_widget(self.date_row)
         self.setdate_layout.add_widget(self.rwd_row)
-        self.setdate_layout.add_widget(self.placeholder_3)
         self.setdate_layout.add_widget(self.button_row)
 
         self.nr = self.chose_d
@@ -1013,18 +977,21 @@ class CalendarApp(App):
         
         self.sound_btn.bind(on_release=self.set_sound)
 
-        self.about_btn = RoundedButton(text='About', font_size=12, size_hint=(1, 0.1),
-                                          background_color=self.popup_btn_col)
+        self.about_btn = RoundedButton(text='About', font_size=12,
+                                       size_hint=(1, 0.05),
+                                       background_color=self.popup_btn_col)
         
         self.about_btn.bind(on_release=self.open_credits)
 
-        self.close_btn = RoundedButton(text='Close', font_size=48, size_hint=(1, 0.3),
-                                          background_color=self.popup_btn_col)
+        self.close_btn = RoundedButton(text='Close', font_size=48,
+                                       size_hint=(1, 0.3),
+                                       background_color=self.popup_btn_col)
         
         self.close_btn.bind(on_release=self.close_menu)
 
         # Boxes in boxes with titles and buttons.
-        self.title_box = BoxLayout(orientation='vertical', spacing=30, size_hint=(0.4, 1))
+        self.title_box = BoxLayout(orientation='vertical', spacing=30,
+                                   size_hint=(0.4, 1))
         self.title_box.add_widget(self.col_title)
         self.title_box.add_widget(self.invert_title)
         self.title_box.add_widget(self.sound_title)
@@ -1265,7 +1232,7 @@ class CalendarApp(App):
         credits_box.add_widget(close_button)
 
         self.credits_popup = Popup(title=f'Credits', content=credits_box,
-                                size_hint=(0.65, 0.65), title_align='center')
+                                size_hint=(0.5, 0.6), title_align='center')
         
         self.credits_popup.background_color = self.bg_popups
     
