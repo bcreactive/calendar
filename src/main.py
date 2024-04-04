@@ -718,25 +718,25 @@ class CalendarApp(App):
         # Setting up the Layoutboxes for the set-date view.
         self.label_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
                                    spacing=80)
-        labels = [self.y_label, self.m_label, self.d_label]
+        labels = [self.d_label, self.m_label, self.y_label]
         for i in labels:
             self.label_row.add_widget(i)
         
         self.fwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
                                  spacing=80)
-        fwd_buttons = [self.y_fwd, self.m_fwd, self.d_fwd]
+        fwd_buttons = [self.d_fwd, self.m_fwd, self.y_fwd]
         for i in fwd_buttons:
             self.fwd_row.add_widget(i)
 
         self.date_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
                                   spacing=80)
-        date_values = [self.yr, self.mnt, self.dy]
+        date_values = [self.dy, self.mnt, self.yr]
         for i in date_values:
             self.date_row.add_widget(i)
 
         self.rwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
                                  spacing=80)
-        rwd_buttons = [self.y_rwd, self.m_rwd, self.d_rwd]
+        rwd_buttons = [self.d_rwd, self.m_rwd, self.y_rwd]
         for i in rwd_buttons:
             self.rwd_row.add_widget(i)
         
@@ -772,7 +772,7 @@ class CalendarApp(App):
 
         self.setdate_popup = Popup(title=f'Jump to date',
                                    content=self.setdate_layout,
-                                   size_hint=(0.7, 0.85), title_align='center')
+                                   size_hint=(0.5, 0.6), title_align='center')
 
         self.setdate_popup.background_color = self.bg_popups
         
@@ -877,28 +877,28 @@ class CalendarApp(App):
         self.label_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
                                    spacing=80)
         
-        labels = [self.y_label, self.m_label, self.d_label]
+        labels = [self.d_label, self.m_label, self.y_label]
         for i in labels:
             self.label_row.add_widget(i)
         
         self.fwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
                                  spacing=80)
         
-        fwd_buttons = [self.y_fwd, self.m_fwd, self.d_fwd]
+        fwd_buttons = [self.d_fwd, self.m_fwd, self.y_fwd]
         for i in fwd_buttons:
             self.fwd_row.add_widget(i)
 
         self.date_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
                                   spacing=80)
         
-        date_values = [self.yr, self.mnt, self.dy]
+        date_values = [self.dy, self.mnt, self.yr]
         for i in date_values:
             self.date_row.add_widget(i)
 
         self.rwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
                                  spacing=80)
         
-        rwd_buttons = [self.y_rwd, self.m_rwd, self.d_rwd]
+        rwd_buttons = [self.d_rwd, self.m_rwd, self.y_rwd]
         for i in rwd_buttons:
             self.rwd_row.add_widget(i)
         
@@ -967,25 +967,19 @@ class CalendarApp(App):
             col_2_bg_color = self.popup_btn_col
             col_3_bg_color = self.chosen_btn_col
 
-        self.col_select_1 = RoundedButton(text='Set 1', font_size=46,
+        self.col_select_1 = RoundedButton(text='Set 1', font_size=42,
                                           background_color=col_1_bg_color)
-        self.col_select_2 = RoundedButton(text='Set 2', font_size=46,
+        self.col_select_2 = RoundedButton(text='Set 2', font_size=42,
                                           background_color=col_2_bg_color)
-        self.col_select_3 = RoundedButton(text='Set 3', font_size=46,
+        self.col_select_3 = RoundedButton(text='Set 3', font_size=42,
                                           background_color=col_3_bg_color)
 
         self.col_select_1.bind(on_release=self.colorset_1)
         self.col_select_2.bind(on_release=self.colorset_2)
         self.col_select_3.bind(on_release=self.colorset_3)
 
-        self.menu_color = BoxLayout(orientation='horizontal', spacing=30)
-        self.menu_color.add_widget(self.col_title)
-        self.menu_color.add_widget(self.col_select_1)
-        self.menu_color.add_widget(self.col_select_2)
-        self.menu_color.add_widget(self.col_select_3)
-
         # Labels, buttons, bindings for axis inversion settings.
-        self.invert_title = Label(text='Invert\naxis:', font_size=48,
+        self.invert_title = Label(text='Invert:', font_size=48,
                              color=self.setdate_text_col)
 
         if self.swipe_x_default:
@@ -1005,11 +999,6 @@ class CalendarApp(App):
 
         self.invert_x_btn.bind(on_release=self.invert_x)
         self.invert_y_btn.bind(on_release=self.invert_y)
-        
-        self.invert_axis = BoxLayout(orientation='horizontal', spacing=30)
-        self.invert_axis.add_widget(self.invert_title)
-        self.invert_axis.add_widget(self.invert_x_btn)
-        self.invert_axis.add_widget(self.invert_y_btn)
 
         # Labels, buttons, bindings for sound settings.
         self.sound_title = Label(text='Sound:', font_size=48,
@@ -1023,36 +1012,52 @@ class CalendarApp(App):
                                           background_color=self.popup_btn_col)
         
         self.sound_btn.bind(on_release=self.set_sound)
-        
-        self.sound_off = BoxLayout(orientation='horizontal', spacing=30)
-        self.sound_off.add_widget(self.sound_title)
-        self.sound_off.add_widget(self.sound_btn)
 
-        self.about_btn = RoundedButton(text='About', font_size=12,
+        self.about_btn = RoundedButton(text='About', font_size=12, size_hint=(1, 0.1),
                                           background_color=self.popup_btn_col)
         
         self.about_btn.bind(on_release=self.open_credits)
 
-        self.close_btn = RoundedButton(text='Close', font_size=48,
+        self.close_btn = RoundedButton(text='Close', font_size=48, size_hint=(1, 0.3),
                                           background_color=self.popup_btn_col)
         
         self.close_btn.bind(on_release=self.close_menu)
 
-        self.button_box = BoxLayout(orientation='horizontal',
-                                    size_hint=(1, 0.3))
-        self.button_box.add_widget(self.about_btn)
-       
-        
+        # Boxes in boxes with titles and buttons.
+        self.title_box = BoxLayout(orientation='vertical', spacing=30, size_hint=(0.4, 1))
+        self.title_box.add_widget(self.col_title)
+        self.title_box.add_widget(self.invert_title)
+        self.title_box.add_widget(self.sound_title)
+
+        self.clr_btns = BoxLayout(orientation='horizontal', spacing=20)
+        self.clr_btns.add_widget(self.col_select_1)
+        self.clr_btns.add_widget(self.col_select_2)
+        self.clr_btns.add_widget(self.col_select_3)
+
+        self.inv_btns = BoxLayout(orientation='horizontal', spacing=20) 
+        self.inv_btns.add_widget(self.invert_x_btn)
+        self.inv_btns.add_widget(self.invert_y_btn)
+
+        self.snd_btn = BoxLayout(orientation='horizontal', spacing=0)
+        self.snd_btn.add_widget(self.sound_btn)
+
+        self.btn_box = BoxLayout(orientation='vertical', spacing=30)
+        self.btn_box.add_widget(self.clr_btns)
+        self.btn_box.add_widget(self.inv_btns)
+        self.btn_box.add_widget(self.snd_btn)
+
+        self.btns_title_box = BoxLayout(orientation='horizontal', spacing=20)
+        self.btns_title_box.add_widget(self.title_box)
+        self.btns_title_box.add_widget(self.btn_box)
+
         # Main layoutbox for the settings.
         self.menu_layout = BoxLayout(orientation='vertical', spacing=20)
-        self.menu_layout.add_widget(self.menu_color)
-        self.menu_layout.add_widget(self.invert_axis)
-        self.menu_layout.add_widget(self.sound_off)
+        self.menu_layout.add_widget(self.btns_title_box)
         self.menu_layout.add_widget(self.close_btn)
-        self.menu_layout.add_widget(self.button_box)
+        self.menu_layout.add_widget(self.about_btn)
 
         self.menu_popup = Popup(title='Settings', content=self.menu_layout, 
-                                size_hint=(0.7, 0.7), title_align="center")
+                                size_hint=(0.5, 0.6), title_align="center")
         
         self.menu_popup.background_color = self.bg_popups
 
@@ -1102,11 +1107,14 @@ class CalendarApp(App):
 
     def update_menu(self, instance):
         # Update the colors of the chosen options.
-        
-        self.menu_color.clear_widgets()
-        self.invert_axis.clear_widgets()
-        self.sound_off.clear_widgets()
-        self.button_box.clear_widgets()
+
+        # Clear all layout-boxes to update with actualized elements.
+        self.btns_title_box.clear_widgets()
+        self.btn_box.clear_widgets()
+        self.title_box.clear_widgets()
+        self.clr_btns.clear_widgets()
+        self.inv_btns.clear_widgets()
+        self.snd_btn.clear_widgets()
         self.menu_layout.clear_widgets()
         
         # Update labels, buttons, bindings for color settings.
@@ -1126,24 +1134,19 @@ class CalendarApp(App):
             col_2_bg_color = self.popup_btn_col
             col_3_bg_color = self.chosen_btn_col
 
-        self.col_select_1 = RoundedButton(text='Set 1', font_size=46,
+        self.col_select_1 = RoundedButton(text='Set 1', font_size=42,
                                           background_color=col_1_bg_color)
-        self.col_select_2 = RoundedButton(text='Set 2', font_size=46,
+        self.col_select_2 = RoundedButton(text='Set 2', font_size=42,
                                           background_color=col_2_bg_color)
-        self.col_select_3 = RoundedButton(text='Set 3', font_size=46,
+        self.col_select_3 = RoundedButton(text='Set 3', font_size=42,
                                           background_color=col_3_bg_color)
 
         self.col_select_1.bind(on_release=self.colorset_1)
         self.col_select_2.bind(on_release=self.colorset_2)
         self.col_select_3.bind(on_release=self.colorset_3)
 
-        self.menu_color.add_widget(self.col_title)
-        self.menu_color.add_widget(self.col_select_1)
-        self.menu_color.add_widget(self.col_select_2)
-        self.menu_color.add_widget(self.col_select_3)
-
         # Update labels, buttons, bindings for axis inversion settings.
-        self.invert_title = Label(text='Invert\naxis:', font_size=48,
+        self.invert_title = Label(text='Invert:', font_size=48,
                              color=self.setdate_text_col)
 
         if self.swipe_x_default:
@@ -1164,10 +1167,6 @@ class CalendarApp(App):
         self.invert_x_btn.bind(on_release=self.invert_x)
         self.invert_y_btn.bind(on_release=self.invert_y)
 
-        self.invert_axis.add_widget(self.invert_title)
-        self.invert_axis.add_widget(self.invert_x_btn)
-        self.invert_axis.add_widget(self.invert_y_btn)
-
         # Update labels, buttons, bindings for sound settings.
         self.sound_title = Label(text='Sound:', font_size=48,
                              color=self.setdate_text_col)
@@ -1180,32 +1179,51 @@ class CalendarApp(App):
                                           background_color=self.popup_btn_col)
         
         self.sound_btn.bind(on_release=self.set_sound)
-        
-        self.sound_off = BoxLayout(orientation='horizontal', spacing=30)
-        self.sound_off.add_widget(self.sound_title)
-        self.sound_off.add_widget(self.sound_btn)
 
-        self.about_btn = RoundedButton(text='About', font_size=12,
+        self.about_btn = RoundedButton(text='About', font_size=12, size_hint=(1, 0.1),
                                           background_color=self.popup_btn_col)
         
         self.about_btn.bind(on_release=self.open_credits)
 
-        self.close_btn = RoundedButton(text='Close', font_size=48,
+        self.close_btn = RoundedButton(text='Close', font_size=48, size_hint=(1, 0.3),
                                           background_color=self.popup_btn_col)
         
         self.close_btn.bind(on_release=self.close_menu)
 
         self.button_box = BoxLayout(orientation='horizontal', 
                                     size_hint=(1, 0.3))
-        
-        self.button_box.add_widget(self.about_btn)
 
-        # Adding layouts in main layoutbox.
-        self.menu_layout.add_widget(self.menu_color)
-        self.menu_layout.add_widget(self.invert_axis)
-        self.menu_layout.add_widget(self.sound_off)
+        # Boxes in boxes with titles and buttons.
+        self.title_box = BoxLayout(orientation='vertical', spacing=30, size_hint=(0.4, 1))
+        self.title_box.add_widget(self.col_title)
+        self.title_box.add_widget(self.invert_title)
+        self.title_box.add_widget(self.sound_title)
+
+        self.clr_btns = BoxLayout(orientation='horizontal', spacing=20)
+        self.clr_btns.add_widget(self.col_select_1)
+        self.clr_btns.add_widget(self.col_select_2)
+        self.clr_btns.add_widget(self.col_select_3)
+
+        self.inv_btns = BoxLayout(orientation='horizontal', spacing=20) 
+        self.inv_btns.add_widget(self.invert_x_btn)
+        self.inv_btns.add_widget(self.invert_y_btn)
+
+        self.snd_btn = BoxLayout(orientation='horizontal', spacing=0)
+        self.snd_btn.add_widget(self.sound_btn)
+
+        self.btn_box = BoxLayout(orientation='vertical', spacing=30)
+        self.btn_box.add_widget(self.clr_btns)
+        self.btn_box.add_widget(self.inv_btns)
+        self.btn_box.add_widget(self.snd_btn)
+
+        self.btns_title_box = BoxLayout(orientation='horizontal', spacing=20)
+        self.btns_title_box.add_widget(self.title_box)
+        self.btns_title_box.add_widget(self.btn_box)
+
+        # Main layoutbox for the settings.
+        self.menu_layout.add_widget(self.btns_title_box)
         self.menu_layout.add_widget(self.close_btn)
-        self.menu_layout.add_widget(self.button_box)
+        self.menu_layout.add_widget(self.about_btn)
         self.save_setting()
         self.input = ""
 
