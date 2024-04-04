@@ -6,14 +6,14 @@ i used the google colab notebook to compile the apk from my main.py and save_fil
 
 when !buildozer init is executed, you need to edit the generated buildozer.spec file:
 
-include json files and fix screen orientation:
+include json and mp3 files and fix screen orientation:
 
 
 [app]
 
-source.include_exts = py,png,jpg,kv,atlas,json
+source.include_exts = py,png,jpg,kv,atlas,json,mp3
 
-orientation = landscape
+orientation = portrait, landscape
 
 
 

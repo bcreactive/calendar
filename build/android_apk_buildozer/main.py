@@ -29,7 +29,7 @@ class CalendarApp(App):
     month. To jump to a specific date swipe up or click the '^'-button to set a 
     date using the up and down buttons. If the displayed month is not the 
     current one, the '^'-button becomes a home-button to switch to the actual
-    month. Swipe up to display the settings-popup where you can chose a
+    month. Swipe down to display the settings-popup where you can chose a
     colorset, change swipe-directions and disable/enable buttonsounds."""
 
     def __init__(self, **kwargs):
@@ -75,6 +75,7 @@ class CalendarApp(App):
         self.ok_sound = SoundLoader.load('ok.mp3')
         self.btn_sound = SoundLoader.load('btn.mp3')
         self.credits_sound = SoundLoader.load('credits.mp3')
+        self.credits_playing = False
 
     def on_touch_down(self, instance, touch):
         self.start_pos = touch.pos
@@ -264,7 +265,7 @@ class CalendarApp(App):
             self.main_text_col = get_color_from_hex('#bda499')
 
             # Colors for popups.
-            self.bg_popups = get_color_from_hex('#966888')
+            self.bg_popups = get_color_from_hex('#c68bb4')#966888
             self.popup_btn_col = get_color_from_hex('#88a3bc')
             self.chosen_btn_col = get_color_from_hex('#d4b8b8')
             self.setdate_text_col = get_color_from_hex('#bda499')
@@ -326,6 +327,7 @@ class CalendarApp(App):
 
         if self.sound:
             self.btn_sound.play()
+        self.credits_sound.stop()
 
         month = self.get_month_name(self.current_month)
         if isinstance(instance, int):
@@ -526,6 +528,8 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.top_row)
         self.main_layout.add_widget(self.mid_row)
         self.main_layout.add_widget(self.bottom_row)
+        
+        self.credits_sound.stop()
 
     def show_today(self, x=None):
         # Set the current year and month and update the view.
@@ -553,6 +557,7 @@ class CalendarApp(App):
 
     def close_popup(self, x=None):
         self.popup.dismiss()
+        self.input = ""
         if self.sound:
             self.btn_sound.play()
 
@@ -659,7 +664,6 @@ class CalendarApp(App):
         self.chose_m = datetime.now().month
         self.chose_y = datetime.now().year
         month_name = self.get_month_name(self.chose_m)
-        # self.input = ""
 
         # Setting up the buttons and labels.
         self.paragraph = Label(text='Select:', font_size=64,
@@ -717,62 +721,46 @@ class CalendarApp(App):
 
         # Setting up the Layoutboxes for the set-date view.
         self.label_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                   spacing=80)
-        labels = [self.y_label, self.m_label, self.d_label]
+                                   spacing=30)
+        labels = [self.d_label, self.m_label, self.y_label]
         for i in labels:
             self.label_row.add_widget(i)
         
         self.fwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                 spacing=80)
-        fwd_buttons = [self.y_fwd, self.m_fwd, self.d_fwd]
+                                 spacing=30)
+        fwd_buttons = [self.d_fwd, self.m_fwd, self.y_fwd]
         for i in fwd_buttons:
             self.fwd_row.add_widget(i)
 
         self.date_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                  spacing=80)
-        date_values = [self.yr, self.mnt, self.dy]
+                                  spacing=30)
+        date_values = [self.dy, self.mnt, self.yr]
         for i in date_values:
             self.date_row.add_widget(i)
 
         self.rwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                 spacing=80)
-        rwd_buttons = [self.y_rwd, self.m_rwd, self.d_rwd]
+                                 spacing=30)
+        rwd_buttons = [self.d_rwd, self.m_rwd, self.y_rwd]
         for i in rwd_buttons:
             self.rwd_row.add_widget(i)
         
         self.button_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                    spacing=80)
+                                    spacing=30)
         buttons = [self.cancel, self.ok]
         for i in buttons:
             self.button_row.add_widget(i)
-        
-        self.placeholder_1 = BoxLayout(orientation='horizontal',
-                                       size_hint=(1,1))
-        self.placeholder_1.add_widget(self.spaceholder_1)
-
-        self.placeholder_2 = BoxLayout(orientation='horizontal',
-                                       size_hint=(1,1))
-        self.placeholder_2.add_widget(self.spaceholder_2)
-
-        self.placeholder_3 = BoxLayout(orientation='horizontal',
-                                       size_hint=(1,1))
-        self.placeholder_3.add_widget(self.spaceholder_3)
 
         # Create the main set-date layout by stacking the Layoutboxes.
-        self.setdate_layout = BoxLayout(orientation='vertical')
-        self.setdate_layout.add_widget(self.title_row)
-        self.setdate_layout.add_widget(self.placeholder_1)
+        self.setdate_layout = BoxLayout(orientation='vertical', spacing=20)
         self.setdate_layout.add_widget(self.label_row)
-        self.setdate_layout.add_widget(self.placeholder_2)
         self.setdate_layout.add_widget(self.fwd_row)
         self.setdate_layout.add_widget(self.date_row)
         self.setdate_layout.add_widget(self.rwd_row)
-        self.setdate_layout.add_widget(self.placeholder_3)
         self.setdate_layout.add_widget(self.button_row)
 
         self.setdate_popup = Popup(title=f'Jump to date',
                                    content=self.setdate_layout,
-                                   size_hint=(0.7, 0.85), title_align='center')
+                                   size_hint=(0.7, 0.7), title_align='center')
 
         self.setdate_popup.background_color = self.bg_popups
         
@@ -855,9 +843,6 @@ class CalendarApp(App):
         self.date_row.clear_widgets()
         self.rwd_row.clear_widgets()       
         self.button_row.clear_widgets()       
-        self.placeholder_1.clear_widgets()
-        self.placeholder_2.clear_widgets()
-        self.placeholder_3.clear_widgets()
         self.setdate_layout.clear_widgets()
 
         # Check, if day value is possible and correct if not so.
@@ -875,60 +860,44 @@ class CalendarApp(App):
                           color=self.setdate_text_col)
 
         self.label_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                   spacing=80)
+                                   spacing=30)
         
-        labels = [self.y_label, self.m_label, self.d_label]
+        labels = [self.d_label, self.m_label, self.y_label]
         for i in labels:
             self.label_row.add_widget(i)
         
         self.fwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                 spacing=80)
+                                 spacing=30)
         
-        fwd_buttons = [self.y_fwd, self.m_fwd, self.d_fwd]
+        fwd_buttons = [self.d_fwd, self.m_fwd, self.y_fwd]
         for i in fwd_buttons:
             self.fwd_row.add_widget(i)
 
         self.date_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                  spacing=80)
+                                  spacing=30)
         
-        date_values = [self.yr, self.mnt, self.dy]
+        date_values = [self.dy, self.mnt, self.yr]
         for i in date_values:
             self.date_row.add_widget(i)
 
         self.rwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                 spacing=80)
+                                 spacing=30)
         
-        rwd_buttons = [self.y_rwd, self.m_rwd, self.d_rwd]
+        rwd_buttons = [self.d_rwd, self.m_rwd, self.y_rwd]
         for i in rwd_buttons:
             self.rwd_row.add_widget(i)
         
         self.button_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                    spacing=80)
+                                    spacing=30)
         
         buttons = [self.cancel, self.ok]
         for i in buttons:
             self.button_row.add_widget(i)
-        
-        self.placeholder_1 = BoxLayout(orientation='horizontal',
-                                       size_hint=(1,1))
-        self.placeholder_1.add_widget(self.spaceholder_1)
 
-        self.placeholder_2 = BoxLayout(orientation='horizontal',
-                                       size_hint=(1,1))
-        self.placeholder_2.add_widget(self.spaceholder_2)
-
-        self.placeholder_3 = BoxLayout(orientation='horizontal',
-                                       size_hint=(1,1))
-        self.placeholder_3.add_widget(self.spaceholder_3)
-        
-        self.setdate_layout.add_widget(self.title_row)
-        self.setdate_layout.add_widget(self.placeholder_1)
         self.setdate_layout.add_widget(self.label_row)
-        self.setdate_layout.add_widget(self.placeholder_2)
         self.setdate_layout.add_widget(self.fwd_row)
         self.setdate_layout.add_widget(self.date_row)
         self.setdate_layout.add_widget(self.rwd_row)
-        self.setdate_layout.add_widget(self.placeholder_3)
         self.setdate_layout.add_widget(self.button_row)
 
         self.nr = self.chose_d
@@ -949,9 +918,10 @@ class CalendarApp(App):
 
         if self.sound:
             self.btn_sound.play()
+        self.credits_sound.stop()
 
         # Labels, buttons, bindings for color settings.
-        self.col_title = Label(text='Color:', font_size=40, 
+        self.col_title = Label(text='Color:', font_size=48, 
                           color=self.setdate_text_col)
 
         if self.color_set == 1:
@@ -967,25 +937,19 @@ class CalendarApp(App):
             col_2_bg_color = self.popup_btn_col
             col_3_bg_color = self.chosen_btn_col
 
-        self.col_select_1 = RoundedButton(text='Set 1', font_size=40,
+        self.col_select_1 = RoundedButton(text='Set 1', font_size=42,
                                           background_color=col_1_bg_color)
-        self.col_select_2 = RoundedButton(text='Set 2', font_size=40,
+        self.col_select_2 = RoundedButton(text='Set 2', font_size=42,
                                           background_color=col_2_bg_color)
-        self.col_select_3 = RoundedButton(text='Set 3', font_size=40,
+        self.col_select_3 = RoundedButton(text='Set 3', font_size=42,
                                           background_color=col_3_bg_color)
 
         self.col_select_1.bind(on_release=self.colorset_1)
         self.col_select_2.bind(on_release=self.colorset_2)
         self.col_select_3.bind(on_release=self.colorset_3)
 
-        self.menu_color = BoxLayout(orientation='horizontal', spacing=30)
-        self.menu_color.add_widget(self.col_title)
-        self.menu_color.add_widget(self.col_select_1)
-        self.menu_color.add_widget(self.col_select_2)
-        self.menu_color.add_widget(self.col_select_3)
-
         # Labels, buttons, bindings for axis inversion settings.
-        self.invert_title = Label(text='Invert\naxis:', font_size=40,
+        self.invert_title = Label(text='Invert:', font_size=48,
                              color=self.setdate_text_col)
 
         if self.swipe_x_default:
@@ -998,57 +962,72 @@ class CalendarApp(App):
         else:
             invert_y_bg_color = self.chosen_btn_col
 
-        self.invert_x_btn = RoundedButton(text='X', font_size=40,
+        self.invert_x_btn = RoundedButton(text='X', font_size=48,
                                           background_color=invert_x_bg_color)
-        self.invert_y_btn = RoundedButton(text='Y', font_size=40,
+        self.invert_y_btn = RoundedButton(text='Y', font_size=48,
                                           background_color=invert_y_bg_color)
 
         self.invert_x_btn.bind(on_release=self.invert_x)
         self.invert_y_btn.bind(on_release=self.invert_y)
-        
-        self.invert_axis = BoxLayout(orientation='horizontal', spacing=30)
-        self.invert_axis.add_widget(self.invert_title)
-        self.invert_axis.add_widget(self.invert_x_btn)
-        self.invert_axis.add_widget(self.invert_y_btn)
 
         # Labels, buttons, bindings for sound settings.
-        self.sound_title = Label(text='Sound:', font_size=40,
+        self.sound_title = Label(text='Sound:', font_size=48,
                              color=self.setdate_text_col)
         
         if self.sound:
-            self.sound_btn = RoundedButton(text='On', font_size=40,
+            self.sound_btn = RoundedButton(text='On', font_size=48,
                                           background_color=self.chosen_btn_col)
         else:
-            self.sound_btn = RoundedButton(text='Off', font_size=40,
+            self.sound_btn = RoundedButton(text='Off', font_size=48,
                                           background_color=self.popup_btn_col)
         
         self.sound_btn.bind(on_release=self.set_sound)
-        
-        self.sound_off = BoxLayout(orientation='horizontal', spacing=30)
-        self.sound_off.add_widget(self.sound_title)
-        self.sound_off.add_widget(self.sound_btn)
 
-        self.about_btn = RoundedButton(text='About', font_size=10,
-                                          background_color=self.popup_btn_col)
+        self.about_btn = RoundedButton(text='About', font_size=12,
+                                       size_hint=(1, 0.05),
+                                       background_color=self.popup_btn_col)
         
         self.about_btn.bind(on_release=self.open_credits)
 
-        self.close_btn = RoundedButton(text='Close', font_size=40,
-                                          background_color=self.popup_btn_col)
+        self.close_btn = RoundedButton(text='Close', font_size=48,
+                                       size_hint=(1, 0.3),
+                                       background_color=self.popup_btn_col)
         
         self.close_btn.bind(on_release=self.close_menu)
 
-        self.button_box = BoxLayout(orientation='horizontal', size_hint=(1, 0.1))
-        self.button_box.add_widget(self.about_btn)
-       
-        
+        # Boxes in boxes with titles and buttons.
+        self.title_box = BoxLayout(orientation='vertical', spacing=30,
+                                   size_hint=(0.4, 1))
+        self.title_box.add_widget(self.col_title)
+        self.title_box.add_widget(self.invert_title)
+        self.title_box.add_widget(self.sound_title)
+
+        self.clr_btns = BoxLayout(orientation='horizontal', spacing=20)
+        self.clr_btns.add_widget(self.col_select_1)
+        self.clr_btns.add_widget(self.col_select_2)
+        self.clr_btns.add_widget(self.col_select_3)
+
+        self.inv_btns = BoxLayout(orientation='horizontal', spacing=20) 
+        self.inv_btns.add_widget(self.invert_x_btn)
+        self.inv_btns.add_widget(self.invert_y_btn)
+
+        self.snd_btn = BoxLayout(orientation='horizontal', spacing=0)
+        self.snd_btn.add_widget(self.sound_btn)
+
+        self.btn_box = BoxLayout(orientation='vertical', spacing=30)
+        self.btn_box.add_widget(self.clr_btns)
+        self.btn_box.add_widget(self.inv_btns)
+        self.btn_box.add_widget(self.snd_btn)
+
+        self.btns_title_box = BoxLayout(orientation='horizontal', spacing=20)
+        self.btns_title_box.add_widget(self.title_box)
+        self.btns_title_box.add_widget(self.btn_box)
+
         # Main layoutbox for the settings.
         self.menu_layout = BoxLayout(orientation='vertical', spacing=20)
-        self.menu_layout.add_widget(self.menu_color)
-        self.menu_layout.add_widget(self.invert_axis)
-        self.menu_layout.add_widget(self.sound_off)
+        self.menu_layout.add_widget(self.btns_title_box)
         self.menu_layout.add_widget(self.close_btn)
-        self.menu_layout.add_widget(self.button_box)
+        self.menu_layout.add_widget(self.about_btn)
 
         self.menu_popup = Popup(title='Settings', content=self.menu_layout, 
                                 size_hint=(0.7, 0.7), title_align="center")
@@ -1098,18 +1077,22 @@ class CalendarApp(App):
         self.menu_popup.dismiss()
         if self.sound:
             self.btn_sound.play()
+        self.credits_sound.stop()
 
     def update_menu(self, instance):
         # Update the colors of the chosen options.
-        
-        self.menu_color.clear_widgets()
-        self.invert_axis.clear_widgets()
-        self.sound_off.clear_widgets()
-        self.button_box.clear_widgets()
+
+        # Clear all layout-boxes to update with actualized elements.
+        self.btns_title_box.clear_widgets()
+        self.btn_box.clear_widgets()
+        self.title_box.clear_widgets()
+        self.clr_btns.clear_widgets()
+        self.inv_btns.clear_widgets()
+        self.snd_btn.clear_widgets()
         self.menu_layout.clear_widgets()
         
         # Update labels, buttons, bindings for color settings.
-        self.col_title = Label(text='Color:', font_size=40, 
+        self.col_title = Label(text='Color:', font_size=48, 
                           color=self.setdate_text_col)
         
         if self.color_set == 1:
@@ -1125,24 +1108,19 @@ class CalendarApp(App):
             col_2_bg_color = self.popup_btn_col
             col_3_bg_color = self.chosen_btn_col
 
-        self.col_select_1 = RoundedButton(text='Set 1', font_size=40,
+        self.col_select_1 = RoundedButton(text='Set 1', font_size=42,
                                           background_color=col_1_bg_color)
-        self.col_select_2 = RoundedButton(text='Set 2', font_size=40,
+        self.col_select_2 = RoundedButton(text='Set 2', font_size=42,
                                           background_color=col_2_bg_color)
-        self.col_select_3 = RoundedButton(text='Set 3', font_size=40,
+        self.col_select_3 = RoundedButton(text='Set 3', font_size=42,
                                           background_color=col_3_bg_color)
 
         self.col_select_1.bind(on_release=self.colorset_1)
         self.col_select_2.bind(on_release=self.colorset_2)
         self.col_select_3.bind(on_release=self.colorset_3)
 
-        self.menu_color.add_widget(self.col_title)
-        self.menu_color.add_widget(self.col_select_1)
-        self.menu_color.add_widget(self.col_select_2)
-        self.menu_color.add_widget(self.col_select_3)
-
         # Update labels, buttons, bindings for axis inversion settings.
-        self.invert_title = Label(text='Invert\naxis:', font_size=40,
+        self.invert_title = Label(text='Invert:', font_size=48,
                              color=self.setdate_text_col)
 
         if self.swipe_x_default:
@@ -1155,58 +1133,78 @@ class CalendarApp(App):
         else:
             invert_y_bg_color = self.chosen_btn_col
 
-        self.invert_x_btn = RoundedButton(text='X', font_size=40,
+        self.invert_x_btn = RoundedButton(text='X', font_size=48,
                                           background_color=invert_x_bg_color)
-        self.invert_y_btn = RoundedButton(text='Y', font_size=40,
+        self.invert_y_btn = RoundedButton(text='Y', font_size=48,
                                           background_color=invert_y_bg_color)
 
         self.invert_x_btn.bind(on_release=self.invert_x)
         self.invert_y_btn.bind(on_release=self.invert_y)
 
-        self.invert_axis.add_widget(self.invert_title)
-        self.invert_axis.add_widget(self.invert_x_btn)
-        self.invert_axis.add_widget(self.invert_y_btn)
-
         # Update labels, buttons, bindings for sound settings.
-        self.sound_title = Label(text='Sound:', font_size=40,
+        self.sound_title = Label(text='Sound:', font_size=48,
                              color=self.setdate_text_col)
         
         if self.sound:
-            self.sound_btn = RoundedButton(text='On', font_size=40,
+            self.sound_btn = RoundedButton(text='On', font_size=48,
                                           background_color=self.chosen_btn_col)
         else:
-            self.sound_btn = RoundedButton(text='Off', font_size=40,
+            self.sound_btn = RoundedButton(text='Off', font_size=48,
                                           background_color=self.popup_btn_col)
         
         self.sound_btn.bind(on_release=self.set_sound)
-        
-        self.sound_off = BoxLayout(orientation='horizontal', spacing=30)
-        self.sound_off.add_widget(self.sound_title)
-        self.sound_off.add_widget(self.sound_btn)
 
-        self.about_btn = RoundedButton(text='About', font_size=10,
-                                          background_color=self.popup_btn_col)
+        self.about_btn = RoundedButton(text='About', font_size=12,
+                                       size_hint=(1, 0.05),
+                                       background_color=self.popup_btn_col)
         
         self.about_btn.bind(on_release=self.open_credits)
 
-        self.close_btn = RoundedButton(text='Close', font_size=40,
-                                          background_color=self.popup_btn_col)
+        self.close_btn = RoundedButton(text='Close', font_size=48,
+                                       size_hint=(1, 0.3),
+                                       background_color=self.popup_btn_col)
         
         self.close_btn.bind(on_release=self.close_menu)
 
-        self.button_box = BoxLayout(orientation='horizontal', 
-                                    size_hint=(1, 0.1))
-        
-        self.button_box.add_widget(self.about_btn)
+        self.button_box = BoxLayout(orientation='horizontal',
+                                    size_hint=(1, 0.3))
 
-        # Adding layouts in main layoutbox.
-        self.menu_layout.add_widget(self.menu_color)
-        self.menu_layout.add_widget(self.invert_axis)
-        self.menu_layout.add_widget(self.sound_off)
+        # Boxes in boxes with titles and buttons.
+        self.title_box = BoxLayout(orientation='vertical', spacing=30,
+                                   size_hint=(0.4, 1))
+        self.title_box.add_widget(self.col_title)
+        self.title_box.add_widget(self.invert_title)
+        self.title_box.add_widget(self.sound_title)
+
+        self.clr_btns = BoxLayout(orientation='horizontal', spacing=20)
+        self.clr_btns.add_widget(self.col_select_1)
+        self.clr_btns.add_widget(self.col_select_2)
+        self.clr_btns.add_widget(self.col_select_3)
+
+        self.inv_btns = BoxLayout(orientation='horizontal', spacing=20) 
+        self.inv_btns.add_widget(self.invert_x_btn)
+        self.inv_btns.add_widget(self.invert_y_btn)
+
+        self.snd_btn = BoxLayout(orientation='horizontal', spacing=0)
+        self.snd_btn.add_widget(self.sound_btn)
+
+        self.btn_box = BoxLayout(orientation='vertical', spacing=30)
+        self.btn_box.add_widget(self.clr_btns)
+        self.btn_box.add_widget(self.inv_btns)
+        self.btn_box.add_widget(self.snd_btn)
+
+        self.btns_title_box = BoxLayout(orientation='horizontal', spacing=20)
+        self.btns_title_box.add_widget(self.title_box)
+        self.btns_title_box.add_widget(self.btn_box)
+
+        # Main layoutbox for the settings.
+        self.menu_layout.add_widget(self.btns_title_box)
         self.menu_layout.add_widget(self.close_btn)
-        self.menu_layout.add_widget(self.button_box)
+        self.menu_layout.add_widget(self.about_btn)
         self.save_setting()
         self.input = ""
+        # self.music = False
+        self.credits_sound.stop()
 
     def save_setting(self):
         color = {"color": self.color_set}
@@ -1246,17 +1244,17 @@ class CalendarApp(App):
         credits_box.add_widget(close_button)
 
         self.credits_popup = Popup(title=f'Credits', content=credits_box,
-                                size_hint=(0.65, 0.65), title_align='center')
+                                size_hint=(0.7, 0.7), title_align='center')
         
         self.credits_popup.background_color = self.bg_popups
     
         self.credits_popup.open()
-        self.sound = True
-        self.credits_sound.play()
-    
+        if self.sound:
+            self.credits_sound.play()
+        
     def close_credits(self, instance):
         self.credits_popup.dismiss()
-        self.sound = False
+        self.sound = self.save_file["sound"]
         self.credits_sound.stop()
 
 

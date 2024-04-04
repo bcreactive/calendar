@@ -75,6 +75,7 @@ class CalendarApp(App):
         self.ok_sound = SoundLoader.load('ok.mp3')
         self.btn_sound = SoundLoader.load('btn.mp3')
         self.credits_sound = SoundLoader.load('credits.mp3')
+        self.credits_playing = False
 
     def on_touch_down(self, instance, touch):
         self.start_pos = touch.pos
@@ -326,6 +327,7 @@ class CalendarApp(App):
 
         if self.sound:
             self.btn_sound.play()
+        self.credits_sound.stop()
 
         month = self.get_month_name(self.current_month)
         if isinstance(instance, int):
@@ -526,6 +528,8 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.top_row)
         self.main_layout.add_widget(self.mid_row)
         self.main_layout.add_widget(self.bottom_row)
+        
+        self.credits_sound.stop()
 
     def show_today(self, x=None):
         # Set the current year and month and update the view.
@@ -756,7 +760,7 @@ class CalendarApp(App):
 
         self.setdate_popup = Popup(title=f'Jump to date',
                                    content=self.setdate_layout,
-                                   size_hint=(0.5, 0.6), title_align='center')
+                                   size_hint=(0.7, 0.7), title_align='center')
 
         self.setdate_popup.background_color = self.bg_popups
         
@@ -914,6 +918,7 @@ class CalendarApp(App):
 
         if self.sound:
             self.btn_sound.play()
+        self.credits_sound.stop()
 
         # Labels, buttons, bindings for color settings.
         self.col_title = Label(text='Color:', font_size=48, 
@@ -1025,7 +1030,7 @@ class CalendarApp(App):
         self.menu_layout.add_widget(self.about_btn)
 
         self.menu_popup = Popup(title='Settings', content=self.menu_layout, 
-                                size_hint=(0.5, 0.6), title_align="center")
+                                size_hint=(0.7, 0.7), title_align="center")
         
         self.menu_popup.background_color = self.bg_popups
 
@@ -1072,6 +1077,7 @@ class CalendarApp(App):
         self.menu_popup.dismiss()
         if self.sound:
             self.btn_sound.play()
+        self.credits_sound.stop()
 
     def update_menu(self, instance):
         # Update the colors of the chosen options.
@@ -1149,7 +1155,7 @@ class CalendarApp(App):
         self.sound_btn.bind(on_release=self.set_sound)
 
         self.about_btn = RoundedButton(text='About', font_size=12,
-                                       size_hint=(1, 0.1),
+                                       size_hint=(1, 0.05),
                                        background_color=self.popup_btn_col)
         
         self.about_btn.bind(on_release=self.open_credits)
@@ -1197,6 +1203,8 @@ class CalendarApp(App):
         self.menu_layout.add_widget(self.about_btn)
         self.save_setting()
         self.input = ""
+        # self.music = False
+        self.credits_sound.stop()
 
     def save_setting(self):
         color = {"color": self.color_set}
@@ -1236,17 +1244,17 @@ class CalendarApp(App):
         credits_box.add_widget(close_button)
 
         self.credits_popup = Popup(title=f'Credits', content=credits_box,
-                                size_hint=(0.5, 0.6), title_align='center')
+                                size_hint=(0.7, 0.7), title_align='center')
         
         self.credits_popup.background_color = self.bg_popups
     
         self.credits_popup.open()
-        self.sound = True
-        self.credits_sound.play()
-    
+        if self.sound:
+            self.credits_sound.play()
+        
     def close_credits(self, instance):
         self.credits_popup.dismiss()
-        self.sound = False
+        self.sound = self.save_file["sound"]
         self.credits_sound.stop()
 
 
