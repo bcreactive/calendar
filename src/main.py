@@ -29,7 +29,7 @@ class CalendarApp(App):
     month. To jump to a specific date swipe up or click the '^'-button to set a 
     date using the up and down buttons. If the displayed month is not the 
     current one, the '^'-button becomes a home-button to switch to the actual
-    month. Swipe up to display the settings-popup where you can chose a
+    month. Swipe down to display the settings-popup where you can chose a
     colorset, change swipe-directions and disable/enable buttonsounds."""
 
     def __init__(self, **kwargs):
@@ -264,7 +264,7 @@ class CalendarApp(App):
             self.main_text_col = get_color_from_hex('#bda499')
 
             # Colors for popups.
-            self.bg_popups = get_color_from_hex('#966888')
+            self.bg_popups = get_color_from_hex('#c68bb4')#966888
             self.popup_btn_col = get_color_from_hex('#88a3bc')
             self.chosen_btn_col = get_color_from_hex('#d4b8b8')
             self.setdate_text_col = get_color_from_hex('#bda499')
@@ -553,6 +553,7 @@ class CalendarApp(App):
 
     def close_popup(self, x=None):
         self.popup.dismiss()
+        self.input = ""
         if self.sound:
             self.btn_sound.play()
 
@@ -1147,21 +1148,24 @@ class CalendarApp(App):
         
         self.sound_btn.bind(on_release=self.set_sound)
 
-        self.about_btn = RoundedButton(text='About', font_size=12, size_hint=(1, 0.1),
-                                          background_color=self.popup_btn_col)
+        self.about_btn = RoundedButton(text='About', font_size=12,
+                                       size_hint=(1, 0.1),
+                                       background_color=self.popup_btn_col)
         
         self.about_btn.bind(on_release=self.open_credits)
 
-        self.close_btn = RoundedButton(text='Close', font_size=48, size_hint=(1, 0.3),
-                                          background_color=self.popup_btn_col)
+        self.close_btn = RoundedButton(text='Close', font_size=48,
+                                       size_hint=(1, 0.3),
+                                       background_color=self.popup_btn_col)
         
         self.close_btn.bind(on_release=self.close_menu)
 
-        self.button_box = BoxLayout(orientation='horizontal', 
+        self.button_box = BoxLayout(orientation='horizontal',
                                     size_hint=(1, 0.3))
 
         # Boxes in boxes with titles and buttons.
-        self.title_box = BoxLayout(orientation='vertical', spacing=30, size_hint=(0.4, 1))
+        self.title_box = BoxLayout(orientation='vertical', spacing=30,
+                                   size_hint=(0.4, 1))
         self.title_box.add_widget(self.col_title)
         self.title_box.add_widget(self.invert_title)
         self.title_box.add_widget(self.sound_title)
