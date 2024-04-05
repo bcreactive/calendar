@@ -411,7 +411,7 @@ class CalendarApp(App):
         self.current_year -= 1
         self.update_values()
         if self.sound:
-            self.swipe_r_sound.play()
+            self.swipe_l_sound.play()
 
     def inc_month(self, x=None):
         # Increase month in main-window.
@@ -433,7 +433,7 @@ class CalendarApp(App):
             self.current_month -= 1
         self.update_values()
         if self.sound:
-            self.swipe_r_sound.play()
+            self.swipe_l_sound.play()
     
     def check_today_visible(self):
         # Check, if the current date is visible on screen.
@@ -579,7 +579,7 @@ class CalendarApp(App):
                                 background_color=self.popup_btn_col,
                                 font_size=40)
         
-        cancel_button.bind(on_press=self.close_ask)
+        cancel_button.bind(on_press=self.prep_close_ask)
 
         ok_button = RoundedButton(text='Ok',
                                 background_color=self.popup_btn_col,
@@ -601,9 +601,12 @@ class CalendarApp(App):
     
         self.ask_popup.open()
         
-    def close_ask(self, x=None):
+    def prep_close_ask(self, x=None):
+        self.close_ask()
         if self.sound:
             self.btn_sound.play()
+
+    def close_ask(self, x=None):
         self.ask_popup.dismiss()
         self.update_values()
         
@@ -697,13 +700,13 @@ class CalendarApp(App):
                                 background_color=self.popup_btn_col)
  
         self.cancel = RoundedButton(text="cancel", font_size=56,
-                                background_color=self.popup_btn_col)
+                                    # size_hint=(1, 0.5),
+                                    background_color=self.popup_btn_col)
         self.ok = RoundedButton(text="ok", font_size=56,
-                                background_color=self.popup_btn_col)
+                                    # size_hint=(1, 0.5),
+                                    background_color=self.popup_btn_col)
         
-        self.spaceholder_1 = Label(text='', font_size=64)
-        self.spaceholder_2 = Label(text='', font_size=64)
-        self.spaceholder_3 = Label(text='', font_size=64)
+        self.spaceholder_1 = Label(text='', font_size=64, size_hint=(1, 0.2))
         
         # Button bindings.
         self.y_fwd.bind(on_press=self.inc_y)
@@ -713,7 +716,7 @@ class CalendarApp(App):
         self.d_fwd.bind(on_press=self.inc_d)
         self.d_rwd.bind(on_press=self.dec_d)
 
-        self.cancel.bind(on_press=self.close_setdate)
+        self.cancel.bind(on_press=self.prep_close)
         self.ok.bind(on_press=self.jump_to)
 
         # Title for popup.
@@ -756,6 +759,7 @@ class CalendarApp(App):
         self.setdate_layout.add_widget(self.fwd_row)
         self.setdate_layout.add_widget(self.date_row)
         self.setdate_layout.add_widget(self.rwd_row)
+        self.setdate_layout.add_widget(self.spaceholder_1)
         self.setdate_layout.add_widget(self.button_row)
 
         self.setdate_popup = Popup(title=f'Jump to date',
@@ -767,6 +771,11 @@ class CalendarApp(App):
         self.nr = self.chose_d
         self.setdate_popup.open()
     
+    def prep_close(self, x=None):
+        self.close_setdate()
+        if self.sound:
+            self.btn_sound.play()
+
     def close_setdate(self, x=None):
         self.setdate_popup.dismiss()
         self.update_values()
@@ -898,6 +907,7 @@ class CalendarApp(App):
         self.setdate_layout.add_widget(self.fwd_row)
         self.setdate_layout.add_widget(self.date_row)
         self.setdate_layout.add_widget(self.rwd_row)
+        self.setdate_layout.add_widget(self.spaceholder_1)
         self.setdate_layout.add_widget(self.button_row)
 
         self.nr = self.chose_d
@@ -990,10 +1000,12 @@ class CalendarApp(App):
         self.about_btn.bind(on_release=self.open_credits)
 
         self.close_btn = RoundedButton(text='Close', font_size=48,
-                                       size_hint=(1, 0.3),
+                                       size_hint=(1, 0.25),
                                        background_color=self.popup_btn_col)
         
         self.close_btn.bind(on_release=self.close_menu)
+
+        self.spaceholder_2 = Label(text='', font_size=64, size_hint=(1, 0.2))
 
         # Boxes in boxes with titles and buttons.
         self.title_box = BoxLayout(orientation='vertical', spacing=30,
@@ -1026,6 +1038,7 @@ class CalendarApp(App):
         # Main layoutbox for the settings.
         self.menu_layout = BoxLayout(orientation='vertical', spacing=20)
         self.menu_layout.add_widget(self.btns_title_box)
+        self.menu_layout.add_widget(self.spaceholder_2)
         self.menu_layout.add_widget(self.close_btn)
         self.menu_layout.add_widget(self.about_btn)
 
@@ -1041,16 +1054,22 @@ class CalendarApp(App):
         self.color_set = 1
         self.update_values()
         self.update_menu(instance)
+        if self.sound:
+            self.btn_sound.play()
 
     def colorset_2(self, instance):
         self.color_set = 2
         self.update_values()
         self.update_menu(instance)
+        if self.sound:
+            self.btn_sound.play()
 
     def colorset_3(self, instance):
         self.color_set = 3
         self.update_values()
         self.update_menu(instance)
+        if self.sound:
+            self.btn_sound.play()
 
     def invert_x(self, instance):
         if self.swipe_x_default:
@@ -1058,6 +1077,8 @@ class CalendarApp(App):
         else:
             self.swipe_x_default = True
         self.update_menu(instance)
+        if self.sound:
+            self.btn_sound.play()
 
     def invert_y(self, instance):
         if self.swipe_y_default:
@@ -1065,6 +1086,8 @@ class CalendarApp(App):
         else:
             self.swipe_y_default = True
         self.update_menu(instance)
+        if self.sound:
+            self.btn_sound.play()
 
     def set_sound(self, instance):
         if self.sound:
@@ -1072,6 +1095,8 @@ class CalendarApp(App):
         else:
             self.sound = True
         self.update_menu(instance)
+        if self.sound:
+            self.btn_sound.play()
 
     def close_menu(self, x=None):
         self.menu_popup.dismiss()
@@ -1161,7 +1186,7 @@ class CalendarApp(App):
         self.about_btn.bind(on_release=self.open_credits)
 
         self.close_btn = RoundedButton(text='Close', font_size=48,
-                                       size_hint=(1, 0.3),
+                                       size_hint=(1, 0.25),
                                        background_color=self.popup_btn_col)
         
         self.close_btn.bind(on_release=self.close_menu)
@@ -1199,11 +1224,11 @@ class CalendarApp(App):
 
         # Main layoutbox for the settings.
         self.menu_layout.add_widget(self.btns_title_box)
+        self.menu_layout.add_widget(self.spaceholder_2)
         self.menu_layout.add_widget(self.close_btn)
         self.menu_layout.add_widget(self.about_btn)
         self.save_setting()
         self.input = ""
-        # self.music = False
         self.credits_sound.stop()
 
     def save_setting(self):
