@@ -78,6 +78,7 @@ class CalendarApp(App):
         self.credits_playing = False
 
     def on_touch_down(self, instance, touch):
+        # Actions taken, when touching the screen.
         self.start_pos = touch.pos
         self.touch_x = touch.x
         self.touch_y = touch.y
@@ -86,6 +87,7 @@ class CalendarApp(App):
                 self.nr = int(i.text)
         
     def on_touch_up(self, instance, touch):
+        # Check, if the input is a click or a swipe and lock buttons if swiped.
         if abs(touch.x - self.start_pos[0]) > 40 or abs(
             touch.y - self.start_pos[1]) > 40:
             self.input = "swipe"
@@ -146,6 +148,7 @@ class CalendarApp(App):
         self.input = ""
 
     def check_day_popup(self, instance):
+        # Check, if clicked or swiped, when the move starts on a day-button.
         if abs(self.touch_x - self.start_pos[0]) > 20 or abs(
             self.touch_y - self.start_pos[1]) > 20:
             self.input = "swipe"
@@ -746,12 +749,6 @@ class CalendarApp(App):
         rwd_buttons = [self.d_rwd, self.m_rwd, self.y_rwd]
         for i in rwd_buttons:
             self.rwd_row.add_widget(i)
-        
-        self.button_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                    spacing=30)
-        buttons = [self.cancel, self.ok]
-        for i in buttons:
-            self.button_row.add_widget(i)
 
         # Create the main set-date layout by stacking the Layoutboxes.
         self.setdate_layout = BoxLayout(orientation='vertical', spacing=20)
@@ -760,11 +757,11 @@ class CalendarApp(App):
         self.setdate_layout.add_widget(self.date_row)
         self.setdate_layout.add_widget(self.rwd_row)
         self.setdate_layout.add_widget(self.spaceholder_1)
-        self.setdate_layout.add_widget(self.button_row)
+        self.setdate_layout.add_widget(self.ok)
 
         self.setdate_popup = Popup(title=f'Jump to date',
                                    content=self.setdate_layout,
-                                   size_hint=(0.7, 0.7), title_align='center')
+                                   size_hint=(0.6, 0.7), title_align='center')
 
         self.setdate_popup.background_color = self.bg_popups
         
@@ -851,7 +848,6 @@ class CalendarApp(App):
         self.fwd_row.clear_widgets()
         self.date_row.clear_widgets()
         self.rwd_row.clear_widgets()       
-        self.button_row.clear_widgets()       
         self.setdate_layout.clear_widgets()
 
         # Check, if day value is possible and correct if not so.
@@ -895,20 +891,13 @@ class CalendarApp(App):
         rwd_buttons = [self.d_rwd, self.m_rwd, self.y_rwd]
         for i in rwd_buttons:
             self.rwd_row.add_widget(i)
-        
-        self.button_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                    spacing=30)
-        
-        buttons = [self.cancel, self.ok]
-        for i in buttons:
-            self.button_row.add_widget(i)
 
         self.setdate_layout.add_widget(self.label_row)
         self.setdate_layout.add_widget(self.fwd_row)
         self.setdate_layout.add_widget(self.date_row)
         self.setdate_layout.add_widget(self.rwd_row)
         self.setdate_layout.add_widget(self.spaceholder_1)
-        self.setdate_layout.add_widget(self.button_row)
+        self.setdate_layout.add_widget(self.ok)
 
         self.nr = self.chose_d
         self.input = ""
@@ -994,7 +983,7 @@ class CalendarApp(App):
         self.sound_btn.bind(on_release=self.set_sound)
 
         self.about_btn = RoundedButton(text='About', font_size=12,
-                                       size_hint=(1, 0.05),
+                                       size_hint=(1, 0.25),
                                        background_color=self.popup_btn_col)
         
         self.about_btn.bind(on_release=self.open_credits)
@@ -1006,6 +995,8 @@ class CalendarApp(App):
         self.close_btn.bind(on_release=self.close_menu)
 
         self.spaceholder_2 = Label(text='', font_size=64, size_hint=(1, 0.2))
+        self.spaceholder_3 = Label(text='', font_size=64, size_hint=(1, 0.2))
+        self.spaceholder_4 = Label(text='', font_size=64, size_hint=(1, 0.2))
 
         # Boxes in boxes with titles and buttons.
         self.title_box = BoxLayout(orientation='vertical', spacing=30,
@@ -1013,6 +1004,8 @@ class CalendarApp(App):
         self.title_box.add_widget(self.col_title)
         self.title_box.add_widget(self.invert_title)
         self.title_box.add_widget(self.sound_title)
+        self.title_box.add_widget(self.spaceholder_2)
+        self.title_box.add_widget(self.spaceholder_3)
 
         self.clr_btns = BoxLayout(orientation='horizontal', spacing=20)
         self.clr_btns.add_widget(self.col_select_1)
@@ -1030,6 +1023,8 @@ class CalendarApp(App):
         self.btn_box.add_widget(self.clr_btns)
         self.btn_box.add_widget(self.inv_btns)
         self.btn_box.add_widget(self.snd_btn)
+        self.btn_box.add_widget(self.spaceholder_4)
+        self.btn_box.add_widget(self.about_btn)
 
         self.btns_title_box = BoxLayout(orientation='horizontal', spacing=20)
         self.btns_title_box.add_widget(self.title_box)
@@ -1038,12 +1033,9 @@ class CalendarApp(App):
         # Main layoutbox for the settings.
         self.menu_layout = BoxLayout(orientation='vertical', spacing=20)
         self.menu_layout.add_widget(self.btns_title_box)
-        self.menu_layout.add_widget(self.spaceholder_2)
-        self.menu_layout.add_widget(self.close_btn)
-        self.menu_layout.add_widget(self.about_btn)
 
         self.menu_popup = Popup(title='Settings', content=self.menu_layout, 
-                                size_hint=(0.7, 0.7), title_align="center")
+                                size_hint=(0.6, 0.7), title_align="center")
         
         self.menu_popup.background_color = self.bg_popups
 
@@ -1180,7 +1172,7 @@ class CalendarApp(App):
         self.sound_btn.bind(on_release=self.set_sound)
 
         self.about_btn = RoundedButton(text='About', font_size=12,
-                                       size_hint=(1, 0.05),
+                                       size_hint=(1, 0.25),
                                        background_color=self.popup_btn_col)
         
         self.about_btn.bind(on_release=self.open_credits)
@@ -1200,6 +1192,8 @@ class CalendarApp(App):
         self.title_box.add_widget(self.col_title)
         self.title_box.add_widget(self.invert_title)
         self.title_box.add_widget(self.sound_title)
+        self.title_box.add_widget(self.spaceholder_2)
+        self.title_box.add_widget(self.spaceholder_3)
 
         self.clr_btns = BoxLayout(orientation='horizontal', spacing=20)
         self.clr_btns.add_widget(self.col_select_1)
@@ -1217,6 +1211,8 @@ class CalendarApp(App):
         self.btn_box.add_widget(self.clr_btns)
         self.btn_box.add_widget(self.inv_btns)
         self.btn_box.add_widget(self.snd_btn)
+        self.btn_box.add_widget(self.spaceholder_4)
+        self.btn_box.add_widget(self.about_btn)
 
         self.btns_title_box = BoxLayout(orientation='horizontal', spacing=20)
         self.btns_title_box.add_widget(self.title_box)
@@ -1224,9 +1220,6 @@ class CalendarApp(App):
 
         # Main layoutbox for the settings.
         self.menu_layout.add_widget(self.btns_title_box)
-        self.menu_layout.add_widget(self.spaceholder_2)
-        self.menu_layout.add_widget(self.close_btn)
-        self.menu_layout.add_widget(self.about_btn)
         self.save_setting()
         self.input = ""
         self.credits_sound.stop()
