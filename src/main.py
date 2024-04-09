@@ -288,6 +288,22 @@ class CalendarApp(App):
             self.popup_btn_col = get_color_from_hex('#4f4f4f')
             self.chosen_btn_col = get_color_from_hex('#a09d9d')
             self.setdate_text_col = get_color_from_hex('#9f9f9f')
+        
+        elif self.color_set == 4: #space
+            self.main_win_col = get_color_from_hex('#282c3c')
+            self.empty_col = get_color_from_hex('#d4b8b8')
+            self.entry_col = get_color_from_hex('#966888')
+            self.today_col = get_color_from_hex('#b8ccd8')
+            self.today_entry_col = get_color_from_hex('#d480bb')
+            self.navi_btn_col = get_color_from_hex('#64878c')
+            self.home_btn_col = get_color_from_hex('#64878c')
+            self.main_text_col = get_color_from_hex('#afe9df')
+
+            # Colors for popups.
+            self.bg_popups = get_color_from_hex('#282c3c')
+            self.popup_btn_col = get_color_from_hex('#966888')
+            self.chosen_btn_col = get_color_from_hex('#d4b8b8')
+            self.setdate_text_col = get_color_from_hex('#afe9df')
 
     def set_buttons(self):
         """Setting up the day-buttongrid."""
@@ -927,25 +943,36 @@ class CalendarApp(App):
             col_1_bg_color = self.chosen_btn_col
             col_2_bg_color = self.popup_btn_col
             col_3_bg_color = self.popup_btn_col
+            col_4_bg_color = self.popup_btn_col
         elif self.color_set == 2:
             col_1_bg_color = self.popup_btn_col
             col_2_bg_color = self.chosen_btn_col
             col_3_bg_color = self.popup_btn_col
+            col_4_bg_color = self.popup_btn_col
         elif self.color_set == 3:
             col_1_bg_color = self.popup_btn_col
             col_2_bg_color = self.popup_btn_col
             col_3_bg_color = self.chosen_btn_col
+            col_4_bg_color = self.popup_btn_col
+        elif self.color_set == 4:
+            col_1_bg_color = self.popup_btn_col
+            col_2_bg_color = self.popup_btn_col
+            col_3_bg_color = self.popup_btn_col
+            col_4_bg_color = self.chosen_btn_col
 
-        self.col_select_1 = RoundedButton(text='Set 1', font_size=42,
+        self.col_select_1 = RoundedButton(text='1', font_size=42,
                                           background_color=col_1_bg_color)
-        self.col_select_2 = RoundedButton(text='Set 2', font_size=42,
+        self.col_select_2 = RoundedButton(text='2', font_size=42,
                                           background_color=col_2_bg_color)
-        self.col_select_3 = RoundedButton(text='Set 3', font_size=42,
+        self.col_select_3 = RoundedButton(text='3', font_size=42,
                                           background_color=col_3_bg_color)
+        self.col_select_4 = RoundedButton(text='4', font_size=42,
+                                          background_color=col_4_bg_color)
 
         self.col_select_1.bind(on_release=self.colorset_1)
         self.col_select_2.bind(on_release=self.colorset_2)
         self.col_select_3.bind(on_release=self.colorset_3)
+        self.col_select_4.bind(on_release=self.colorset_4)
 
         # Labels, buttons, bindings for axis inversion settings.
         self.invert_title = Label(text='Invert:', font_size=48,
@@ -1011,6 +1038,7 @@ class CalendarApp(App):
         self.clr_btns.add_widget(self.col_select_1)
         self.clr_btns.add_widget(self.col_select_2)
         self.clr_btns.add_widget(self.col_select_3)
+        self.clr_btns.add_widget(self.col_select_4)
 
         self.inv_btns = BoxLayout(orientation='horizontal', spacing=20) 
         self.inv_btns.add_widget(self.invert_x_btn)
@@ -1035,7 +1063,9 @@ class CalendarApp(App):
         self.menu_layout.add_widget(self.btns_title_box)
 
         self.menu_popup = Popup(title='Settings', content=self.menu_layout, 
-                                size_hint=(0.6, 0.7), title_align="center")
+                                size_hint=(0.6, 0.7), 
+                                # background_color=self.bg_popups,
+                                title_align="center")
         
         self.menu_popup.background_color = self.bg_popups
 
@@ -1058,6 +1088,13 @@ class CalendarApp(App):
 
     def colorset_3(self, instance):
         self.color_set = 3
+        self.update_values()
+        self.update_menu(instance)
+        if self.sound:
+            self.btn_sound.play()
+    
+    def colorset_4(self, instance):
+        self.color_set = 4
         self.update_values()
         self.update_menu(instance)
         if self.sound:
@@ -1112,29 +1149,42 @@ class CalendarApp(App):
         self.col_title = Label(text='Color:', font_size=48, 
                           color=self.setdate_text_col)
         
+        self.menu_popup.background_color = self.bg_popups
+        
         if self.color_set == 1:
             col_1_bg_color = self.chosen_btn_col
             col_2_bg_color = self.popup_btn_col
             col_3_bg_color = self.popup_btn_col
+            col_4_bg_color = self.popup_btn_col
         elif self.color_set == 2:
             col_1_bg_color = self.popup_btn_col
             col_2_bg_color = self.chosen_btn_col
             col_3_bg_color = self.popup_btn_col
+            col_4_bg_color = self.popup_btn_col
         elif self.color_set == 3:
             col_1_bg_color = self.popup_btn_col
             col_2_bg_color = self.popup_btn_col
             col_3_bg_color = self.chosen_btn_col
+            col_4_bg_color = self.popup_btn_col
+        elif self.color_set == 4:
+            col_1_bg_color = self.popup_btn_col
+            col_2_bg_color = self.popup_btn_col
+            col_3_bg_color = self.popup_btn_col
+            col_4_bg_color = self.chosen_btn_col
 
-        self.col_select_1 = RoundedButton(text='Set 1', font_size=42,
+        self.col_select_1 = RoundedButton(text='1', font_size=42,
                                           background_color=col_1_bg_color)
-        self.col_select_2 = RoundedButton(text='Set 2', font_size=42,
+        self.col_select_2 = RoundedButton(text='2', font_size=42,
                                           background_color=col_2_bg_color)
-        self.col_select_3 = RoundedButton(text='Set 3', font_size=42,
+        self.col_select_3 = RoundedButton(text='3', font_size=42,
                                           background_color=col_3_bg_color)
+        self.col_select_4 = RoundedButton(text='4', font_size=42,
+                                          background_color=col_4_bg_color)
 
         self.col_select_1.bind(on_release=self.colorset_1)
         self.col_select_2.bind(on_release=self.colorset_2)
         self.col_select_3.bind(on_release=self.colorset_3)
+        self.col_select_4.bind(on_release=self.colorset_4)
 
         # Update labels, buttons, bindings for axis inversion settings.
         self.invert_title = Label(text='Invert:', font_size=48,
@@ -1199,6 +1249,7 @@ class CalendarApp(App):
         self.clr_btns.add_widget(self.col_select_1)
         self.clr_btns.add_widget(self.col_select_2)
         self.clr_btns.add_widget(self.col_select_3)
+        self.clr_btns.add_widget(self.col_select_4)
 
         self.inv_btns = BoxLayout(orientation='horizontal', spacing=20) 
         self.inv_btns.add_widget(self.invert_x_btn)
