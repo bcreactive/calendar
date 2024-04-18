@@ -269,25 +269,41 @@ class CalendarApp(App):
 
             # Colors for popups.
             self.bg_popups = get_color_from_hex('#3f3f74')
-            self.popup_btn_col = get_color_from_hex('#5fcde4')
-            self.chosen_btn_col = get_color_from_hex('#cbdbfc')
+            self.popup_btn_col = get_color_from_hex('#306082')
+            self.chosen_btn_col = get_color_from_hex('#5fcde4')
             self.setdate_text_col = get_color_from_hex('#d77bba')
 
-        elif self.color_set == 2: #sepia
-            self.main_win_col = get_color_from_hex('#87738f')
+        # elif self.color_set == 2: #sepia
+        #     self.main_win_col = get_color_from_hex('#87738f')
+        #     self.empty_col = get_color_from_hex('#d4b8b8')
+        #     self.entry_col = get_color_from_hex('#c090a9')
+        #     self.today_col = get_color_from_hex('#966888')
+        #     self.today_entry_col = get_color_from_hex('#88a3bc')
+        #     self.navi_btn_col = get_color_from_hex('#88a3bc')
+        #     self.home_btn_col = get_color_from_hex('#bda499')
+        #     self.main_text_col = get_color_from_hex('#bda499')
+
+        #     # Colors for popups.
+        #     self.bg_popups = get_color_from_hex('#c68bb4')#966888
+        #     self.popup_btn_col = get_color_from_hex('#88a3bc')
+        #     self.chosen_btn_col = get_color_from_hex('#d4b8b8')
+        #     self.setdate_text_col = get_color_from_hex('#bda499')
+        
+        elif self.color_set == 2: #space
+            self.main_win_col = get_color_from_hex('#282c3c')
             self.empty_col = get_color_from_hex('#d4b8b8')
-            self.entry_col = get_color_from_hex('#c090a9')
-            self.today_col = get_color_from_hex('#966888')
-            self.today_entry_col = get_color_from_hex('#88a3bc')
-            self.navi_btn_col = get_color_from_hex('#88a3bc')
-            self.home_btn_col = get_color_from_hex('#bda499')
-            self.main_text_col = get_color_from_hex('#bda499')
+            self.entry_col = get_color_from_hex('#966888')
+            self.today_col = get_color_from_hex('#b8ccd8')
+            self.today_entry_col = get_color_from_hex('#d480bb')
+            self.navi_btn_col = get_color_from_hex('#64878c')
+            self.home_btn_col = get_color_from_hex('#64878c')
+            self.main_text_col = get_color_from_hex('#afe9df')
 
             # Colors for popups.
-            self.bg_popups = get_color_from_hex('#c68bb4')#966888
-            self.popup_btn_col = get_color_from_hex('#88a3bc')
+            self.bg_popups = get_color_from_hex('#282c3c')
+            self.popup_btn_col = get_color_from_hex('#966888')
             self.chosen_btn_col = get_color_from_hex('#d4b8b8')
-            self.setdate_text_col = get_color_from_hex('#bda499')
+            self.setdate_text_col = get_color_from_hex('#afe9df')
 
         elif self.color_set == 3: #b/w
             self.main_win_col = get_color_from_hex('#ffffff')
@@ -304,22 +320,22 @@ class CalendarApp(App):
             self.popup_btn_col = get_color_from_hex('#4f4f4f')
             self.chosen_btn_col = get_color_from_hex('#a09d9d')
             self.setdate_text_col = get_color_from_hex('#9f9f9f')
-        
-        elif self.color_set == 4: #space
-            self.main_win_col = get_color_from_hex('#282c3c')
-            self.empty_col = get_color_from_hex('#d4b8b8')
-            self.entry_col = get_color_from_hex('#966888')
-            self.today_col = get_color_from_hex('#b8ccd8')
-            self.today_entry_col = get_color_from_hex('#d480bb')
-            self.navi_btn_col = get_color_from_hex('#64878c')
-            self.home_btn_col = get_color_from_hex('#64878c')
-            self.main_text_col = get_color_from_hex('#afe9df')
+
+        elif self.color_set == 4: #forest
+            self.main_win_col = get_color_from_hex('#181c19')
+            self.empty_col = get_color_from_hex('#5d9b79')
+            self.entry_col = get_color_from_hex('#c6b858')
+            self.today_col = get_color_from_hex('#8fd032')
+            self.today_entry_col = get_color_from_hex('#97edca')
+            self.navi_btn_col = get_color_from_hex('#586335')
+            self.home_btn_col = get_color_from_hex('#586335')
+            self.main_text_col = get_color_from_hex('#97edca')
 
             # Colors for popups.
-            self.bg_popups = get_color_from_hex('#282c3c')
-            self.popup_btn_col = get_color_from_hex('#966888')
-            self.chosen_btn_col = get_color_from_hex('#d4b8b8')
-            self.setdate_text_col = get_color_from_hex('#afe9df')
+            self.bg_popups = get_color_from_hex('#333c24')
+            self.popup_btn_col = get_color_from_hex('#5d9b79')
+            self.chosen_btn_col = get_color_from_hex('#97edca')
+            self.setdate_text_col = get_color_from_hex('#97edca')
 
     def set_buttons(self):
         """Setting up the day-buttongrid."""
@@ -1342,7 +1358,7 @@ class CalendarApp(App):
         self.sound = self.save_file["sound"]
         self.credits_sound.stop()
 
-
+   
 class RoundedButton(Button):
     """This class creates buttons with rounded edges."""
     
