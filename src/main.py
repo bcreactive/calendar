@@ -101,17 +101,17 @@ class CalendarApp(App):
                     self.inc_month()
                 
                 if self.swipe_y_default:
-                    if touch.y > self.touch_y + 150:
+                    if touch.y > self.touch_y + 250:
                         self.set_date()   
 
-                    elif touch.y < self.touch_y - 150:
+                    elif touch.y < self.touch_y - 250:
                         self.open_menu_popup()
 
                 else:
-                    if touch.y < self.touch_y - 150:
+                    if touch.y < self.touch_y - 250:
                         self.set_date()
 
-                    elif touch.y > self.touch_y + 150:
+                    elif touch.y > self.touch_y + 250:
                         self.open_menu_popup()
             
             else:
@@ -122,17 +122,17 @@ class CalendarApp(App):
                     self.inc_month()
 
                 if self.swipe_y_default:   
-                    if touch.y > self.touch_y + 150:
+                    if touch.y > self.touch_y + 250:
                         self.set_date()
 
-                    elif touch.y < self.touch_y - 150:
+                    elif touch.y < self.touch_y - 250:
                         self.open_menu_popup()
 
                 else:
-                    if touch.y < self.touch_y - 150:
+                    if touch.y < self.touch_y - 250:
                         self.set_date()
                     
-                    elif touch.y > self.touch_y + 150:
+                    elif touch.y > self.touch_y + 250:
                         self.open_menu_popup()
 
             self.input = ""
@@ -241,21 +241,37 @@ class CalendarApp(App):
             return data
     
     def load_colors(self):
-        if self.color_set == 1: #green
-            self.main_win_col = (0.7, 1, 0.1, 1)
-            self.empty_col = (0, 0.6, 0.3)
-            self.entry_col = get_color_from_hex('#13ecb9')
-            self.today_col = get_color_from_hex('#9523fa')#ff69b4
-            self.today_entry_col = get_color_from_hex('#ee23fa')
-            self.navi_btn_col = get_color_from_hex('#0a748a')
-            self.home_btn_col = get_color_from_hex('#50befc')
-            self.main_text_col = get_color_from_hex('#03573b')
+        # if self.color_set == 1: #green
+        #     self.main_win_col = (0.7, 1, 0.1, 1)
+        #     self.empty_col = (0, 0.6, 0.3)
+        #     self.entry_col = get_color_from_hex('#13ecb9')
+        #     self.today_col = get_color_from_hex('#9523fa')#ff69b4
+        #     self.today_entry_col = get_color_from_hex('#ee23fa')
+        #     self.navi_btn_col = get_color_from_hex('#0a748a')
+        #     self.home_btn_col = get_color_from_hex('#50befc')
+        #     self.main_text_col = get_color_from_hex('#03573b')
+
+        #     # Colors for popups.
+        #     self.bg_popups = (0,1,1,1)
+        #     self.popup_btn_col = get_color_from_hex('#0a748a')
+        #     self.chosen_btn_col = (1,0.3,1.1,1)
+        #     self.setdate_text_col = (0.5,0.75,1,1)
+
+        if self.color_set == 1: #metroid
+            self.main_win_col = get_color_from_hex('#222034')
+            self.empty_col = get_color_from_hex('#cbdbfc')
+            self.entry_col = get_color_from_hex('#5fcde4')
+            self.today_col = get_color_from_hex('#306082')#ff69b4
+            self.today_entry_col = get_color_from_hex('#639bff')
+            self.navi_btn_col = get_color_from_hex('#76428a')
+            self.home_btn_col = get_color_from_hex('#76428a')
+            self.main_text_col = get_color_from_hex('#d77bba')
 
             # Colors for popups.
-            self.bg_popups = (0,1,1,1)
-            self.popup_btn_col = get_color_from_hex('#0a748a')
-            self.chosen_btn_col = (1,0.3,1.1,1)
-            self.setdate_text_col = (0.5,0.75,1,1)
+            self.bg_popups = get_color_from_hex('#3f3f74')
+            self.popup_btn_col = get_color_from_hex('#5fcde4')
+            self.chosen_btn_col = get_color_from_hex('#cbdbfc')
+            self.setdate_text_col = get_color_from_hex('#d77bba')
 
         elif self.color_set == 2: #sepia
             self.main_win_col = get_color_from_hex('#87738f')
