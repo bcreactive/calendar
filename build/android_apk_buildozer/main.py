@@ -78,6 +78,7 @@ class CalendarApp(App):
         self.credits_playing = False
 
     def on_touch_down(self, instance, touch):
+        # Actions taken, when touching the screen.
         self.start_pos = touch.pos
         self.touch_x = touch.x
         self.touch_y = touch.y
@@ -86,6 +87,7 @@ class CalendarApp(App):
                 self.nr = int(i.text)
         
     def on_touch_up(self, instance, touch):
+        # Check, if the input is a click or a swipe and lock buttons if swiped.
         if abs(touch.x - self.start_pos[0]) > 40 or abs(
             touch.y - self.start_pos[1]) > 40:
             self.input = "swipe"
@@ -99,17 +101,17 @@ class CalendarApp(App):
                     self.inc_month()
                 
                 if self.swipe_y_default:
-                    if touch.y > self.touch_y + 150:
+                    if touch.y > self.touch_y + 250:
                         self.set_date()   
 
-                    elif touch.y < self.touch_y - 150:
+                    elif touch.y < self.touch_y - 250:
                         self.open_menu_popup()
 
                 else:
-                    if touch.y < self.touch_y - 150:
+                    if touch.y < self.touch_y - 250:
                         self.set_date()
 
-                    elif touch.y > self.touch_y + 150:
+                    elif touch.y > self.touch_y + 250:
                         self.open_menu_popup()
             
             else:
@@ -120,17 +122,17 @@ class CalendarApp(App):
                     self.inc_month()
 
                 if self.swipe_y_default:   
-                    if touch.y > self.touch_y + 150:
+                    if touch.y > self.touch_y + 250:
                         self.set_date()
 
-                    elif touch.y < self.touch_y - 150:
+                    elif touch.y < self.touch_y - 250:
                         self.open_menu_popup()
 
                 else:
-                    if touch.y < self.touch_y - 150:
+                    if touch.y < self.touch_y - 250:
                         self.set_date()
                     
-                    elif touch.y > self.touch_y + 150:
+                    elif touch.y > self.touch_y + 250:
                         self.open_menu_popup()
 
             self.input = ""
@@ -146,6 +148,7 @@ class CalendarApp(App):
         self.input = ""
 
     def check_day_popup(self, instance):
+        # Check, if clicked or swiped, when the move starts on a day-button.
         if abs(self.touch_x - self.start_pos[0]) > 20 or abs(
             self.touch_y - self.start_pos[1]) > 20:
             self.input = "swipe"
@@ -238,37 +241,69 @@ class CalendarApp(App):
             return data
     
     def load_colors(self):
-        if self.color_set == 1: #green
-            self.main_win_col = (0.7, 1, 0.1, 1)
-            self.empty_col = (0, 0.6, 0.3)
-            self.entry_col = get_color_from_hex('#13ecb9')
-            self.today_col = get_color_from_hex('#9523fa')#ff69b4
-            self.today_entry_col = get_color_from_hex('#ee23fa')
-            self.navi_btn_col = get_color_from_hex('#0a748a')
-            self.home_btn_col = get_color_from_hex('#50befc')
-            self.main_text_col = get_color_from_hex('#03573b')
+        # if self.color_set == 1: #green
+        #     self.main_win_col = (0.7, 1, 0.1, 1)
+        #     self.empty_col = (0, 0.6, 0.3)
+        #     self.entry_col = get_color_from_hex('#13ecb9')
+        #     self.today_col = get_color_from_hex('#9523fa')#ff69b4
+        #     self.today_entry_col = get_color_from_hex('#ee23fa')
+        #     self.navi_btn_col = get_color_from_hex('#0a748a')
+        #     self.home_btn_col = get_color_from_hex('#50befc')
+        #     self.main_text_col = get_color_from_hex('#03573b')
+
+        #     # Colors for popups.
+        #     self.bg_popups = (0,1,1,1)
+        #     self.popup_btn_col = get_color_from_hex('#0a748a')
+        #     self.chosen_btn_col = (1,0.3,1.1,1)
+        #     self.setdate_text_col = (0.5,0.75,1,1)
+
+        if self.color_set == 1: #metroid
+            self.main_win_col = get_color_from_hex('#222034')
+            self.empty_col = get_color_from_hex('#cbdbfc')
+            self.entry_col = get_color_from_hex('#5fcde4')
+            self.today_col = get_color_from_hex('#306082')#ff69b4
+            self.today_entry_col = get_color_from_hex('#639bff')
+            self.navi_btn_col = get_color_from_hex('#76428a')
+            self.home_btn_col = get_color_from_hex('#76428a')
+            self.main_text_col = get_color_from_hex('#d77bba')
 
             # Colors for popups.
-            self.bg_popups = (0,1,1,1)
-            self.popup_btn_col = get_color_from_hex('#0a748a')
-            self.chosen_btn_col = (1,0.3,1.1,1)
-            self.setdate_text_col = (0.5,0.75,1,1)
+            self.bg_popups = get_color_from_hex('#3f3f74')
+            self.popup_btn_col = get_color_from_hex('#306082')
+            self.chosen_btn_col = get_color_from_hex('#5fcde4')
+            self.setdate_text_col = get_color_from_hex('#d77bba')
 
-        elif self.color_set == 2: #sepia
-            self.main_win_col = get_color_from_hex('#87738f')
+        # elif self.color_set == 2: #sepia
+        #     self.main_win_col = get_color_from_hex('#87738f')
+        #     self.empty_col = get_color_from_hex('#d4b8b8')
+        #     self.entry_col = get_color_from_hex('#c090a9')
+        #     self.today_col = get_color_from_hex('#966888')
+        #     self.today_entry_col = get_color_from_hex('#88a3bc')
+        #     self.navi_btn_col = get_color_from_hex('#88a3bc')
+        #     self.home_btn_col = get_color_from_hex('#bda499')
+        #     self.main_text_col = get_color_from_hex('#bda499')
+
+        #     # Colors for popups.
+        #     self.bg_popups = get_color_from_hex('#c68bb4')#966888
+        #     self.popup_btn_col = get_color_from_hex('#88a3bc')
+        #     self.chosen_btn_col = get_color_from_hex('#d4b8b8')
+        #     self.setdate_text_col = get_color_from_hex('#bda499')
+        
+        elif self.color_set == 2: #space
+            self.main_win_col = get_color_from_hex('#282c3c')
             self.empty_col = get_color_from_hex('#d4b8b8')
-            self.entry_col = get_color_from_hex('#c090a9')
-            self.today_col = get_color_from_hex('#966888')
-            self.today_entry_col = get_color_from_hex('#88a3bc')
-            self.navi_btn_col = get_color_from_hex('#88a3bc')
-            self.home_btn_col = get_color_from_hex('#bda499')
-            self.main_text_col = get_color_from_hex('#bda499')
+            self.entry_col = get_color_from_hex('#966888')
+            self.today_col = get_color_from_hex('#b8ccd8')
+            self.today_entry_col = get_color_from_hex('#d480bb')
+            self.navi_btn_col = get_color_from_hex('#64878c')
+            self.home_btn_col = get_color_from_hex('#64878c')
+            self.main_text_col = get_color_from_hex('#afe9df')
 
             # Colors for popups.
-            self.bg_popups = get_color_from_hex('#c68bb4')#966888
-            self.popup_btn_col = get_color_from_hex('#88a3bc')
+            self.bg_popups = get_color_from_hex('#282c3c')
+            self.popup_btn_col = get_color_from_hex('#966888')
             self.chosen_btn_col = get_color_from_hex('#d4b8b8')
-            self.setdate_text_col = get_color_from_hex('#bda499')
+            self.setdate_text_col = get_color_from_hex('#afe9df')
 
         elif self.color_set == 3: #b/w
             self.main_win_col = get_color_from_hex('#ffffff')
@@ -285,6 +320,22 @@ class CalendarApp(App):
             self.popup_btn_col = get_color_from_hex('#4f4f4f')
             self.chosen_btn_col = get_color_from_hex('#a09d9d')
             self.setdate_text_col = get_color_from_hex('#9f9f9f')
+
+        elif self.color_set == 4: #forest
+            self.main_win_col = get_color_from_hex('#181c19')
+            self.empty_col = get_color_from_hex('#5d9b79')
+            self.entry_col = get_color_from_hex('#c6b858')
+            self.today_col = get_color_from_hex('#8fd032')
+            self.today_entry_col = get_color_from_hex('#97edca')
+            self.navi_btn_col = get_color_from_hex('#586335')
+            self.home_btn_col = get_color_from_hex('#586335')
+            self.main_text_col = get_color_from_hex('#97edca')
+
+            # Colors for popups.
+            self.bg_popups = get_color_from_hex('#333c24')
+            self.popup_btn_col = get_color_from_hex('#5d9b79')
+            self.chosen_btn_col = get_color_from_hex('#97edca')
+            self.setdate_text_col = get_color_from_hex('#97edca')
 
     def set_buttons(self):
         """Setting up the day-buttongrid."""
@@ -411,7 +462,7 @@ class CalendarApp(App):
         self.current_year -= 1
         self.update_values()
         if self.sound:
-            self.swipe_r_sound.play()
+            self.swipe_l_sound.play()
 
     def inc_month(self, x=None):
         # Increase month in main-window.
@@ -433,7 +484,7 @@ class CalendarApp(App):
             self.current_month -= 1
         self.update_values()
         if self.sound:
-            self.swipe_r_sound.play()
+            self.swipe_l_sound.play()
     
     def check_today_visible(self):
         # Check, if the current date is visible on screen.
@@ -579,7 +630,7 @@ class CalendarApp(App):
                                 background_color=self.popup_btn_col,
                                 font_size=40)
         
-        cancel_button.bind(on_press=self.close_ask)
+        cancel_button.bind(on_press=self.prep_close_ask)
 
         ok_button = RoundedButton(text='Ok',
                                 background_color=self.popup_btn_col,
@@ -601,9 +652,12 @@ class CalendarApp(App):
     
         self.ask_popup.open()
         
-    def close_ask(self, x=None):
+    def prep_close_ask(self, x=None):
+        self.close_ask()
         if self.sound:
             self.btn_sound.play()
+
+    def close_ask(self, x=None):
         self.ask_popup.dismiss()
         self.update_values()
         
@@ -697,13 +751,13 @@ class CalendarApp(App):
                                 background_color=self.popup_btn_col)
  
         self.cancel = RoundedButton(text="cancel", font_size=56,
-                                background_color=self.popup_btn_col)
+                                    # size_hint=(1, 0.5),
+                                    background_color=self.popup_btn_col)
         self.ok = RoundedButton(text="ok", font_size=56,
-                                background_color=self.popup_btn_col)
+                                    # size_hint=(1, 0.5),
+                                    background_color=self.popup_btn_col)
         
-        self.spaceholder_1 = Label(text='', font_size=64)
-        self.spaceholder_2 = Label(text='', font_size=64)
-        self.spaceholder_3 = Label(text='', font_size=64)
+        self.spaceholder_1 = Label(text='', font_size=64, size_hint=(1, 0.2))
         
         # Button bindings.
         self.y_fwd.bind(on_press=self.inc_y)
@@ -713,7 +767,7 @@ class CalendarApp(App):
         self.d_fwd.bind(on_press=self.inc_d)
         self.d_rwd.bind(on_press=self.dec_d)
 
-        self.cancel.bind(on_press=self.close_setdate)
+        self.cancel.bind(on_press=self.prep_close)
         self.ok.bind(on_press=self.jump_to)
 
         # Title for popup.
@@ -743,12 +797,6 @@ class CalendarApp(App):
         rwd_buttons = [self.d_rwd, self.m_rwd, self.y_rwd]
         for i in rwd_buttons:
             self.rwd_row.add_widget(i)
-        
-        self.button_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                    spacing=30)
-        buttons = [self.cancel, self.ok]
-        for i in buttons:
-            self.button_row.add_widget(i)
 
         # Create the main set-date layout by stacking the Layoutboxes.
         self.setdate_layout = BoxLayout(orientation='vertical', spacing=20)
@@ -756,17 +804,23 @@ class CalendarApp(App):
         self.setdate_layout.add_widget(self.fwd_row)
         self.setdate_layout.add_widget(self.date_row)
         self.setdate_layout.add_widget(self.rwd_row)
-        self.setdate_layout.add_widget(self.button_row)
+        self.setdate_layout.add_widget(self.spaceholder_1)
+        self.setdate_layout.add_widget(self.ok)
 
         self.setdate_popup = Popup(title=f'Jump to date',
                                    content=self.setdate_layout,
-                                   size_hint=(0.7, 0.7), title_align='center')
+                                   size_hint=(0.6, 0.7), title_align='center')
 
         self.setdate_popup.background_color = self.bg_popups
         
         self.nr = self.chose_d
         self.setdate_popup.open()
     
+    def prep_close(self, x=None):
+        self.close_setdate()
+        if self.sound:
+            self.btn_sound.play()
+
     def close_setdate(self, x=None):
         self.setdate_popup.dismiss()
         self.update_values()
@@ -842,7 +896,6 @@ class CalendarApp(App):
         self.fwd_row.clear_widgets()
         self.date_row.clear_widgets()
         self.rwd_row.clear_widgets()       
-        self.button_row.clear_widgets()       
         self.setdate_layout.clear_widgets()
 
         # Check, if day value is possible and correct if not so.
@@ -886,19 +939,13 @@ class CalendarApp(App):
         rwd_buttons = [self.d_rwd, self.m_rwd, self.y_rwd]
         for i in rwd_buttons:
             self.rwd_row.add_widget(i)
-        
-        self.button_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
-                                    spacing=30)
-        
-        buttons = [self.cancel, self.ok]
-        for i in buttons:
-            self.button_row.add_widget(i)
 
         self.setdate_layout.add_widget(self.label_row)
         self.setdate_layout.add_widget(self.fwd_row)
         self.setdate_layout.add_widget(self.date_row)
         self.setdate_layout.add_widget(self.rwd_row)
-        self.setdate_layout.add_widget(self.button_row)
+        self.setdate_layout.add_widget(self.spaceholder_1)
+        self.setdate_layout.add_widget(self.ok)
 
         self.nr = self.chose_d
         self.input = ""
@@ -928,25 +975,36 @@ class CalendarApp(App):
             col_1_bg_color = self.chosen_btn_col
             col_2_bg_color = self.popup_btn_col
             col_3_bg_color = self.popup_btn_col
+            col_4_bg_color = self.popup_btn_col
         elif self.color_set == 2:
             col_1_bg_color = self.popup_btn_col
             col_2_bg_color = self.chosen_btn_col
             col_3_bg_color = self.popup_btn_col
+            col_4_bg_color = self.popup_btn_col
         elif self.color_set == 3:
             col_1_bg_color = self.popup_btn_col
             col_2_bg_color = self.popup_btn_col
             col_3_bg_color = self.chosen_btn_col
+            col_4_bg_color = self.popup_btn_col
+        elif self.color_set == 4:
+            col_1_bg_color = self.popup_btn_col
+            col_2_bg_color = self.popup_btn_col
+            col_3_bg_color = self.popup_btn_col
+            col_4_bg_color = self.chosen_btn_col
 
-        self.col_select_1 = RoundedButton(text='Set 1', font_size=42,
+        self.col_select_1 = RoundedButton(text='1', font_size=42,
                                           background_color=col_1_bg_color)
-        self.col_select_2 = RoundedButton(text='Set 2', font_size=42,
+        self.col_select_2 = RoundedButton(text='2', font_size=42,
                                           background_color=col_2_bg_color)
-        self.col_select_3 = RoundedButton(text='Set 3', font_size=42,
+        self.col_select_3 = RoundedButton(text='3', font_size=42,
                                           background_color=col_3_bg_color)
+        self.col_select_4 = RoundedButton(text='4', font_size=42,
+                                          background_color=col_4_bg_color)
 
         self.col_select_1.bind(on_release=self.colorset_1)
         self.col_select_2.bind(on_release=self.colorset_2)
         self.col_select_3.bind(on_release=self.colorset_3)
+        self.col_select_4.bind(on_release=self.colorset_4)
 
         # Labels, buttons, bindings for axis inversion settings.
         self.invert_title = Label(text='Invert:', font_size=48,
@@ -984,16 +1042,20 @@ class CalendarApp(App):
         self.sound_btn.bind(on_release=self.set_sound)
 
         self.about_btn = RoundedButton(text='About', font_size=12,
-                                       size_hint=(1, 0.05),
+                                       size_hint=(1, 0.25),
                                        background_color=self.popup_btn_col)
         
         self.about_btn.bind(on_release=self.open_credits)
 
         self.close_btn = RoundedButton(text='Close', font_size=48,
-                                       size_hint=(1, 0.3),
+                                       size_hint=(1, 0.25),
                                        background_color=self.popup_btn_col)
         
         self.close_btn.bind(on_release=self.close_menu)
+
+        self.spaceholder_2 = Label(text='', font_size=64, size_hint=(1, 0.2))
+        self.spaceholder_3 = Label(text='', font_size=64, size_hint=(1, 0.2))
+        self.spaceholder_4 = Label(text='', font_size=64, size_hint=(1, 0.2))
 
         # Boxes in boxes with titles and buttons.
         self.title_box = BoxLayout(orientation='vertical', spacing=30,
@@ -1001,11 +1063,14 @@ class CalendarApp(App):
         self.title_box.add_widget(self.col_title)
         self.title_box.add_widget(self.invert_title)
         self.title_box.add_widget(self.sound_title)
+        self.title_box.add_widget(self.spaceholder_2)
+        self.title_box.add_widget(self.spaceholder_3)
 
         self.clr_btns = BoxLayout(orientation='horizontal', spacing=20)
         self.clr_btns.add_widget(self.col_select_1)
         self.clr_btns.add_widget(self.col_select_2)
         self.clr_btns.add_widget(self.col_select_3)
+        self.clr_btns.add_widget(self.col_select_4)
 
         self.inv_btns = BoxLayout(orientation='horizontal', spacing=20) 
         self.inv_btns.add_widget(self.invert_x_btn)
@@ -1018,6 +1083,8 @@ class CalendarApp(App):
         self.btn_box.add_widget(self.clr_btns)
         self.btn_box.add_widget(self.inv_btns)
         self.btn_box.add_widget(self.snd_btn)
+        self.btn_box.add_widget(self.spaceholder_4)
+        self.btn_box.add_widget(self.about_btn)
 
         self.btns_title_box = BoxLayout(orientation='horizontal', spacing=20)
         self.btns_title_box.add_widget(self.title_box)
@@ -1026,11 +1093,11 @@ class CalendarApp(App):
         # Main layoutbox for the settings.
         self.menu_layout = BoxLayout(orientation='vertical', spacing=20)
         self.menu_layout.add_widget(self.btns_title_box)
-        self.menu_layout.add_widget(self.close_btn)
-        self.menu_layout.add_widget(self.about_btn)
 
         self.menu_popup = Popup(title='Settings', content=self.menu_layout, 
-                                size_hint=(0.7, 0.7), title_align="center")
+                                size_hint=(0.6, 0.7), 
+                                # background_color=self.bg_popups,
+                                title_align="center")
         
         self.menu_popup.background_color = self.bg_popups
 
@@ -1041,16 +1108,29 @@ class CalendarApp(App):
         self.color_set = 1
         self.update_values()
         self.update_menu(instance)
+        if self.sound:
+            self.btn_sound.play()
 
     def colorset_2(self, instance):
         self.color_set = 2
         self.update_values()
         self.update_menu(instance)
+        if self.sound:
+            self.btn_sound.play()
 
     def colorset_3(self, instance):
         self.color_set = 3
         self.update_values()
         self.update_menu(instance)
+        if self.sound:
+            self.btn_sound.play()
+    
+    def colorset_4(self, instance):
+        self.color_set = 4
+        self.update_values()
+        self.update_menu(instance)
+        if self.sound:
+            self.btn_sound.play()
 
     def invert_x(self, instance):
         if self.swipe_x_default:
@@ -1058,6 +1138,8 @@ class CalendarApp(App):
         else:
             self.swipe_x_default = True
         self.update_menu(instance)
+        if self.sound:
+            self.btn_sound.play()
 
     def invert_y(self, instance):
         if self.swipe_y_default:
@@ -1065,6 +1147,8 @@ class CalendarApp(App):
         else:
             self.swipe_y_default = True
         self.update_menu(instance)
+        if self.sound:
+            self.btn_sound.play()
 
     def set_sound(self, instance):
         if self.sound:
@@ -1072,6 +1156,8 @@ class CalendarApp(App):
         else:
             self.sound = True
         self.update_menu(instance)
+        if self.sound:
+            self.btn_sound.play()
 
     def close_menu(self, x=None):
         self.menu_popup.dismiss()
@@ -1095,29 +1181,42 @@ class CalendarApp(App):
         self.col_title = Label(text='Color:', font_size=48, 
                           color=self.setdate_text_col)
         
+        self.menu_popup.background_color = self.bg_popups
+        
         if self.color_set == 1:
             col_1_bg_color = self.chosen_btn_col
             col_2_bg_color = self.popup_btn_col
             col_3_bg_color = self.popup_btn_col
+            col_4_bg_color = self.popup_btn_col
         elif self.color_set == 2:
             col_1_bg_color = self.popup_btn_col
             col_2_bg_color = self.chosen_btn_col
             col_3_bg_color = self.popup_btn_col
+            col_4_bg_color = self.popup_btn_col
         elif self.color_set == 3:
             col_1_bg_color = self.popup_btn_col
             col_2_bg_color = self.popup_btn_col
             col_3_bg_color = self.chosen_btn_col
+            col_4_bg_color = self.popup_btn_col
+        elif self.color_set == 4:
+            col_1_bg_color = self.popup_btn_col
+            col_2_bg_color = self.popup_btn_col
+            col_3_bg_color = self.popup_btn_col
+            col_4_bg_color = self.chosen_btn_col
 
-        self.col_select_1 = RoundedButton(text='Set 1', font_size=42,
+        self.col_select_1 = RoundedButton(text='1', font_size=42,
                                           background_color=col_1_bg_color)
-        self.col_select_2 = RoundedButton(text='Set 2', font_size=42,
+        self.col_select_2 = RoundedButton(text='2', font_size=42,
                                           background_color=col_2_bg_color)
-        self.col_select_3 = RoundedButton(text='Set 3', font_size=42,
+        self.col_select_3 = RoundedButton(text='3', font_size=42,
                                           background_color=col_3_bg_color)
+        self.col_select_4 = RoundedButton(text='4', font_size=42,
+                                          background_color=col_4_bg_color)
 
         self.col_select_1.bind(on_release=self.colorset_1)
         self.col_select_2.bind(on_release=self.colorset_2)
         self.col_select_3.bind(on_release=self.colorset_3)
+        self.col_select_4.bind(on_release=self.colorset_4)
 
         # Update labels, buttons, bindings for axis inversion settings.
         self.invert_title = Label(text='Invert:', font_size=48,
@@ -1155,13 +1254,13 @@ class CalendarApp(App):
         self.sound_btn.bind(on_release=self.set_sound)
 
         self.about_btn = RoundedButton(text='About', font_size=12,
-                                       size_hint=(1, 0.05),
+                                       size_hint=(1, 0.25),
                                        background_color=self.popup_btn_col)
         
         self.about_btn.bind(on_release=self.open_credits)
 
         self.close_btn = RoundedButton(text='Close', font_size=48,
-                                       size_hint=(1, 0.3),
+                                       size_hint=(1, 0.25),
                                        background_color=self.popup_btn_col)
         
         self.close_btn.bind(on_release=self.close_menu)
@@ -1175,11 +1274,14 @@ class CalendarApp(App):
         self.title_box.add_widget(self.col_title)
         self.title_box.add_widget(self.invert_title)
         self.title_box.add_widget(self.sound_title)
+        self.title_box.add_widget(self.spaceholder_2)
+        self.title_box.add_widget(self.spaceholder_3)
 
         self.clr_btns = BoxLayout(orientation='horizontal', spacing=20)
         self.clr_btns.add_widget(self.col_select_1)
         self.clr_btns.add_widget(self.col_select_2)
         self.clr_btns.add_widget(self.col_select_3)
+        self.clr_btns.add_widget(self.col_select_4)
 
         self.inv_btns = BoxLayout(orientation='horizontal', spacing=20) 
         self.inv_btns.add_widget(self.invert_x_btn)
@@ -1192,6 +1294,8 @@ class CalendarApp(App):
         self.btn_box.add_widget(self.clr_btns)
         self.btn_box.add_widget(self.inv_btns)
         self.btn_box.add_widget(self.snd_btn)
+        self.btn_box.add_widget(self.spaceholder_4)
+        self.btn_box.add_widget(self.about_btn)
 
         self.btns_title_box = BoxLayout(orientation='horizontal', spacing=20)
         self.btns_title_box.add_widget(self.title_box)
@@ -1199,11 +1303,8 @@ class CalendarApp(App):
 
         # Main layoutbox for the settings.
         self.menu_layout.add_widget(self.btns_title_box)
-        self.menu_layout.add_widget(self.close_btn)
-        self.menu_layout.add_widget(self.about_btn)
         self.save_setting()
         self.input = ""
-        # self.music = False
         self.credits_sound.stop()
 
     def save_setting(self):
@@ -1257,7 +1358,7 @@ class CalendarApp(App):
         self.sound = self.save_file["sound"]
         self.credits_sound.stop()
 
-
+   
 class RoundedButton(Button):
     """This class creates buttons with rounded edges."""
     
