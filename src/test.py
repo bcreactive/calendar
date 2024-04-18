@@ -10,24 +10,13 @@ from kivy.graphics import Color, RoundedRectangle
 from kivy.core.window import Window
 from kivy.core.audio import SoundLoader
 # from plyer import notification
-from kivy.uix.screenmanager import ScreenManager, Screen, SlideTransition, TransitionBase
+from kivy.uix.screenmanager import ScreenManager, Screen, SlideTransition
 
 from datetime import datetime
 # import threading
 import calendar
 # import time
 import json
-
-
-# class CustomSlideTransition(SlideTransition):
-#     def on_progress(self, progress):
-#         # Customize the transition behavior based on the swipe direction
-#         if self.screen_in.x < self.screen_out.x:
-#             # Swipe left
-#             self.screen_in.x = self.screen_out.width * progress
-#         else:
-#             # Swipe right
-#             self.screen_in.x = self.screen_out.width * (1 - progress)
 
 
 class Screen1(Screen):
@@ -40,12 +29,6 @@ class Screen2(Screen):
     def __init__(self, **kwargs):
         super(Screen2, self).__init__(**kwargs)
         self.add_widget(Label(text='Screen 2'))
-
-
-class Screen3(Screen):
-    def __init__(self, **kwargs):
-        super(Screen3, self).__init__(**kwargs)
-        self.add_widget(Label(text='Screen 3'))
 
 
 class CalendarApp(App):
@@ -98,14 +81,6 @@ class CalendarApp(App):
                 self.sm.current = 'screen1'
             elif self.sm.current == 'screen2' and self.input == "swipe-right":
                 self.sm.current = 'screen1'
-            # elif self.sm.current == 'screen3' and self.input == "swipe-right":
-            #     self.sm.current = 'screen1'
-            # elif self.sm.current == 'screen1' and self.input == "swipe-left":
-            #     self.sm.current = 'screen3'
-            # elif self.sm.current == 'screen2' and self.input == "swipe-left":
-            #     self.sm.current = 'screen1'
-            # elif self.sm.current == 'screen3' and self.input == "swipe-left":
-            #     self.sm.current = 'screen2'
 
             print(self.input)
             self.input = ""
