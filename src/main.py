@@ -30,7 +30,8 @@ class CalendarApp(App):
     date using the up and down buttons. If the displayed month is not the 
     current one, the '^'-button becomes a home-button to switch to the actual
     month. Swipe down to display the settings-popup where you can chose a
-    colorset, change swipe-directions and disable/enable buttonsounds."""
+    colorset, change swipe-directions, disable/enable buttonsounds and change
+    the language."""
 
     def __init__(self, **kwargs):
         """Initalizing attributes."""
@@ -395,26 +396,46 @@ class CalendarApp(App):
             content = self.save_file[key]
             text_input = TextInput(text=content, multiline=True)
         else:
-            text_input = TextInput(hint_text='Platz für Notizen...',
-                            multiline=True)
+            if self.language == "EN":
+                text_input = TextInput(hint_text='Write here...',
+                                multiline=True)
+            else:
+                text_input = TextInput(hint_text='Platz für Notizen...',
+                                multiline=True)
+                
         text_input.bind(text=self.on_text_input)
             
         # Create and bind the cancel, delete and save buttons.
-        self.close_button = RoundedButton(text='Close', 
-                                background_color=self.popup_btn_col,
-                                font_size=48)
+        if self.language == "EN":
+            self.close_button = RoundedButton(text='Close', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+        else:
+            self.close_button = RoundedButton(text='Zurück', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
             
         self.close_button.bind(on_press=self.close_popup)
 
-        self.save_button = RoundedButton(text='Save', 
-                                background_color=self.popup_btn_col,
-                                font_size=48)
+        if self.language == "EN":
+            self.save_button = RoundedButton(text='Save', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+        else:
+            self.save_button = RoundedButton(text='Fertig', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
             
         self.save_button.bind(on_press=self.save_entry)
 
-        self.delete_button = RoundedButton(text='Delete', 
-                                background_color=self.popup_btn_col,
-                                font_size=48)
+        if self.language == "EN":
+            self.delete_button = RoundedButton(text='Delete', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+        else:
+            self.delete_button = RoundedButton(text='Löschen', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
             
         # Close popup without confirmation, if no entry is saved.
         entry = self.check_entry(self.button_nr)
@@ -440,7 +461,12 @@ class CalendarApp(App):
         main_box.add_widget(button_box)
 
         # Create the Popup window with customized content
-        self.popup = Popup(title=f'{self.button_nr}. {month}' + 
+        if self.language == "EN":
+            self.popup = Popup(title=f'{self.current_year} {month}' + 
+                            f' {self.button_nr}.', content=main_box,
+                            size_hint=(0.8, 0.8), title_align='center')
+        else:
+            self.popup = Popup(title=f'{self.button_nr}. {month}' + 
                         f' {self.current_year}', content=main_box,
                         size_hint=(0.8, 0.8), title_align='center')
             
@@ -627,15 +653,24 @@ class CalendarApp(App):
 
     def ask_delete(self, instance):
         # Creates a popup to confirm to delete the entry.
-        cancel_button = RoundedButton(text='No',
-                                background_color=self.popup_btn_col,
-                                font_size=40)
-        
+        if self.language == "EN":
+            cancel_button = RoundedButton(text='No',
+                                    background_color=self.popup_btn_col,
+                                    font_size=40)
+        else:
+            cancel_button = RoundedButton(text='Nein',
+                                    background_color=self.popup_btn_col,
+                                    font_size=40)
         cancel_button.bind(on_press=self.prep_close_ask)
 
-        ok_button = RoundedButton(text='Ok',
-                                background_color=self.popup_btn_col,
-                                font_size=40)
+        if self.language == "EN":
+            ok_button = RoundedButton(text='Ok',
+                                    background_color=self.popup_btn_col,
+                                    font_size=40)
+        else:
+            ok_button = RoundedButton(text='Ja',
+                                    background_color=self.popup_btn_col,
+                                    font_size=40)
         
         ok_button.bind(on_press=self.delete_entry)
 
@@ -647,8 +682,13 @@ class CalendarApp(App):
         button_box.add_widget(ok_button)
         main_box.add_widget(button_box)
 
-        self.ask_popup = Popup(title=f'erase?', content=main_box,
+        if self.language == "EN":
+            self.ask_popup = Popup(title=f'erase entry?', content=main_box,
                                 size_hint=(0.5, 0.3), title_align='center')
+        else:
+            self.ask_popup = Popup(title=f'Eintrag löschen?', content=main_box,
+                                size_hint=(0.5, 0.3), title_align='center')
+            
         self.ask_popup.background_color = self.bg_popups
     
         self.ask_popup.open()
@@ -831,8 +871,13 @@ class CalendarApp(App):
         self.setdate_layout.add_widget(self.spaceholder_1)
         self.setdate_layout.add_widget(self.ok)
 
-        self.setdate_popup = Popup(title=f'Jump to date:',
-                                   content=self.setdate_layout,
+        if self.language == "EN":
+            self.setdate_popup = Popup(title=f'Jump to date:',
+                                    content=self.setdate_layout,
+                                   size_hint=(0.6, 0.6), title_align='center')
+        else:
+            self.setdate_popup = Popup(title=f'Wechsle zu Datum:',
+                                    content=self.setdate_layout,
                                    size_hint=(0.6, 0.6), title_align='center')
 
         self.setdate_popup.background_color = self.bg_popups
@@ -1177,11 +1222,14 @@ class CalendarApp(App):
         self.menu_layout = BoxLayout(orientation='vertical', spacing=20)
         self.menu_layout.add_widget(self.btns_title_box)
 
-        self.menu_popup = Popup(title='Settings', content=self.menu_layout, 
-                                size_hint=(0.6, 0.6), 
-                                # background_color=self.bg_popups,
-                                title_align="center")
-        
+        if self.language == "EN":
+            self.menu_popup = Popup(title='Settings', content=self.menu_layout,
+                                    size_hint=(0.6, 0.6), title_align="center")
+        else:
+            self.menu_popup = Popup(title='Einstellungen',
+                                    content=self.menu_layout,
+                                    size_hint=(0.6, 0.6), title_align="center")
+            
         self.menu_popup.background_color = self.bg_popups
 
         self.menu_popup.open()
