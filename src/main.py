@@ -259,8 +259,8 @@ class CalendarApp(App):
 
         if self.color_set == 1: #metroid
             self.main_win_col = get_color_from_hex('#222034')
-            self.empty_col = get_color_from_hex('#cbdbfc')
-            self.entry_col = get_color_from_hex('#5fcde4')
+            self.empty_col = get_color_from_hex('#5fcde4')
+            self.entry_col = get_color_from_hex('#cbdbfc')
             self.today_col = get_color_from_hex('#306082')#ff69b4
             self.today_entry_col = get_color_from_hex('#639bff')
             self.navi_btn_col = get_color_from_hex('#76428a')
@@ -268,42 +268,42 @@ class CalendarApp(App):
             self.main_text_col = get_color_from_hex('#d77bba')
 
             # Colors for popups.
-            self.bg_popups = get_color_from_hex('#3f3f74')
+            self.bg_popups = get_color_from_hex('#76428a')
             self.popup_btn_col = get_color_from_hex('#306082')
             self.chosen_btn_col = get_color_from_hex('#5fcde4')
             self.setdate_text_col = get_color_from_hex('#d77bba')
 
-        # elif self.color_set == 2: #sepia
-        #     self.main_win_col = get_color_from_hex('#87738f')
-        #     self.empty_col = get_color_from_hex('#d4b8b8')
-        #     self.entry_col = get_color_from_hex('#c090a9')
-        #     self.today_col = get_color_from_hex('#966888')
-        #     self.today_entry_col = get_color_from_hex('#88a3bc')
-        #     self.navi_btn_col = get_color_from_hex('#88a3bc')
-        #     self.home_btn_col = get_color_from_hex('#bda499')
-        #     self.main_text_col = get_color_from_hex('#bda499')
-
-        #     # Colors for popups.
-        #     self.bg_popups = get_color_from_hex('#c68bb4')#966888
-        #     self.popup_btn_col = get_color_from_hex('#88a3bc')
-        #     self.chosen_btn_col = get_color_from_hex('#d4b8b8')
-        #     self.setdate_text_col = get_color_from_hex('#bda499')
-        
-        elif self.color_set == 2: #space
-            self.main_win_col = get_color_from_hex('#282c3c')
+        elif self.color_set == 2: #sepia
+            self.main_win_col = get_color_from_hex('#87738f')
             self.empty_col = get_color_from_hex('#d4b8b8')
-            self.entry_col = get_color_from_hex('#966888')
-            self.today_col = get_color_from_hex('#b8ccd8')
-            self.today_entry_col = get_color_from_hex('#d480bb')
-            self.navi_btn_col = get_color_from_hex('#64878c')
-            self.home_btn_col = get_color_from_hex('#64878c')
-            self.main_text_col = get_color_from_hex('#afe9df')
+            self.entry_col = get_color_from_hex('#c090a9')
+            self.today_col = get_color_from_hex('#966888')
+            self.today_entry_col = get_color_from_hex('#88a3bc')
+            self.navi_btn_col = get_color_from_hex('#88a3bc')
+            self.home_btn_col = get_color_from_hex('#bda499')
+            self.main_text_col = get_color_from_hex('#bda499')
 
             # Colors for popups.
-            self.bg_popups = get_color_from_hex('#282c3c')
-            self.popup_btn_col = get_color_from_hex('#966888')
+            self.bg_popups = get_color_from_hex('#c68bb4')#966888
+            self.popup_btn_col = get_color_from_hex('#87738f')
             self.chosen_btn_col = get_color_from_hex('#d4b8b8')
-            self.setdate_text_col = get_color_from_hex('#afe9df')
+            self.setdate_text_col = get_color_from_hex('#bda499')
+        
+        # elif self.color_set == 2: #space
+        #     self.main_win_col = get_color_from_hex('#282c3c')
+        #     self.empty_col = get_color_from_hex('#d4b8b8')
+        #     self.entry_col = get_color_from_hex('#966888')
+        #     self.today_col = get_color_from_hex('#b8ccd8')
+        #     self.today_entry_col = get_color_from_hex('#d480bb')
+        #     self.navi_btn_col = get_color_from_hex('#64878c')
+        #     self.home_btn_col = get_color_from_hex('#64878c')
+        #     self.main_text_col = get_color_from_hex('#afe9df')
+
+        #     # Colors for popups.
+        #     self.bg_popups = get_color_from_hex('#282c3c')
+        #     self.popup_btn_col = get_color_from_hex('#966888')
+        #     self.chosen_btn_col = get_color_from_hex('#d4b8b8')
+        #     self.setdate_text_col = get_color_from_hex('#afe9df')
 
         elif self.color_set == 3: #b/w
             self.main_win_col = get_color_from_hex('#ffffff')
@@ -319,7 +319,7 @@ class CalendarApp(App):
             self.bg_popups = get_color_from_hex('#ffffff')
             self.popup_btn_col = get_color_from_hex('#4f4f4f')
             self.chosen_btn_col = get_color_from_hex('#a09d9d')
-            self.setdate_text_col = get_color_from_hex('#9f9f9f')
+            self.setdate_text_col = get_color_from_hex('#ffffff')
 
         elif self.color_set == 4: #forest
             self.main_win_col = get_color_from_hex('#181c19')
@@ -329,13 +329,13 @@ class CalendarApp(App):
             self.today_entry_col = get_color_from_hex('#97edca')
             self.navi_btn_col = get_color_from_hex('#586335')
             self.home_btn_col = get_color_from_hex('#586335')
-            self.main_text_col = get_color_from_hex('#97edca')
+            self.main_text_col = get_color_from_hex('#c6b858')
 
             # Colors for popups.
             self.bg_popups = get_color_from_hex('#333c24')
             self.popup_btn_col = get_color_from_hex('#5d9b79')
             self.chosen_btn_col = get_color_from_hex('#97edca')
-            self.setdate_text_col = get_color_from_hex('#97edca')
+            self.setdate_text_col = get_color_from_hex('#c6b858')
 
     def set_buttons(self):
         """Setting up the day-buttongrid."""
@@ -720,9 +720,6 @@ class CalendarApp(App):
         month_name = self.get_month_name(self.chose_m)
 
         # Setting up the buttons and labels.
-        self.paragraph = Label(text='Select:', font_size=64,
-                          color=self.setdate_text_col)
-        
         self.y_label = Label(text='Year', font_size=56,
                           color=self.setdate_text_col)
         self.m_label = Label(text='Month', font_size=56,
@@ -750,9 +747,6 @@ class CalendarApp(App):
         self.d_rwd = RoundedButton(text="v", font_size=46,
                                 background_color=self.popup_btn_col)
  
-        self.cancel = RoundedButton(text="cancel", font_size=56,
-                                    # size_hint=(1, 0.5),
-                                    background_color=self.popup_btn_col)
         self.ok = RoundedButton(text="ok", font_size=56,
                                     # size_hint=(1, 0.5),
                                     background_color=self.popup_btn_col)
@@ -767,11 +761,7 @@ class CalendarApp(App):
         self.d_fwd.bind(on_press=self.inc_d)
         self.d_rwd.bind(on_press=self.dec_d)
 
-        self.cancel.bind(on_press=self.prep_close)
         self.ok.bind(on_press=self.jump_to)
-
-        # Title for popup.
-        self.title_row = self.paragraph
 
         # Setting up the Layoutboxes for the set-date view.
         self.label_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
@@ -807,9 +797,9 @@ class CalendarApp(App):
         self.setdate_layout.add_widget(self.spaceholder_1)
         self.setdate_layout.add_widget(self.ok)
 
-        self.setdate_popup = Popup(title=f'Jump to date',
+        self.setdate_popup = Popup(title=f'Jump to date:',
                                    content=self.setdate_layout,
-                                   size_hint=(0.6, 0.7), title_align='center')
+                                   size_hint=(0.6, 0.6), title_align='center')
 
         self.setdate_popup.background_color = self.bg_popups
         
@@ -1041,8 +1031,8 @@ class CalendarApp(App):
         
         self.sound_btn.bind(on_release=self.set_sound)
 
-        self.about_btn = RoundedButton(text='About', font_size=12,
-                                       size_hint=(1, 0.25),
+        self.about_btn = RoundedButton(text='About', font_size=24,
+                                       size_hint=(1, 0.5),
                                        background_color=self.popup_btn_col)
         
         self.about_btn.bind(on_release=self.open_credits)
@@ -1095,7 +1085,7 @@ class CalendarApp(App):
         self.menu_layout.add_widget(self.btns_title_box)
 
         self.menu_popup = Popup(title='Settings', content=self.menu_layout, 
-                                size_hint=(0.6, 0.7), 
+                                size_hint=(0.6, 0.6), 
                                 # background_color=self.bg_popups,
                                 title_align="center")
         
@@ -1253,8 +1243,8 @@ class CalendarApp(App):
         
         self.sound_btn.bind(on_release=self.set_sound)
 
-        self.about_btn = RoundedButton(text='About', font_size=12,
-                                       size_hint=(1, 0.25),
+        self.about_btn = RoundedButton(text='About', font_size=24,
+                                       size_hint=(1, 0.5),
                                        background_color=self.popup_btn_col)
         
         self.about_btn.bind(on_release=self.open_credits)
@@ -1335,7 +1325,7 @@ class CalendarApp(App):
             thanks for testing!""",
 
             background_color=self.popup_btn_col,
-                                font_size=20, bold=True)
+                                font_size=32, bold=True)
         
         close_button.bind(on_press=self.close_credits)
 
