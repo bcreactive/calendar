@@ -30,7 +30,8 @@ class CalendarApp(App):
     date using the up and down buttons. If the displayed month is not the 
     current one, the '^'-button becomes a home-button to switch to the actual
     month. Swipe down to display the settings-popup where you can chose a
-    colorset, change swipe-directions and disable/enable buttonsounds."""
+    colorset, change swipe-directions, disable/enable buttonsounds and change
+    the language."""
 
     def __init__(self, **kwargs):
         """Initalizing attributes."""
@@ -55,6 +56,7 @@ class CalendarApp(App):
         self.swipe_y_default = self.save_file["inv_y"]
         self.sound = self.save_file["sound"]
         self.color_set = self.save_file["color"]
+        self.language = self.save_file["language"]
 
         self.load_colors()
         Window.clearcolor = self.main_win_col
@@ -259,8 +261,8 @@ class CalendarApp(App):
 
         if self.color_set == 1: #metroid
             self.main_win_col = get_color_from_hex('#222034')
-            self.empty_col = get_color_from_hex('#cbdbfc')
-            self.entry_col = get_color_from_hex('#5fcde4')
+            self.empty_col = get_color_from_hex('#5fcde4')
+            self.entry_col = get_color_from_hex('#cbdbfc')
             self.today_col = get_color_from_hex('#306082')#ff69b4
             self.today_entry_col = get_color_from_hex('#639bff')
             self.navi_btn_col = get_color_from_hex('#76428a')
@@ -268,42 +270,42 @@ class CalendarApp(App):
             self.main_text_col = get_color_from_hex('#d77bba')
 
             # Colors for popups.
-            self.bg_popups = get_color_from_hex('#3f3f74')
+            self.bg_popups = get_color_from_hex('#76428a')
             self.popup_btn_col = get_color_from_hex('#306082')
             self.chosen_btn_col = get_color_from_hex('#5fcde4')
             self.setdate_text_col = get_color_from_hex('#d77bba')
 
-        # elif self.color_set == 2: #sepia
-        #     self.main_win_col = get_color_from_hex('#87738f')
-        #     self.empty_col = get_color_from_hex('#d4b8b8')
-        #     self.entry_col = get_color_from_hex('#c090a9')
-        #     self.today_col = get_color_from_hex('#966888')
-        #     self.today_entry_col = get_color_from_hex('#88a3bc')
-        #     self.navi_btn_col = get_color_from_hex('#88a3bc')
-        #     self.home_btn_col = get_color_from_hex('#bda499')
-        #     self.main_text_col = get_color_from_hex('#bda499')
-
-        #     # Colors for popups.
-        #     self.bg_popups = get_color_from_hex('#c68bb4')#966888
-        #     self.popup_btn_col = get_color_from_hex('#88a3bc')
-        #     self.chosen_btn_col = get_color_from_hex('#d4b8b8')
-        #     self.setdate_text_col = get_color_from_hex('#bda499')
-        
-        elif self.color_set == 2: #space
-            self.main_win_col = get_color_from_hex('#282c3c')
+        elif self.color_set == 2: #sepia
+            self.main_win_col = get_color_from_hex('#87738f')
             self.empty_col = get_color_from_hex('#d4b8b8')
-            self.entry_col = get_color_from_hex('#966888')
-            self.today_col = get_color_from_hex('#b8ccd8')
-            self.today_entry_col = get_color_from_hex('#d480bb')
-            self.navi_btn_col = get_color_from_hex('#64878c')
-            self.home_btn_col = get_color_from_hex('#64878c')
-            self.main_text_col = get_color_from_hex('#afe9df')
+            self.entry_col = get_color_from_hex('#c090a9')
+            self.today_col = get_color_from_hex('#966888')
+            self.today_entry_col = get_color_from_hex('#88a3bc')
+            self.navi_btn_col = get_color_from_hex('#88a3bc')
+            self.home_btn_col = get_color_from_hex('#bda499')
+            self.main_text_col = get_color_from_hex('#bda499')
 
             # Colors for popups.
-            self.bg_popups = get_color_from_hex('#282c3c')
-            self.popup_btn_col = get_color_from_hex('#966888')
+            self.bg_popups = get_color_from_hex('#c68bb4')#966888
+            self.popup_btn_col = get_color_from_hex('#87738f')
             self.chosen_btn_col = get_color_from_hex('#d4b8b8')
-            self.setdate_text_col = get_color_from_hex('#afe9df')
+            self.setdate_text_col = get_color_from_hex('#bda499')
+        
+        # elif self.color_set == 2: #space
+        #     self.main_win_col = get_color_from_hex('#282c3c')
+        #     self.empty_col = get_color_from_hex('#d4b8b8')
+        #     self.entry_col = get_color_from_hex('#966888')
+        #     self.today_col = get_color_from_hex('#b8ccd8')
+        #     self.today_entry_col = get_color_from_hex('#d480bb')
+        #     self.navi_btn_col = get_color_from_hex('#64878c')
+        #     self.home_btn_col = get_color_from_hex('#64878c')
+        #     self.main_text_col = get_color_from_hex('#afe9df')
+
+        #     # Colors for popups.
+        #     self.bg_popups = get_color_from_hex('#282c3c')
+        #     self.popup_btn_col = get_color_from_hex('#966888')
+        #     self.chosen_btn_col = get_color_from_hex('#d4b8b8')
+        #     self.setdate_text_col = get_color_from_hex('#afe9df')
 
         elif self.color_set == 3: #b/w
             self.main_win_col = get_color_from_hex('#ffffff')
@@ -319,7 +321,7 @@ class CalendarApp(App):
             self.bg_popups = get_color_from_hex('#ffffff')
             self.popup_btn_col = get_color_from_hex('#4f4f4f')
             self.chosen_btn_col = get_color_from_hex('#a09d9d')
-            self.setdate_text_col = get_color_from_hex('#9f9f9f')
+            self.setdate_text_col = get_color_from_hex('#ffffff')
 
         elif self.color_set == 4: #forest
             self.main_win_col = get_color_from_hex('#181c19')
@@ -329,13 +331,13 @@ class CalendarApp(App):
             self.today_entry_col = get_color_from_hex('#97edca')
             self.navi_btn_col = get_color_from_hex('#586335')
             self.home_btn_col = get_color_from_hex('#586335')
-            self.main_text_col = get_color_from_hex('#97edca')
+            self.main_text_col = get_color_from_hex('#c6b858')
 
             # Colors for popups.
             self.bg_popups = get_color_from_hex('#333c24')
             self.popup_btn_col = get_color_from_hex('#5d9b79')
             self.chosen_btn_col = get_color_from_hex('#97edca')
-            self.setdate_text_col = get_color_from_hex('#97edca')
+            self.setdate_text_col = get_color_from_hex('#c6b858')
 
     def set_buttons(self):
         """Setting up the day-buttongrid."""
@@ -394,26 +396,46 @@ class CalendarApp(App):
             content = self.save_file[key]
             text_input = TextInput(text=content, multiline=True)
         else:
-            text_input = TextInput(hint_text='Platz für Notizen...',
-                            multiline=True)
+            if self.language == "EN":
+                text_input = TextInput(hint_text='Write here...',
+                                multiline=True)
+            else:
+                text_input = TextInput(hint_text='Platz für Notizen...',
+                                multiline=True)
+                
         text_input.bind(text=self.on_text_input)
             
         # Create and bind the cancel, delete and save buttons.
-        self.close_button = RoundedButton(text='Close', 
-                                background_color=self.popup_btn_col,
-                                font_size=48)
+        if self.language == "EN":
+            self.close_button = RoundedButton(text='Close', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+        else:
+            self.close_button = RoundedButton(text='Zurück', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
             
         self.close_button.bind(on_press=self.close_popup)
 
-        self.save_button = RoundedButton(text='Save', 
-                                background_color=self.popup_btn_col,
-                                font_size=48)
+        if self.language == "EN":
+            self.save_button = RoundedButton(text='Save', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+        else:
+            self.save_button = RoundedButton(text='Fertig', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
             
         self.save_button.bind(on_press=self.save_entry)
 
-        self.delete_button = RoundedButton(text='Delete', 
-                                background_color=self.popup_btn_col,
-                                font_size=48)
+        if self.language == "EN":
+            self.delete_button = RoundedButton(text='Delete', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+        else:
+            self.delete_button = RoundedButton(text='Löschen', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
             
         # Close popup without confirmation, if no entry is saved.
         entry = self.check_entry(self.button_nr)
@@ -439,10 +461,14 @@ class CalendarApp(App):
         main_box.add_widget(button_box)
 
         # Create the Popup window with customized content
-        self.popup = Popup(title=f'{self.button_nr}. {month}' + 
-                        f' {self.current_year}', content=main_box,
-                        size_hint=(0.8, 0.8), title_align='center')
-            
+        # if self.language == "EN":
+        self.popup = Popup(title=f'{self.current_year} {month}' + 
+                            f' {self.button_nr}.', content=main_box,
+                            size_hint=(0.8, 0.8), title_align='center')
+        
+        if self.language == "DE":
+            self.popup.title = f'{self.button_nr}. {month} {self.current_year}'
+
         self.popup.background_color = self.bg_popups
         
         self.popup.open()
@@ -626,15 +652,24 @@ class CalendarApp(App):
 
     def ask_delete(self, instance):
         # Creates a popup to confirm to delete the entry.
-        cancel_button = RoundedButton(text='No',
-                                background_color=self.popup_btn_col,
-                                font_size=40)
-        
+        if self.language == "EN":
+            cancel_button = RoundedButton(text='No',
+                                    background_color=self.popup_btn_col,
+                                    font_size=40)
+        else:
+            cancel_button = RoundedButton(text='Nein',
+                                    background_color=self.popup_btn_col,
+                                    font_size=40)
         cancel_button.bind(on_press=self.prep_close_ask)
 
-        ok_button = RoundedButton(text='Ok',
-                                background_color=self.popup_btn_col,
-                                font_size=40)
+        if self.language == "EN":
+            ok_button = RoundedButton(text='Ok',
+                                    background_color=self.popup_btn_col,
+                                    font_size=40)
+        else:
+            ok_button = RoundedButton(text='Ja',
+                                    background_color=self.popup_btn_col,
+                                    font_size=40)
         
         ok_button.bind(on_press=self.delete_entry)
 
@@ -646,8 +681,12 @@ class CalendarApp(App):
         button_box.add_widget(ok_button)
         main_box.add_widget(button_box)
 
-        self.ask_popup = Popup(title=f'erase?', content=main_box,
+        self.ask_popup = Popup(title='erase entry?', content=main_box,
                                 size_hint=(0.5, 0.3), title_align='center')
+     
+        if self.language == "DE":
+            self.ask_popup.title = 'Eintrag löschen?'
+            
         self.ask_popup.background_color = self.bg_popups
     
         self.ask_popup.open()
@@ -687,15 +726,22 @@ class CalendarApp(App):
             self.ok_sound.play()
         
     def get_month_name(self, value):
-        months = ["Jan", "Feb", "März", "April", "Mai", "Juni", "Juli",
-                  "Aug", "Sept", "Okt", "Nov", "Dez"]
+        if self.language == "EN":
+            months = ["Jan", "Feb", "March", "April", "Mai", "June", "July",
+                    "Aug", "Sept", "Oct", "Nov", "Dec"]
+        else:
+            months = ["Jan", "Feb", "März", "April", "Mai", "Juni", "Juli",
+                    "Aug", "Sept", "Okt", "Nov", "Dez"]
             
         return months[value-1]
        
     def get_day_labels(self):
-        day_names = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
-        labels = []
+        if self.language == "EN":
+            day_names = ["Mon", "Tue", "Wed", "Thu", "Fry", "Sat", "Sun"]
+        else:
+            day_names = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
 
+        labels = []
         for i in day_names:
             label = Label(text=f'{i}', color=self.main_text_col, font_size=40,
                           bold=True)
@@ -720,21 +766,27 @@ class CalendarApp(App):
         month_name = self.get_month_name(self.chose_m)
 
         # Setting up the buttons and labels.
-        self.paragraph = Label(text='Select:', font_size=64,
-                          color=self.setdate_text_col)
+        if self.language == "EN":
+            self.y_label = Label(text='Year', font_size=56,
+                            color=self.setdate_text_col)
+            self.m_label = Label(text='Month', font_size=56,
+                            color=self.setdate_text_col)
+            self.d_label = Label(text='Day', font_size=56,
+                            color=self.setdate_text_col)
         
-        self.y_label = Label(text='Year', font_size=56,
-                          color=self.setdate_text_col)
-        self.m_label = Label(text='Month', font_size=56,
-                          color=self.setdate_text_col)
-        self.d_label = Label(text='Day', font_size=56,
-                          color=self.setdate_text_col)
-        
-        self.yr = Label(text=f'{self.chose_y}', font_size=48,
+        else:
+            self.d_label = Label(text='Tag', font_size=56,
+                            color=self.setdate_text_col)
+            self.m_label = Label(text='Monat', font_size=56,
+                            color=self.setdate_text_col)
+            self.y_label = Label(text='Jahr', font_size=56,
+                            color=self.setdate_text_col)
+            
+        self.dy = Label(text=f'{self.chose_d}', font_size=48,
                         color=self.setdate_text_col)
         self.mnt = Label(text=f'{month_name}', font_size=48,
                         color=self.setdate_text_col)
-        self.dy = Label(text=f'{self.chose_d}', font_size=48,
+        self.yr = Label(text=f'{self.chose_y}', font_size=48,
                         color=self.setdate_text_col)
         
         self.y_fwd = RoundedButton(text="^", font_size=64,
@@ -750,9 +802,6 @@ class CalendarApp(App):
         self.d_rwd = RoundedButton(text="v", font_size=46,
                                 background_color=self.popup_btn_col)
  
-        self.cancel = RoundedButton(text="cancel", font_size=56,
-                                    # size_hint=(1, 0.5),
-                                    background_color=self.popup_btn_col)
         self.ok = RoundedButton(text="ok", font_size=56,
                                     # size_hint=(1, 0.5),
                                     background_color=self.popup_btn_col)
@@ -767,34 +816,47 @@ class CalendarApp(App):
         self.d_fwd.bind(on_press=self.inc_d)
         self.d_rwd.bind(on_press=self.dec_d)
 
-        self.cancel.bind(on_press=self.prep_close)
         self.ok.bind(on_press=self.jump_to)
-
-        # Title for popup.
-        self.title_row = self.paragraph
 
         # Setting up the Layoutboxes for the set-date view.
         self.label_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
                                    spacing=30)
-        labels = [self.d_label, self.m_label, self.y_label]
+        if self.language == "EN":
+            labels = [self.y_label, self.m_label, self.d_label]
+        else:
+            labels = [self.d_label, self.m_label, self.y_label]
+
         for i in labels:
             self.label_row.add_widget(i)
         
         self.fwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
                                  spacing=30)
-        fwd_buttons = [self.d_fwd, self.m_fwd, self.y_fwd]
+        if self.language == "EN":
+            fwd_buttons = [self.y_fwd, self.m_fwd, self.d_fwd]
+        else:
+            fwd_buttons = [self.d_fwd, self.m_fwd, self.y_fwd]
+
         for i in fwd_buttons:
             self.fwd_row.add_widget(i)
 
         self.date_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
                                   spacing=30)
-        date_values = [self.dy, self.mnt, self.yr]
+        
+        if self.language == "EN":
+            date_values = [self.yr, self.mnt, self.dy]
+        else:
+            date_values = [self.dy, self.mnt, self.yr]
+
         for i in date_values:
             self.date_row.add_widget(i)
 
         self.rwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
                                  spacing=30)
-        rwd_buttons = [self.d_rwd, self.m_rwd, self.y_rwd]
+        if self.language == "EN":
+            rwd_buttons = [self.y_rwd, self.m_rwd, self.d_rwd]
+        else:
+            rwd_buttons = [self.d_rwd, self.m_rwd, self.y_rwd]
+            
         for i in rwd_buttons:
             self.rwd_row.add_widget(i)
 
@@ -807,10 +869,13 @@ class CalendarApp(App):
         self.setdate_layout.add_widget(self.spaceholder_1)
         self.setdate_layout.add_widget(self.ok)
 
-        self.setdate_popup = Popup(title=f'Jump to date',
-                                   content=self.setdate_layout,
-                                   size_hint=(0.6, 0.7), title_align='center')
-
+        
+        self.setdate_popup = Popup(title='Jump to date:',
+                                    content=self.setdate_layout,
+                                   size_hint=(0.6, 0.6), title_align='center')
+        
+        if self.language == "DE":
+            self.setdate_popup.title = 'Wechsle zu Datum:'
         self.setdate_popup.background_color = self.bg_popups
         
         self.nr = self.chose_d
@@ -903,40 +968,71 @@ class CalendarApp(App):
         if self.chose_d > days or self.chose_d < 1:
             self.chose_d = 1
         
-        self.month_name = self.get_month_name(self.chose_m)
+        month_name = self.get_month_name(self.chose_m)
 
-        self.yr = Label(text=f'{self.chose_y}', font_size=48,
-                          color=self.setdate_text_col)
-        self.mnt = Label(text=f'{self.month_name}', font_size=48,
-                          color=self.setdate_text_col)
+        if self.language == "EN":
+            self.y_label = Label(text='Year', font_size=56,
+                            color=self.setdate_text_col)
+            self.m_label = Label(text='Month', font_size=56,
+                            color=self.setdate_text_col)
+            self.d_label = Label(text='Day', font_size=56,
+                            color=self.setdate_text_col)
+            
+        elif self.language == "DE":
+            self.d_label = Label(text='Tag', font_size=56,
+                            color=self.setdate_text_col)
+            self.m_label = Label(text='Monat', font_size=56,
+                            color=self.setdate_text_col)
+            self.y_label = Label(text='Jahr', font_size=56,
+                            color=self.setdate_text_col)
+            
         self.dy = Label(text=f'{self.chose_d}', font_size=48,
-                          color=self.setdate_text_col)
+                        color=self.setdate_text_col)
+        self.mnt = Label(text=f'{month_name}', font_size=48,
+                        color=self.setdate_text_col)
+        self.yr = Label(text=f'{self.chose_y}', font_size=48,
+                        color=self.setdate_text_col)
 
         self.label_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
                                    spacing=30)
         
-        labels = [self.d_label, self.m_label, self.y_label]
+        if self.language == "EN":
+            labels = [self.y_label, self.m_label, self.d_label]
+        else:
+            labels = [self.d_label, self.m_label, self.y_label]
+
         for i in labels:
             self.label_row.add_widget(i)
         
         self.fwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
                                  spacing=30)
         
-        fwd_buttons = [self.d_fwd, self.m_fwd, self.y_fwd]
+        if self.language == "EN":
+            fwd_buttons = [self.y_fwd, self.m_fwd, self.d_fwd]
+        else:
+            fwd_buttons = [self.d_fwd, self.m_fwd, self.y_fwd]
+
         for i in fwd_buttons:
             self.fwd_row.add_widget(i)
 
         self.date_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
                                   spacing=30)
         
-        date_values = [self.dy, self.mnt, self.yr]
+        if self.language == "EN":
+            date_values = [self.yr, self.mnt, self.dy]
+        else:
+            date_values = [self.dy, self.mnt, self.yr]
         for i in date_values:
             self.date_row.add_widget(i)
 
         self.rwd_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
                                  spacing=30)
         
-        rwd_buttons = [self.d_rwd, self.m_rwd, self.y_rwd]
+        if self.language == "EN":
+            rwd_buttons = [self.y_rwd, self.m_rwd, self.d_rwd]
+        else:
+            rwd_buttons = [self.d_rwd, self.m_rwd, self.y_rwd]
+
         for i in rwd_buttons:
             self.rwd_row.add_widget(i)
 
@@ -968,7 +1064,11 @@ class CalendarApp(App):
         self.credits_sound.stop()
 
         # Labels, buttons, bindings for color settings.
-        self.col_title = Label(text='Color:', font_size=48, 
+        if self.language == "EN":
+            self.col_title = Label(text='Color:', font_size=48, 
+                            color=self.setdate_text_col)
+        else:
+            self.col_title = Label(text='Farbe:', font_size=48, 
                           color=self.setdate_text_col)
 
         if self.color_set == 1:
@@ -1006,10 +1106,10 @@ class CalendarApp(App):
         self.col_select_3.bind(on_release=self.colorset_3)
         self.col_select_4.bind(on_release=self.colorset_4)
 
-        # Labels, buttons, bindings for axis inversion settings.
+        # Labels, buttons, bindings for axis inversion settings. 
         self.invert_title = Label(text='Invert:', font_size=48,
-                             color=self.setdate_text_col)
-
+                                color=self.setdate_text_col)
+            
         if self.swipe_x_default:
             invert_x_bg_color = self.popup_btn_col
         else:
@@ -1029,33 +1129,54 @@ class CalendarApp(App):
         self.invert_y_btn.bind(on_release=self.invert_y)
 
         # Labels, buttons, bindings for sound settings.
-        self.sound_title = Label(text='Sound:', font_size=48,
+        if self.language == "EN":
+            self.sound_title = Label(text='Sound:', font_size=48,
+                                color=self.setdate_text_col)
+        else:
+            self.sound_title = Label(text='Musik:', font_size=48,
                              color=self.setdate_text_col)
         
         if self.sound:
-            self.sound_btn = RoundedButton(text='On', font_size=48,
+            if self.language == "EN":
+                self.sound_btn = RoundedButton(text='On', font_size=48,
+                                        background_color=self.chosen_btn_col)
+            else:
+                self.sound_btn = RoundedButton(text='Ein', font_size=48,
                                           background_color=self.chosen_btn_col)
         else:
-            self.sound_btn = RoundedButton(text='Off', font_size=48,
+            if self.language == "EN":
+                self.sound_btn = RoundedButton(text='Off', font_size=48,
+                                          background_color=self.popup_btn_col)
+            else:
+                self.sound_btn = RoundedButton(text='Aus', font_size=48,
                                           background_color=self.popup_btn_col)
         
         self.sound_btn.bind(on_release=self.set_sound)
 
-        self.about_btn = RoundedButton(text='About', font_size=12,
-                                       size_hint=(1, 0.25),
+        self.about_btn = RoundedButton(text='Info', font_size=24,
+                                       size_hint=(1, 0.5),
                                        background_color=self.popup_btn_col)
         
         self.about_btn.bind(on_release=self.open_credits)
 
-        self.close_btn = RoundedButton(text='Close', font_size=48,
-                                       size_hint=(1, 0.25),
-                                       background_color=self.popup_btn_col)
-        
-        self.close_btn.bind(on_release=self.close_menu)
+        # Labels, buttons, bindings for language settings.
+        if self.language == "EN":
+            self.language_title = Label(text='Language:', font_size=48,
+                                color=self.setdate_text_col)
+        else:
+            self.language_title = Label(text='Sprache:', font_size=48,
+                                color=self.setdate_text_col)
 
-        self.spaceholder_2 = Label(text='', font_size=64, size_hint=(1, 0.2))
-        self.spaceholder_3 = Label(text='', font_size=64, size_hint=(1, 0.2))
-        self.spaceholder_4 = Label(text='', font_size=64, size_hint=(1, 0.2))
+        if self.language == "EN":
+            self.language_button = RoundedButton(text='English', font_size=48,
+                                          background_color=self.popup_btn_col)
+        else:
+            self.language_button = RoundedButton(text='Deutsch', font_size=48,
+                                          background_color=self.popup_btn_col)
+        
+        self.language_button.bind(on_release=self.switch_language)
+
+        self.spaceholder_2 = Label(text='', font_size=64, size_hint=(1, 0.7))
 
         # Boxes in boxes with titles and buttons.
         self.title_box = BoxLayout(orientation='vertical', spacing=30,
@@ -1063,8 +1184,8 @@ class CalendarApp(App):
         self.title_box.add_widget(self.col_title)
         self.title_box.add_widget(self.invert_title)
         self.title_box.add_widget(self.sound_title)
+        self.title_box.add_widget(self.language_title)
         self.title_box.add_widget(self.spaceholder_2)
-        self.title_box.add_widget(self.spaceholder_3)
 
         self.clr_btns = BoxLayout(orientation='horizontal', spacing=20)
         self.clr_btns.add_widget(self.col_select_1)
@@ -1079,11 +1200,14 @@ class CalendarApp(App):
         self.snd_btn = BoxLayout(orientation='horizontal', spacing=0)
         self.snd_btn.add_widget(self.sound_btn)
 
+        self.lang_btn = BoxLayout(orientation='horizontal')
+        self.lang_btn.add_widget(self.language_button)
+
         self.btn_box = BoxLayout(orientation='vertical', spacing=30)
         self.btn_box.add_widget(self.clr_btns)
         self.btn_box.add_widget(self.inv_btns)
         self.btn_box.add_widget(self.snd_btn)
-        self.btn_box.add_widget(self.spaceholder_4)
+        self.btn_box.add_widget(self.lang_btn)
         self.btn_box.add_widget(self.about_btn)
 
         self.btns_title_box = BoxLayout(orientation='horizontal', spacing=20)
@@ -1094,11 +1218,12 @@ class CalendarApp(App):
         self.menu_layout = BoxLayout(orientation='vertical', spacing=20)
         self.menu_layout.add_widget(self.btns_title_box)
 
-        self.menu_popup = Popup(title='Settings', content=self.menu_layout, 
-                                size_hint=(0.6, 0.7), 
-                                # background_color=self.bg_popups,
-                                title_align="center")
         
+        self.menu_popup = Popup(title='Settings', content=self.menu_layout,
+                                    size_hint=(0.6, 0.6), title_align="center")
+        
+        if self.language == "DE":
+            self.menu_popup.title = 'Einstellungen'
         self.menu_popup.background_color = self.bg_popups
 
         self.menu_popup.open()
@@ -1159,6 +1284,16 @@ class CalendarApp(App):
         if self.sound:
             self.btn_sound.play()
 
+    def switch_language(self, instance):
+        if self.language == "DE":
+            self.language = "EN"
+        else:
+            self.language = "DE"
+        self.update_values()
+        self.update_menu(instance)
+        if self.sound:
+            self.btn_sound.play()
+
     def close_menu(self, x=None):
         self.menu_popup.dismiss()
         if self.sound:
@@ -1166,7 +1301,7 @@ class CalendarApp(App):
         self.credits_sound.stop()
 
     def update_menu(self, instance):
-        # Update the colors of the chosen options.
+        # Update button-colors of the chosen options.
 
         # Clear all layout-boxes to update with actualized elements.
         self.btns_title_box.clear_widgets()
@@ -1178,7 +1313,11 @@ class CalendarApp(App):
         self.menu_layout.clear_widgets()
         
         # Update labels, buttons, bindings for color settings.
-        self.col_title = Label(text='Color:', font_size=48, 
+        if self.language == "EN":
+            self.col_title = Label(text='Color:', font_size=48, 
+                            color=self.setdate_text_col)
+        else:
+            self.col_title = Label(text='Farbe:', font_size=48, 
                           color=self.setdate_text_col)
         
         self.menu_popup.background_color = self.bg_popups
@@ -1241,32 +1380,55 @@ class CalendarApp(App):
         self.invert_y_btn.bind(on_release=self.invert_y)
 
         # Update labels, buttons, bindings for sound settings.
-        self.sound_title = Label(text='Sound:', font_size=48,
+        if self.language == "EN":
+            self.sound_title = Label(text='Sound:', font_size=48,
+                                color=self.setdate_text_col)
+        else:
+            self.sound_title = Label(text='Musik:', font_size=48,
                              color=self.setdate_text_col)
         
         if self.sound:
-            self.sound_btn = RoundedButton(text='On', font_size=48,
+            if self.language == "EN":
+                self.sound_btn = RoundedButton(text='On', font_size=48,
+                                          background_color=self.chosen_btn_col)
+            else:
+                self.sound_btn = RoundedButton(text='Ein', font_size=48,
                                           background_color=self.chosen_btn_col)
         else:
-            self.sound_btn = RoundedButton(text='Off', font_size=48,
+            if self.language == "EN":
+                self.sound_btn = RoundedButton(text='Off', font_size=48,
                                           background_color=self.popup_btn_col)
-        
+            else:
+                self.sound_btn = RoundedButton(text='Aus', font_size=48,
+                                          background_color=self.popup_btn_col)
+                
         self.sound_btn.bind(on_release=self.set_sound)
 
-        self.about_btn = RoundedButton(text='About', font_size=12,
-                                       size_hint=(1, 0.25),
+        self.about_btn = RoundedButton(text='Info', font_size=24,
+                                       size_hint=(1, 0.5),
                                        background_color=self.popup_btn_col)
         
         self.about_btn.bind(on_release=self.open_credits)
 
-        self.close_btn = RoundedButton(text='Close', font_size=48,
-                                       size_hint=(1, 0.25),
-                                       background_color=self.popup_btn_col)
-        
-        self.close_btn.bind(on_release=self.close_menu)
-
         self.button_box = BoxLayout(orientation='horizontal',
                                     size_hint=(1, 0.3))
+        
+        # Labels, buttons, bindings for language settings.
+        if self.language == "EN":
+            self.language_title = Label(text='Language:', font_size=48,
+                                color=self.setdate_text_col)
+        else:
+            self.language_title = Label(text='Sprache:', font_size=48,
+                                color=self.setdate_text_col)
+
+        if self.language == "EN":
+            self.language_button = RoundedButton(text='English', font_size=48,
+                                          background_color=self.popup_btn_col)
+        else:
+            self.language_button = RoundedButton(text='Deutsch', font_size=48,
+                                          background_color=self.popup_btn_col)
+        
+        self.language_button.bind(on_release=self.switch_language)
 
         # Boxes in boxes with titles and buttons.
         self.title_box = BoxLayout(orientation='vertical', spacing=30,
@@ -1274,8 +1436,8 @@ class CalendarApp(App):
         self.title_box.add_widget(self.col_title)
         self.title_box.add_widget(self.invert_title)
         self.title_box.add_widget(self.sound_title)
+        self.title_box.add_widget(self.language_title)
         self.title_box.add_widget(self.spaceholder_2)
-        self.title_box.add_widget(self.spaceholder_3)
 
         self.clr_btns = BoxLayout(orientation='horizontal', spacing=20)
         self.clr_btns.add_widget(self.col_select_1)
@@ -1290,11 +1452,14 @@ class CalendarApp(App):
         self.snd_btn = BoxLayout(orientation='horizontal', spacing=0)
         self.snd_btn.add_widget(self.sound_btn)
 
+        self.lang_btn = BoxLayout(orientation='horizontal', spacing=0)
+        self.lang_btn.add_widget(self.language_button)
+
         self.btn_box = BoxLayout(orientation='vertical', spacing=30)
         self.btn_box.add_widget(self.clr_btns)
         self.btn_box.add_widget(self.inv_btns)
         self.btn_box.add_widget(self.snd_btn)
-        self.btn_box.add_widget(self.spaceholder_4)
+        self.btn_box.add_widget(self.lang_btn)
         self.btn_box.add_widget(self.about_btn)
 
         self.btns_title_box = BoxLayout(orientation='horizontal', spacing=20)
@@ -1312,10 +1477,12 @@ class CalendarApp(App):
         inv_x = {"inv_x": self.swipe_x_default}
         inv_y = {"inv_y": self.swipe_y_default}
         sound = {"sound": self.sound}
+        language = {"language": self.language}
         self.save_file.update(color)
         self.save_file.update(inv_x)
         self.save_file.update(inv_y)
         self.save_file.update(sound)
+        self.save_file.update(language)
 
         with open('save_file.json', 'w') as file:
                 json.dump(self.save_file, file)
@@ -1326,16 +1493,27 @@ class CalendarApp(App):
                              color=self.setdate_text_col)
          
         close_button = RoundedButton(
-            text="""made with kivy/python
+            text="""            made with kivy/python
 
-            by bc-reactive:\ngithub.com/bcreactive
+            by bc-reactive:
+            github.com/bcreactive
 
-            check out my music:\nsoundcloud.com/awtomatsupabreakz
+            soundcloud.com/awtomatsupabreakz
 
             thanks for testing!""",
 
             background_color=self.popup_btn_col,
-                                font_size=20, bold=True)
+                                font_size=28, bold=True)
+    
+        if self.language == "DE":
+            close_button.text = """            Erstellt mit Kivy/Python
+            
+            von bc-reactive:
+            github.com/bcreactive
+
+            soundcloud.com/awtomatsupabreakz
+
+            Danke fürs testen!"""
         
         close_button.bind(on_press=self.close_credits)
 
@@ -1344,7 +1522,7 @@ class CalendarApp(App):
         credits_box.add_widget(title)
         credits_box.add_widget(close_button)
 
-        self.credits_popup = Popup(title=f'Credits', content=credits_box,
+        self.credits_popup = Popup(title='Info', content=credits_box,
                                 size_hint=(0.7, 0.7), title_align='center')
         
         self.credits_popup.background_color = self.bg_popups
