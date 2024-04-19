@@ -461,15 +461,14 @@ class CalendarApp(App):
         main_box.add_widget(button_box)
 
         # Create the Popup window with customized content
-        if self.language == "EN":
-            self.popup = Popup(title=f'{self.current_year} {month}' + 
+        # if self.language == "EN":
+        self.popup = Popup(title=f'{self.current_year} {month}' + 
                             f' {self.button_nr}.', content=main_box,
                             size_hint=(0.8, 0.8), title_align='center')
-        else:
-            self.popup = Popup(title=f'{self.button_nr}. {month}' + 
-                        f' {self.current_year}', content=main_box,
-                        size_hint=(0.8, 0.8), title_align='center')
-            
+        
+        if self.language == "DE":
+            self.popup.title = f'{self.button_nr}. {month} {self.current_year}'
+
         self.popup.background_color = self.bg_popups
         
         self.popup.open()
@@ -682,12 +681,11 @@ class CalendarApp(App):
         button_box.add_widget(ok_button)
         main_box.add_widget(button_box)
 
-        if self.language == "EN":
-            self.ask_popup = Popup(title=f'erase entry?', content=main_box,
+        self.ask_popup = Popup(title='erase entry?', content=main_box,
                                 size_hint=(0.5, 0.3), title_align='center')
-        else:
-            self.ask_popup = Popup(title=f'Eintrag löschen?', content=main_box,
-                                size_hint=(0.5, 0.3), title_align='center')
+     
+        if self.language == "DE":
+            self.ask_popup.title = 'Eintrag löschen?'
             
         self.ask_popup.background_color = self.bg_popups
     
@@ -871,15 +869,13 @@ class CalendarApp(App):
         self.setdate_layout.add_widget(self.spaceholder_1)
         self.setdate_layout.add_widget(self.ok)
 
-        if self.language == "EN":
-            self.setdate_popup = Popup(title=f'Jump to date:',
+        
+        self.setdate_popup = Popup(title='Jump to date:',
                                     content=self.setdate_layout,
                                    size_hint=(0.6, 0.6), title_align='center')
-        else:
-            self.setdate_popup = Popup(title=f'Wechsle zu Datum:',
-                                    content=self.setdate_layout,
-                                   size_hint=(0.6, 0.6), title_align='center')
-
+        
+        if self.language == "DE":
+            self.setdate_popup.title = 'Wechsle zu Datum:'
         self.setdate_popup.background_color = self.bg_popups
         
         self.nr = self.chose_d
@@ -1222,14 +1218,12 @@ class CalendarApp(App):
         self.menu_layout = BoxLayout(orientation='vertical', spacing=20)
         self.menu_layout.add_widget(self.btns_title_box)
 
-        if self.language == "EN":
-            self.menu_popup = Popup(title='Settings', content=self.menu_layout,
+        
+        self.menu_popup = Popup(title='Settings', content=self.menu_layout,
                                     size_hint=(0.6, 0.6), title_align="center")
-        else:
-            self.menu_popup = Popup(title='Einstellungen',
-                                    content=self.menu_layout,
-                                    size_hint=(0.6, 0.6), title_align="center")
-            
+        
+        if self.language == "DE":
+            self.menu_popup.title = 'Einstellungen'
         self.menu_popup.background_color = self.bg_popups
 
         self.menu_popup.open()
@@ -1499,16 +1493,27 @@ class CalendarApp(App):
                              color=self.setdate_text_col)
          
         close_button = RoundedButton(
-            text="""made with kivy/python
+            text="""            made with kivy/python
 
-            by bc-reactive:\ngithub.com/bcreactive
+            by bc-reactive:
+            github.com/bcreactive
 
-            check out my music:\nsoundcloud.com/awtomatsupabreakz
+            soundcloud.com/awtomatsupabreakz
 
             thanks for testing!""",
 
             background_color=self.popup_btn_col,
                                 font_size=28, bold=True)
+    
+        if self.language == "DE":
+            close_button.text = """            Erstellt mit Kivy/Python
+            
+            von bc-reactive:
+            github.com/bcreactive
+
+            soundcloud.com/awtomatsupabreakz
+
+            Danke fürs testen!"""
         
         close_button.bind(on_press=self.close_credits)
 
@@ -1517,7 +1522,7 @@ class CalendarApp(App):
         credits_box.add_widget(title)
         credits_box.add_widget(close_button)
 
-        self.credits_popup = Popup(title=f'Credits', content=credits_box,
+        self.credits_popup = Popup(title='Info', content=credits_box,
                                 size_hint=(0.7, 0.7), title_align='center')
         
         self.credits_popup.background_color = self.bg_popups
