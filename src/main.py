@@ -14,7 +14,7 @@ from kivy.core.audio import SoundLoader
 from datetime import datetime
 # import threading
 import calendar
-# import time
+import time
 import json
 
 # Uncomment to block multitouch for mouse in windows version:
@@ -70,6 +70,7 @@ class CalendarApp(App):
         self.start_pos = (0, 0)
         self.btns = []
         self.nr = 0
+        self.touch_down_time = 0
 
         # Load sounds.
         self.swipe_r_sound = SoundLoader.load('swipe_r.mp3')
@@ -81,6 +82,7 @@ class CalendarApp(App):
 
     def on_touch_down(self, instance, touch):
         # Actions taken, when touching the screen.
+        self.touch_down_time = time.time()
         self.start_pos = touch.pos
         self.touch_x = touch.x
         self.touch_y = touch.y
@@ -89,70 +91,70 @@ class CalendarApp(App):
                 self.nr = int(i.text)
         
     def on_touch_up(self, instance, touch):
-        # Check, if the input is a click or a swipe and lock buttons if swiped.
-        if abs(touch.x - self.start_pos[0]) > 40 or abs(
-            touch.y - self.start_pos[1]) > 40:
-            self.input = "swipe"
-            self.buttons_locked = True
+        # Prevent from swipe actions when close buttons are hold.
+        touch_up_time = time.time()
+        time_threshold = 0.5  
 
-            if self.swipe_x_default:
-                if touch.x > self.touch_x + 80:
-                    self.dec_month()       
+        # Execute swipe or click actions.
+        if touch_up_time - self.touch_down_time < time_threshold:
+            if abs(touch.x - self.start_pos[0]) > 40 or abs(
+                touch.y - self.start_pos[1]) > 40:
+                self.buttons_locked = True
 
-                elif touch.x < self.touch_x - 80:
-                    self.inc_month()
+                if self.swipe_x_default:
+                    if touch.x > self.touch_x + 80:
+                        self.dec_month()       
+                    elif touch.x < self.touch_x - 80:
+                        self.inc_month()
+                    
+                    if self.swipe_y_default:
+                        if touch.y > self.touch_y + 250:
+                            self.set_date()   
+                        elif touch.y < self.touch_y - 250:
+                            self.open_menu_popup()
+
+                    else:
+                        if touch.y < self.touch_y - 250:
+                            self.set_date()
+                        elif touch.y > self.touch_y + 250:
+                            self.open_menu_popup()
                 
-                if self.swipe_y_default:
-                    if touch.y > self.touch_y + 250:
-                        self.set_date()   
-
-                    elif touch.y < self.touch_y - 250:
-                        self.open_menu_popup()
-
                 else:
-                    if touch.y < self.touch_y - 250:
-                        self.set_date()
+                    if touch.x < self.touch_x - 80:
+                        self.dec_month()    
+                    elif touch.x > self.touch_x + 80:
+                        self.inc_month()
 
-                    elif touch.y > self.touch_y + 250:
-                        self.open_menu_popup()
-            
-            else:
-                if touch.x < self.touch_x - 80:
-                    self.dec_month()
-                    
-                elif touch.x > self.touch_x + 80:
-                    self.inc_month()
+                    if self.swipe_y_default:   
+                        if touch.y > self.touch_y + 250:
+                            self.set_date()
+                        elif touch.y < self.touch_y - 250:
+                            self.open_menu_popup()
 
-                if self.swipe_y_default:   
-                    if touch.y > self.touch_y + 250:
-                        self.set_date()
+                    else:
+                        if touch.y < self.touch_y - 250:
+                            self.set_date()                        
+                        elif touch.y > self.touch_y + 250:
+                            self.open_menu_popup()
 
-                    elif touch.y < self.touch_y - 250:
-                        self.open_menu_popup()
-
-                else:
-                    if touch.y < self.touch_y - 250:
-                        self.set_date()
-                    
-                    elif touch.y > self.touch_y + 250:
-                        self.open_menu_popup()
-
-            self.input = ""
-            self.buttons_locked = True
-            return
+                self.input = ""
+                self.start_pos = (0,0)
+                self.buttons_locked = True
+                return
             
         # Enable buttonpress, if input is not a swipe gesture.
         if self.input == "click":
             self.buttons_locked = False
             self.day_popup(self.nr)
             self.buttons_locked = True
-            self.input = ""
+
         self.input = ""
+        self.start_pos = (0,0)
 
     def check_day_popup(self, instance):
         # Check, if clicked or swiped, when the move starts on a day-button.
-        if abs(self.touch_x - self.start_pos[0]) > 20 or abs(
-            self.touch_y - self.start_pos[1]) > 20:
+        if abs(self.touch_x - self.start_pos[0]) > 40 or abs(
+            self.touch_y - self.start_pos[1]) > 40:
             self.input = "swipe"
             self.buttons_locked = True
         else:
@@ -396,24 +398,21 @@ class CalendarApp(App):
     #         content = self.save_file[key]
     #         self.day_entry = RoundedButton(text=content, rad=30,
     #                                 background_color=self.navi_btn_col,
-    #                                 font_size=20, size_hint=(1, 0.5))
-    #     #     text_input = TextInput(text=content, multiline=True)
+    #                                 font_size=20, size_hint=(1, 0.6))
 
     #     else:
     #         if self.language == "EN":
-    #             self.day_entry = RoundedButton(text='Add entry',
+    #             self.empty_entry = RoundedButton(text='Add entry',
     #                                         rad=30, font_size=20,
     #                                         background_color=
     #                                         self.navi_btn_col,
-    #                                         size_hint=(1, 0.2))
+    #                                         size_hint=(1, 0.4))
     #         else:
-    #             self.day_entry = RoundedButton(text='Eintrag erstellen',
+    #             self.empty_entry = RoundedButton(text='Eintrag erstellen',
     #                                         rad=30, font_size=20,
     #                                         background_color=self.navi_btn_col,
-    #                                         size_hint=(1, 0.2))
-                
-    #     # text_input.bind(text=self.on_text_input)
-            
+    #                                         size_hint=(1, 0.4))
+                            
     #     # Create and bind the cancel, delete and save buttons.
     #     if self.language == "EN":
     #         self.close_button = RoundedButton(text='Close', 
@@ -437,8 +436,11 @@ class CalendarApp(App):
             
     #     self.add_button.bind(on_press=self.open_textbox)
 
-    #     self.spaceholder_3 = Label()
-    #     self.spaceholder_4 = Label()
+    #     self.spaceholder_3 = Label(size_hint=(1,0.2))
+    #     self.spaceholder_4 = Label(size_hint=(1,0.2))
+    #     self.spaceholder_5 = Label(size_hint=(0.2,0.2))
+    #     self.spaceholder_6 = Label(size_hint=(0.2,0.2))
+
 
     #     # # Create the layout of the 'today-view' by stacking the widgets.
     #     main_box = BoxLayout(orientation='vertical', spacing=20)
@@ -447,19 +449,24 @@ class CalendarApp(App):
     #     content_box = BoxLayout(orientation='vertical')
 
     #     if key:
-    #         content_box.add_widget(self.day_entry)
-    #         print("entry available!")
-    #     else:
     #         content_box.add_widget(self.spaceholder_3)
     #         content_box.add_widget(self.day_entry)
+    #         content_box.add_widget(self.spaceholder_4)
+    #     else:
+    #         content_box.add_widget(self.spaceholder_3)
+    #         content_box.add_widget(self.empty_entry)
     #         content_box.add_widget(self.spaceholder_4)
 
     #     button_box = BoxLayout(orientation='horizontal',
     #                            size_hint=(1,0.18), spacing=70)
-            
-    #     button_box.add_widget(self.close_button)
-    #     button_box.add_widget(self.add_button)
-    #     # button_box.add_widget(self.save_button)
+        
+    #     if key:
+    #         button_box.add_widget(self.close_button)
+    #         button_box.add_widget(self.add_button)
+    #     else:
+    #         button_box.add_widget(self.spaceholder_5)
+    #         button_box.add_widget(self.close_button)
+    #         button_box.add_widget(self.spaceholder_6)
             
     #     main_box.add_widget(content_box)
     #     main_box.add_widget(button_box)
@@ -471,7 +478,8 @@ class CalendarApp(App):
     #                         title_align='center')
         
     #     if self.language == "DE":
-    #         self.day_pop.title = f'{self.button_nr}. {month} {self.current_year}'
+    #         self.day_pop.title = (f'{self.button_nr}. {month}' +
+    #                                 f'{self.current_year}')
 
     #     self.day_pop.background_color = self.bg_popups
         
@@ -479,9 +487,8 @@ class CalendarApp(App):
     #     self.input = ""
     #     # pass
 
-    # def open_textbox(self, instance):
-    #     print("textbox")
-    #     # self.close_day_popup()
+    def open_textbox(self, instance):
+        print("textbox")
 
     def day_popup(self, instance):
         """Create the day-view with a textbox and buttons."""
@@ -574,13 +581,13 @@ class CalendarApp(App):
                             size_hint=(0.8, 0.8), title_align='center')
         
         if self.language == "DE":
-            self.day_pop.title = f'{self.button_nr}. {month} {self.current_year}'
+            self.day_pop.title = (f'{self.button_nr}. {month}' +
+                                    f'{self.current_year}')
 
         self.day_pop.background_color = self.bg_popups
         
         self.day_pop.open()
         self.input = ""
-        pass
     
     def on_text_input(self, instance, x=None):
         self.entered_text = instance.text
@@ -742,6 +749,8 @@ class CalendarApp(App):
             return False
 
     def close_day_popup(self, x=None):
+        self.input = ""
+        # self.start_pos = (0,0)
         self.day_pop.dismiss()
         if self.sound:
             self.btn_sound.play()
