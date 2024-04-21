@@ -422,7 +422,7 @@ class CalendarApp(App):
                                     background_color=self.popup_btn_col,
                                     font_size=48)
         else:
-            self.save_button = RoundedButton(text='Fertig', 
+            self.save_button = RoundedButton(text='Sichern', 
                                     background_color=self.popup_btn_col,
                                     font_size=48)
             
@@ -472,6 +472,7 @@ class CalendarApp(App):
         self.popup.background_color = self.bg_popups
         
         self.popup.open()
+        self.input = ""
     
     def on_text_input(self, instance, x=None):
         self.entered_text = instance.text
@@ -634,7 +635,6 @@ class CalendarApp(App):
 
     def close_popup(self, x=None):
         self.popup.dismiss()
-        self.input = ""
         if self.sound:
             self.btn_sound.play()
 
@@ -1065,10 +1065,10 @@ class CalendarApp(App):
 
         # Labels, buttons, bindings for color settings.
         if self.language == "EN":
-            self.col_title = Label(text='Color:', font_size=48, 
+            self.col_title = Label(text='Color', font_size=48, 
                             color=self.setdate_text_col)
         else:
-            self.col_title = Label(text='Farbe:', font_size=48, 
+            self.col_title = Label(text='Farbe', font_size=48, 
                           color=self.setdate_text_col)
 
         if self.color_set == 1:
@@ -1107,7 +1107,7 @@ class CalendarApp(App):
         self.col_select_4.bind(on_release=self.colorset_4)
 
         # Labels, buttons, bindings for axis inversion settings. 
-        self.invert_title = Label(text='Invert:', font_size=48,
+        self.invert_title = Label(text='Invert', font_size=48,
                                 color=self.setdate_text_col)
             
         if self.swipe_x_default:
@@ -1130,10 +1130,10 @@ class CalendarApp(App):
 
         # Labels, buttons, bindings for sound settings.
         if self.language == "EN":
-            self.sound_title = Label(text='Sound:', font_size=48,
+            self.sound_title = Label(text='Sound', font_size=48,
                                 color=self.setdate_text_col)
         else:
-            self.sound_title = Label(text='Musik:', font_size=48,
+            self.sound_title = Label(text='Musik', font_size=48,
                              color=self.setdate_text_col)
         
         if self.sound:
@@ -1161,10 +1161,10 @@ class CalendarApp(App):
 
         # Labels, buttons, bindings for language settings.
         if self.language == "EN":
-            self.language_title = Label(text='Language:', font_size=48,
+            self.language_title = Label(text='Language', font_size=48,
                                 color=self.setdate_text_col)
         else:
-            self.language_title = Label(text='Sprache:', font_size=48,
+            self.language_title = Label(text='Sprache', font_size=48,
                                 color=self.setdate_text_col)
 
         if self.language == "EN":
@@ -1220,7 +1220,7 @@ class CalendarApp(App):
 
         
         self.menu_popup = Popup(title='Settings', content=self.menu_layout,
-                                    size_hint=(0.6, 0.6), title_align="center")
+                                    size_hint=(0.7, 0.7), title_align="center")
         
         if self.language == "DE":
             self.menu_popup.title = 'Einstellungen'
@@ -1314,13 +1314,18 @@ class CalendarApp(App):
         
         # Update labels, buttons, bindings for color settings.
         if self.language == "EN":
-            self.col_title = Label(text='Color:', font_size=48, 
+            self.col_title = Label(text='Color', font_size=48, 
                             color=self.setdate_text_col)
         else:
-            self.col_title = Label(text='Farbe:', font_size=48, 
+            self.col_title = Label(text='Farbe', font_size=48, 
                           color=self.setdate_text_col)
         
         self.menu_popup.background_color = self.bg_popups
+
+        if self.language == "EN":
+            self.menu_popup.title = 'Settings'
+        else:
+            self.menu_popup.title = 'Einstellungen'
         
         if self.color_set == 1:
             col_1_bg_color = self.chosen_btn_col
@@ -1358,7 +1363,7 @@ class CalendarApp(App):
         self.col_select_4.bind(on_release=self.colorset_4)
 
         # Update labels, buttons, bindings for axis inversion settings.
-        self.invert_title = Label(text='Invert:', font_size=48,
+        self.invert_title = Label(text='Invert', font_size=48,
                              color=self.setdate_text_col)
 
         if self.swipe_x_default:
@@ -1381,10 +1386,10 @@ class CalendarApp(App):
 
         # Update labels, buttons, bindings for sound settings.
         if self.language == "EN":
-            self.sound_title = Label(text='Sound:', font_size=48,
+            self.sound_title = Label(text='Sound', font_size=48,
                                 color=self.setdate_text_col)
         else:
-            self.sound_title = Label(text='Musik:', font_size=48,
+            self.sound_title = Label(text='Musik', font_size=48,
                              color=self.setdate_text_col)
         
         if self.sound:
@@ -1415,10 +1420,10 @@ class CalendarApp(App):
         
         # Labels, buttons, bindings for language settings.
         if self.language == "EN":
-            self.language_title = Label(text='Language:', font_size=48,
+            self.language_title = Label(text='Language', font_size=48,
                                 color=self.setdate_text_col)
         else:
-            self.language_title = Label(text='Sprache:', font_size=48,
+            self.language_title = Label(text='Sprache', font_size=48,
                                 color=self.setdate_text_col)
 
         if self.language == "EN":
