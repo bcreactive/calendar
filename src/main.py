@@ -375,6 +375,114 @@ class CalendarApp(App):
             self.bottom_row.add_widget(button)
             self.btns.append(button)
     
+    # def day_popup(self, instance):
+    #     """Create the day-view with a textbox and buttons."""
+
+    #     if self.sound:
+    #         self.btn_sound.play()
+    #     self.credits_sound.stop()
+
+    #     month = self.get_month_name(self.current_month)
+    #     if isinstance(instance, int):
+    #         self.button_nr = instance
+    #     else:
+    #         self.button_nr = instance.text
+
+    #     # Check, if an entry exists at the chosen date.
+    #     key = self.check_entry(self.button_nr)
+
+    #     # # If saved entry existing: load the text in the entrybutton.
+    #     if key:
+    #         content = self.save_file[key]
+    #         self.day_entry = RoundedButton(text=content, rad=30,
+    #                                 background_color=self.navi_btn_col,
+    #                                 font_size=20, size_hint=(1, 0.5))
+    #     #     text_input = TextInput(text=content, multiline=True)
+
+    #     else:
+    #         if self.language == "EN":
+    #             self.day_entry = RoundedButton(text='Add entry',
+    #                                         rad=30, font_size=20,
+    #                                         background_color=
+    #                                         self.navi_btn_col,
+    #                                         size_hint=(1, 0.2))
+    #         else:
+    #             self.day_entry = RoundedButton(text='Eintrag erstellen',
+    #                                         rad=30, font_size=20,
+    #                                         background_color=self.navi_btn_col,
+    #                                         size_hint=(1, 0.2))
+                
+    #     # text_input.bind(text=self.on_text_input)
+            
+    #     # Create and bind the cancel, delete and save buttons.
+    #     if self.language == "EN":
+    #         self.close_button = RoundedButton(text='Close', 
+    #                                 background_color=self.popup_btn_col,
+    #                                 font_size=48)
+    #     else:
+    #         self.close_button = RoundedButton(text='Zurück', 
+    #                                 background_color=self.popup_btn_col,
+    #                                 font_size=48)
+            
+    #     self.close_button.bind(on_press=self.close_day_popup)
+
+    #     if self.language == "EN":
+    #         self.add_button = RoundedButton(text='Add', 
+    #                                 background_color=self.popup_btn_col,
+    #                                 font_size=48)
+    #     else:
+    #         self.add = RoundedButton(text='Neu', 
+    #                                 background_color=self.popup_btn_col,
+    #                                 font_size=48)
+            
+    #     self.add_button.bind(on_press=self.open_textbox)
+
+    #     self.spaceholder_3 = Label()
+    #     self.spaceholder_4 = Label()
+
+    #     # # Create the layout of the 'today-view' by stacking the widgets.
+    #     main_box = BoxLayout(orientation='vertical', spacing=20)
+
+    #     # content_box
+    #     content_box = BoxLayout(orientation='vertical')
+
+    #     if key:
+    #         content_box.add_widget(self.day_entry)
+    #         print("entry available!")
+    #     else:
+    #         content_box.add_widget(self.spaceholder_3)
+    #         content_box.add_widget(self.day_entry)
+    #         content_box.add_widget(self.spaceholder_4)
+
+    #     button_box = BoxLayout(orientation='horizontal',
+    #                            size_hint=(1,0.18), spacing=70)
+            
+    #     button_box.add_widget(self.close_button)
+    #     button_box.add_widget(self.add_button)
+    #     # button_box.add_widget(self.save_button)
+            
+    #     main_box.add_widget(content_box)
+    #     main_box.add_widget(button_box)
+
+    #     # # Create the Popup window with customized content
+    #     self.day_pop = Popup(title=f'{self.current_year} {month}' + 
+    #                         f' {self.button_nr}.', content=main_box,
+    #                         # size_hint=(0.8, 0.8),
+    #                         title_align='center')
+        
+    #     if self.language == "DE":
+    #         self.day_pop.title = f'{self.button_nr}. {month} {self.current_year}'
+
+    #     self.day_pop.background_color = self.bg_popups
+        
+    #     self.day_pop.open()
+    #     self.input = ""
+    #     # pass
+
+    # def open_textbox(self, instance):
+    #     print("textbox")
+    #     # self.close_day_popup()
+
     def day_popup(self, instance):
         """Create the day-view with a textbox and buttons."""
 
@@ -415,7 +523,7 @@ class CalendarApp(App):
                                     background_color=self.popup_btn_col,
                                     font_size=48)
             
-        self.close_button.bind(on_press=self.close_popup)
+        self.close_button.bind(on_press=self.close_day_popup)
 
         if self.language == "EN":
             self.save_button = RoundedButton(text='Save', 
@@ -442,7 +550,7 @@ class CalendarApp(App):
         if entry:
             self.delete_button.bind(on_press=self.ask_delete)
         else:
-            self.delete_button.bind(on_press=self.close_popup)
+            self.delete_button.bind(on_press=self.close_day_popup)
     
         # Create the layout of the 'today-view' by stacking the widgets.
         main_box = BoxLayout(orientation='vertical')
@@ -461,18 +569,18 @@ class CalendarApp(App):
         main_box.add_widget(button_box)
 
         # Create the Popup window with customized content
-        # if self.language == "EN":
-        self.popup = Popup(title=f'{self.current_year} {month}' + 
+        self.day_pop = Popup(title=f'{self.current_year} {month}' + 
                             f' {self.button_nr}.', content=main_box,
                             size_hint=(0.8, 0.8), title_align='center')
         
         if self.language == "DE":
-            self.popup.title = f'{self.button_nr}. {month} {self.current_year}'
+            self.day_pop.title = f'{self.button_nr}. {month} {self.current_year}'
 
-        self.popup.background_color = self.bg_popups
+        self.day_pop.background_color = self.bg_popups
         
-        self.popup.open()
+        self.day_pop.open()
         self.input = ""
+        pass
     
     def on_text_input(self, instance, x=None):
         self.entered_text = instance.text
@@ -616,7 +724,7 @@ class CalendarApp(App):
         self.update_values()
 
     def check_entry(self, number):
-        # Format the date and check if an entry is saved for the passed day.
+        # Format the date and check if an entry is saved for the passed date.
         if len(str(number)) == 1:
             if len(str(self.current_month)) == 1:
                 date = f'{self.current_year}0{self.current_month}0{number}'
@@ -633,8 +741,8 @@ class CalendarApp(App):
         else:
             return False
 
-    def close_popup(self, x=None):
-        self.popup.dismiss()
+    def close_day_popup(self, x=None):
+        self.day_pop.dismiss()
         if self.sound:
             self.btn_sound.play()
 
@@ -646,7 +754,7 @@ class CalendarApp(App):
             with open('save_file.json', 'w') as file:
                 json.dump(self.save_file, file)
         self.update_values()
-        self.close_popup(instance)
+        self.close_day_popup(instance)
         if self.sound:
             self.ok_sound.play()
 
@@ -721,7 +829,7 @@ class CalendarApp(App):
                 json.dump(self.save_file, file)
 
         self.update_values()
-        self.close_popup(instance)
+        self.close_day_popup(instance)
         if self.sound:
             self.ok_sound.play()
         
@@ -1545,13 +1653,14 @@ class CalendarApp(App):
 class RoundedButton(Button):
     """This class creates buttons with rounded edges."""
     
-    def __init__(self, text="", background_color=(0, 0.6, 0.3), **kwargs):
+    def __init__(self, text="", background_color=(0, 0.6, 0.3), rad=68,
+                 **kwargs):
 
         super(RoundedButton, self).__init__(**kwargs)
         with self.canvas.before:
             Color(*background_color)
             self._rounded_rect = RoundedRectangle(pos=self.pos, size=self.size,
-                                                  radius=[68])
+                                                  radius=[rad])
 
         self.text = text
         self.background_color = [0, 0, 0, 0] # Background color: transparent
