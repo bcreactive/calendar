@@ -52,11 +52,21 @@ class CalendarApp(App):
         self.save_file = self.load_json()
 
         # Load settings.
-        self.swipe_x_default = self.save_file["inv_x"]
-        self.swipe_y_default = self.save_file["inv_y"]
-        self.sound = self.save_file["sound"]
-        self.color_set = self.save_file["color"]
-        self.language = self.save_file["language"]
+        # self.settings = self.save_file['settings']
+        self.color_set = self.save_file['color']
+        self.swipe_x_default = self.save_file['inv_x']
+        self.swipe_y_default = self.save_file['inv_y']
+        self.sound = self.save_file['sound']
+        self.language = self.save_file['language']
+        # self.settings = self.save_file['settings']
+        # self.color_set = self.settings['color']
+        # self.swipe_x_default = self.settings['inv_x']
+        # self.swipe_y_default = self.settings['inv_y']
+        # self.sound = self.settings['sound']
+        # self.language = self.settings['language']
+
+        # Load saved entries.
+        # self.data = self.save_file['data']
 
         self.load_colors()
         Window.clearcolor = self.main_win_col
@@ -94,7 +104,6 @@ class CalendarApp(App):
         # Prevent from swipe actions when close buttons are hold.
         touch_up_time = time.time()
         time_threshold = 0.5  
-
         # Execute swipe or click actions.
         if touch_up_time - self.touch_down_time < time_threshold:
             if abs(touch.x - self.start_pos[0]) > 40 or abs(
@@ -393,12 +402,16 @@ class CalendarApp(App):
     #     # Check, if an entry exists at the chosen date.
     #     key = self.check_entry(self.button_nr)
 
-    #     # # If saved entry existing: load the text in the entrybutton.
+    #     # Load entries or an add button, if no saved info is available.
     #     if key:
-    #         content = self.save_file[key]
-    #         self.day_entry = RoundedButton(text=content, rad=30,
-    #                                 background_color=self.navi_btn_col,
-    #                                 font_size=20, size_hint=(1, 0.6))
+    #         data = self.get_data(key)
+
+    #         entries = BoxLayout(orientation='vertical', spacing=10)
+    #         for i in data:
+    #             day_entry = RoundedButton(text=i, rad=30,
+    #                                     background_color=self.navi_btn_col,
+    #                                     font_size=20, size_hint=(1, 0.6))
+    #             entries.add_widget(day_entry)
 
     #     else:
     #         if self.language == "EN":
@@ -449,8 +462,9 @@ class CalendarApp(App):
     #     content_box = BoxLayout(orientation='vertical')
 
     #     if key:
+            
     #         content_box.add_widget(self.spaceholder_3)
-    #         content_box.add_widget(self.day_entry)
+    #         content_box.add_widget(entries)
     #         content_box.add_widget(self.spaceholder_4)
     #     else:
     #         content_box.add_widget(self.spaceholder_3)
@@ -485,10 +499,13 @@ class CalendarApp(App):
         
     #     self.day_pop.open()
     #     self.input = ""
-    #     # pass
 
-    def open_textbox(self, instance):
-        print("textbox")
+    # def get_data(self, key):
+    #     entries = self.data[key]
+    #     return entries
+
+    # def open_textbox(self, instance):
+    #     print("textbox")
 
     def day_popup(self, instance):
         """Create the day-view with a textbox and buttons."""
@@ -507,6 +524,17 @@ class CalendarApp(App):
         key = self.check_entry(self.button_nr)
 
         # If saved entry existing: load the text in the textbox.
+        # if key:
+        #     data = self.get_data(key)
+        #     content = data[0]
+
+            # entries = BoxLayout(orientation='vertical', spacing=10)
+            # for i in data:
+            #     day_entry = RoundedButton(text=i, rad=30,
+            #                             background_color=self.navi_btn_col,
+            #                             font_size=20, size_hint=(1, 0.6))
+            #     entries.add_widget(day_entry)
+
         if key:
             content = self.save_file[key]
             text_input = TextInput(text=content, multiline=True)
@@ -743,14 +771,14 @@ class CalendarApp(App):
             elif len(str(self.current_month)) == 2:
                 date = f'{self.current_year}{self.current_month}{number}'
 
-        if date in self.save_file:   
+        # if date in self.data: 
+        if date in self.save_file:  
             return date
         else:
             return False
 
     def close_day_popup(self, x=None):
         self.input = ""
-        # self.start_pos = (0,0)
         self.day_pop.dismiss()
         if self.sound:
             self.btn_sound.play()
@@ -831,7 +859,10 @@ class CalendarApp(App):
             date = f'{self.current_year}{self.current_month}{self.button_nr}'
 
         if self.entered_text:
+            # entries = self.data[date]
+            # entries.append(self.entered_text)
             new_entry = {date: self.entered_text}
+            # self.data.update(new_entry)
             self.save_file.update(new_entry)
 
             with open('save_file.json', 'w') as file:
