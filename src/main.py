@@ -383,7 +383,7 @@ class CalendarApp(App):
         if self.sound:
             self.btn_sound.play()
         
-        # self.entered_text = ""
+        self.content = ""
         if instance.btn_nr > 0:
             content = instance.text
             self.content = content
@@ -473,6 +473,7 @@ class CalendarApp(App):
     
     def close_text_popup(self, instance):
         self.text_popup.dismiss()
+
         self.update_day_popup(instance)
 
     def update_entries(self, instance):
@@ -496,6 +497,7 @@ class CalendarApp(App):
         key = self.check_entry(self.button_nr)
 
         # Load entries or an add button, if no saved info is available.
+
         if key:
             self.entries = BoxLayout(orientation='vertical', spacing=10)
 
@@ -509,7 +511,7 @@ class CalendarApp(App):
 
                 self.entries.add_widget(self.day_entry)
                 nr += 1
-
+        
         else:
             if self.language == "EN":
                 self.empty_entry = RoundedButton(text='Add entry',
@@ -598,7 +600,7 @@ class CalendarApp(App):
         self.day_pop.open()
         self.input = ""
 
-    def update_day_popup(self, instance):
+    def update_day_popup(self, instance): 
         """Update the day view."""
 
         self.close_day_popup()
@@ -713,7 +715,7 @@ class CalendarApp(App):
         
         self.day_pop.open()
         self.input = ""
-
+        
     def on_text_input(self, instance, x=None):
         self.entered_text = instance.text
         
@@ -981,7 +983,6 @@ class CalendarApp(App):
         self.close_text_popup(instance)
         if self.sound:
             self.ok_sound.play()
-
 
     def get_month_name(self, value):
         if self.language == "EN":
