@@ -52,21 +52,11 @@ class CalendarApp(App):
         self.save_file = self.load_json()
 
         # Load settings.
-        # self.settings = self.save_file['settings']
         self.color_set = self.save_file['color']
         self.swipe_x_default = self.save_file['inv_x']
         self.swipe_y_default = self.save_file['inv_y']
         self.sound = self.save_file['sound']
         self.language = self.save_file['language']
-        # self.settings = self.save_file['settings']
-        # self.color_set = self.settings['color']
-        # self.swipe_x_default = self.settings['inv_x']
-        # self.swipe_y_default = self.settings['inv_y']
-        # self.sound = self.settings['sound']
-        # self.language = self.settings['language']
-
-        # Load saved entries.
-        # self.entries = self.get_entries()
 
         self.load_colors()
         Window.clearcolor = self.main_win_col
@@ -76,6 +66,7 @@ class CalendarApp(App):
         self.entered_text = ''
         self.day_entry = ''  
         self.input = ""
+        self.content = ""
 
         self.start_pos = (0, 0)
         self.btns = []
@@ -387,10 +378,16 @@ class CalendarApp(App):
             self.btns.append(button)
 
     def open_text_popup(self, instance):
+        """Creates a popup with textbox to write an entry, save and delete."""
 
+        if self.sound:
+            self.btn_sound.play()
+        
+        # self.entered_text = ""
         if instance.btn_nr > 0:
             content = instance.text
-
+            self.content = content
+            
             text_input = TextInput(text=content, multiline=True)
             
         else:
@@ -424,7 +421,7 @@ class CalendarApp(App):
                                     background_color=self.popup_btn_col,
                                     font_size=48)
             
-        save_button.bind(on_press=self.save_entry)
+        save_button.bind(on_press=self.update_entries)
 
         if self.language == "EN":
             delete_button = RoundedButton(text='Delete', 
@@ -437,6 +434,7 @@ class CalendarApp(App):
             
         # Close popup without confirmation, if no entry is saved.
         entry = self.check_entry(self.nr)
+
         if entry:
             delete_button.bind(on_press=self.ask_delete)
         else:
@@ -466,7 +464,7 @@ class CalendarApp(App):
         
         if self.language == "DE":
             self.text_popup.title = (f'{self.button_nr}. {month}' +
-                                    f'{self.current_year}')
+                                    f' {self.current_year}')
 
         self.text_popup.background_color = self.bg_popups
         
@@ -475,6 +473,11 @@ class CalendarApp(App):
     
     def close_text_popup(self, instance):
         self.text_popup.dismiss()
+        self.update_day_popup(instance)
+
+    def update_entries(self, instance):
+        self.update_day_popup(instance)
+        self.save_entry(instance)
 
     def day_popup(self, instance):
         """Create the day-view with a textbox and buttons."""
@@ -494,17 +497,17 @@ class CalendarApp(App):
 
         # Load entries or an add button, if no saved info is available.
         if key:
-            entries = BoxLayout(orientation='vertical', spacing=10)
+            self.entries = BoxLayout(orientation='vertical', spacing=10)
 
             data = self.save_file.get(key)
             nr = 1
             for i in data:
-                day_entry = RoundedButton(text=i, rad=30, btn_nr=nr,
+                self.day_entry = RoundedButton(text=i, rad=30, btn_nr=nr,
                                         background_color=self.navi_btn_col,
                                         font_size=20, size_hint=(1, 0.6))
-                day_entry.bind(on_press=self.open_text_popup)
+                self.day_entry.bind(on_press=self.open_text_popup)
 
-                entries.add_widget(day_entry)
+                self.entries.add_widget(self.day_entry)
                 nr += 1
 
         else:
@@ -539,7 +542,7 @@ class CalendarApp(App):
                                     background_color=self.popup_btn_col,
                                     font_size=48)
         else:
-            self.add = RoundedButton(text='Neu', 
+            self.add_button = RoundedButton(text='Neu', 
                                     background_color=self.popup_btn_col,
                                     font_size=48)
             
@@ -551,54 +554,166 @@ class CalendarApp(App):
         self.spaceholder_6 = Label(size_hint=(0.2,0.2))
 
         # # Create the layout of the 'today-view' by stacking the widgets.
-        main_box = BoxLayout(orientation='vertical', spacing=20)
+        self.main_box = BoxLayout(orientation='vertical', spacing=20)
 
         # content_box
-        content_box = BoxLayout(orientation='vertical')
+        self.content_box = BoxLayout(orientation='vertical')
 
         if key:
             
-            content_box.add_widget(self.spaceholder_3)
-            content_box.add_widget(entries)
-            content_box.add_widget(self.spaceholder_4)
+            self.content_box.add_widget(self.spaceholder_3)
+            self.content_box.add_widget(self.entries)
+            self.content_box.add_widget(self.spaceholder_4)
         else:
-            content_box.add_widget(self.spaceholder_3)
-            content_box.add_widget(self.empty_entry)
-            content_box.add_widget(self.spaceholder_4)
+            self.content_box.add_widget(self.spaceholder_3)
+            self.content_box.add_widget(self.empty_entry)
+            self.content_box.add_widget(self.spaceholder_4)
 
-        button_box = BoxLayout(orientation='horizontal',
+        self.day_button_box = BoxLayout(orientation='horizontal',
                                size_hint=(1,0.18), spacing=70)
         
         if key:
-            button_box.add_widget(self.close_button)
-            button_box.add_widget(self.add_button)
+            self.day_button_box.add_widget(self.close_button)
+            self.day_button_box.add_widget(self.add_button)
         else:
-            button_box.add_widget(self.spaceholder_5)
-            button_box.add_widget(self.close_button)
-            button_box.add_widget(self.spaceholder_6)
+            self.day_button_box.add_widget(self.spaceholder_5)
+            self.day_button_box.add_widget(self.close_button)
+            self.day_button_box.add_widget(self.spaceholder_6)
             
-        main_box.add_widget(content_box)
-        main_box.add_widget(button_box)
+        self.main_box.add_widget(self.content_box)
+        self.main_box.add_widget(self.day_button_box)
 
         # # Create the Popup window with customized content
         self.day_pop = Popup(title=f'{self.current_year} {month}' + 
-                            f' {self.button_nr}.', content=main_box,
+                            f' {self.button_nr}.', content=self.main_box,
                             # size_hint=(0.8, 0.8),
                             title_align='center')
         
         if self.language == "DE":
             self.day_pop.title = (f'{self.button_nr}. {month}' +
-                                    f'{self.current_year}')
+                                    f' {self.current_year}')
 
         self.day_pop.background_color = self.bg_popups
         
         self.day_pop.open()
         self.input = ""
 
-    def get_data(self, key):
-        entries = self.data[key]
-        return entries
-    
+    def update_day_popup(self, instance):
+        """Update the day view."""
+
+        self.close_day_popup()
+        self.content_box.clear_widgets()
+        self.day_button_box.clear_widgets()
+        self.main_box.clear_widgets()
+
+        month = self.get_month_name(self.current_month)
+
+        # Check, if an entry exists at the chosen date.
+        key = self.check_entry(self.nr)
+
+        # Load entries or an add button, if no saved info is available.
+        if key:
+            self.entries = BoxLayout(orientation='vertical', spacing=10)
+
+            data = self.save_file.get(key)
+            nr = 1
+            for i in data:
+                self.day_entry = RoundedButton(text=i, rad=30, btn_nr=nr,
+                                        background_color=self.navi_btn_col,
+                                        font_size=20, size_hint=(1, 0.6))
+                self.day_entry.bind(on_press=self.open_text_popup)
+
+                self.entries.add_widget(self.day_entry)
+                nr += 1
+
+        else:
+            if self.language == "EN":
+                self.empty_entry = RoundedButton(text='Add entry',
+                                            rad=30, font_size=20,
+                                            background_color=
+                                            self.navi_btn_col,
+                                            size_hint=(1, 0.4))
+            else:
+                self.empty_entry = RoundedButton(text='Eintrag erstellen',
+                                            rad=30, font_size=20,
+                                            background_color=self.navi_btn_col,
+                                            size_hint=(1, 0.4))
+            
+            self.empty_entry.bind(on_press=self.open_text_popup)
+
+        # Create and bind the cancel, delete and save buttons.
+        if self.language == "EN":
+            self.close_button = RoundedButton(text='Close', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+        else:
+            self.close_button = RoundedButton(text='Zurück', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+            
+        self.close_button.bind(on_press=self.close_day_popup)
+
+        if self.language == "EN":
+            self.add_button = RoundedButton(text='Add', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+        else:
+            self.add_button = RoundedButton(text='Neu', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+            
+        self.add_button.bind(on_press=self.open_text_popup)
+
+        self.spaceholder_3 = Label(size_hint=(1,0.2))
+        self.spaceholder_4 = Label(size_hint=(1,0.2))
+        self.spaceholder_5 = Label(size_hint=(0.2,0.2))
+        self.spaceholder_6 = Label(size_hint=(0.2,0.2))
+
+        # # Create the layout of the 'today-view' by stacking the widgets.
+        self.main_box = BoxLayout(orientation='vertical', spacing=20)
+
+        # content_box
+        self.content_box = BoxLayout(orientation='vertical')
+
+        if key:
+            
+            self.content_box.add_widget(self.spaceholder_3)
+            self.content_box.add_widget(self.entries)
+            self.content_box.add_widget(self.spaceholder_4)
+        else:
+            self.content_box.add_widget(self.spaceholder_3)
+            self.content_box.add_widget(self.empty_entry)
+            self.content_box.add_widget(self.spaceholder_4)
+
+        self.day_button_box = BoxLayout(orientation='horizontal',
+                               size_hint=(1,0.18), spacing=70)
+        
+        if key:
+            self.day_button_box.add_widget(self.close_button)
+            self.day_button_box.add_widget(self.add_button)
+        else:
+            self.day_button_box.add_widget(self.spaceholder_5)
+            self.day_button_box.add_widget(self.close_button)
+            self.day_button_box.add_widget(self.spaceholder_6)
+            
+        self.main_box.add_widget(self.content_box)
+        self.main_box.add_widget(self.day_button_box)
+
+        # # Create the Popup window with customized content
+        self.day_pop = Popup(title=f'{self.current_year} {month}' + 
+                            f' {self.button_nr}.', content=self.main_box,
+                            # size_hint=(0.8, 0.8),
+                            title_align='center')
+        
+        if self.language == "DE":
+            self.day_pop.title = (f'{self.button_nr}. {month}' +
+                                    f' {self.current_year}')
+
+        self.day_pop.background_color = self.bg_popups
+        
+        self.day_pop.open()
+        self.input = ""
+
     def on_text_input(self, instance, x=None):
         self.entered_text = instance.text
         
@@ -753,9 +868,7 @@ class CalendarApp(App):
             elif len(str(self.current_month)) == 2:
                 date = f'{self.current_year}{self.current_month}{number}'
 
-        # if date in self.data: 
         if date in self.save_file:  
-        # if date in self.entries:
             return date
         else:
             return False
@@ -770,14 +883,21 @@ class CalendarApp(App):
         self.close_ask()
         key = self.check_entry(self.button_nr)
         if key:
-            del self.save_file[key]
+            entries = self.save_file.get(key)
+            entries.pop(instance.btn_nr - 1)  
+            if entries:  
+                self.save_file[key] = entries
+            else: 
+                del self.save_file[key]
+            
             with open('save_file.json', 'w') as file:
                 json.dump(self.save_file, file)
-        self.update_values()
-        self.close_text_popup(instance)
 
-        if self.sound:
-            self.ok_sound.play()
+            self.update_values()
+            self.close_text_popup(instance)
+
+            if self.sound:
+                self.ok_sound.play()
 
     def ask_delete(self, instance):
         # Creates a popup to confirm to delete the entry.
@@ -844,26 +964,25 @@ class CalendarApp(App):
 
         if self.entered_text:
             if date in self.save_file:
-                entries = []
-                for entry in entries:
-                    entries.append(entry)
+                entries = self.save_file.get(date)
+                if self.content:
+                    entries.remove(self.content)
                 entries.append(self.entered_text)
-                new_entry = {date: entries}
-
+                self.save_file[date] = entries
             else:
                 new_entry = {date: [self.entered_text]}
-            
-            self.save_file.update(new_entry)
+                self.save_file.update(new_entry)
 
             with open('save_file.json', 'w') as file:
                 json.dump(self.save_file, file)
 
-        # self.entered_text = ""
         self.update_values()
+        self.update_day_popup(instance)
         self.close_text_popup(instance)
         if self.sound:
             self.ok_sound.play()
-        
+
+
     def get_month_name(self, value):
         if self.language == "EN":
             months = ["Jan", "Feb", "March", "April", "Mai", "June", "July",
