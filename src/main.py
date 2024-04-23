@@ -593,14 +593,14 @@ class CalendarApp(App):
         # Load entries or an add button, if no saved info is available.
         if key:
             self.entries = BoxLayout(orientation='vertical', spacing=10, 
-                                     padding=(30,10,30,10))
+                                     padding=(0,10,0,10))
 
             data = self.save_file.get(key)
             nr = 1
             for i in data:
                 self.day_entry = RoundedButton(text=i, rad=30, btn_nr=nr,
                                         background_color=self.navi_btn_col,
-                                        font_size=48, size_hint=(1, 0.4))
+                                        font_size=48, size_hint=(1, 0.3))
                 self.day_entry.bind(on_press=self.open_text_popup)
 
                 self.entries.add_widget(self.day_entry)
@@ -611,13 +611,13 @@ class CalendarApp(App):
                 self.empty_entry = RoundedButton(text='Add entry',
                                             rad=30, font_size=48,
                                             background_color=
-                                            self.navi_btn_col,
-                                            size_hint=(1, 0.4))
+                                            self.chosen_btn_col,
+                                            size_hint=(1, 0.3))
             else:
                 self.empty_entry = RoundedButton(text='Eintrag erstellen',
-                                            rad=30, font_size=48,
-                                            background_color=self.navi_btn_col,
-                                            size_hint=(1, 0.4))
+                                        rad=30, font_size=48,
+                                        background_color=self.chosen_btn_col,
+                                        size_hint=(1, 0.3))
             
             self.empty_entry.bind(on_press=self.open_text_popup)
 
@@ -711,14 +711,14 @@ class CalendarApp(App):
         # Load entries or an add button, if no saved info is available.
         if key:
             self.entries = BoxLayout(orientation='vertical', spacing=10,
-                                     padding=(30,10,30,10))
+                                     padding=(0,10,0,10))
 
             data = self.save_file.get(key)
             nr = 1
             for i in data:
                 self.day_entry = RoundedButton(text=i, rad=30, btn_nr=nr,
                                         background_color=self.navi_btn_col,
-                                        font_size=48, size_hint=(1, 0.6))
+                                        font_size=48, size_hint=(1, 0.3))
                 self.day_entry.bind(on_press=self.open_text_popup)
 
                 self.entries.add_widget(self.day_entry)
@@ -729,13 +729,13 @@ class CalendarApp(App):
                 self.empty_entry = RoundedButton(text='Add entry',
                                             rad=30, font_size=48,
                                             background_color=
-                                            self.navi_btn_col,
-                                            size_hint=(1, 0.4))
+                                            self.chosen_btn_col,
+                                            size_hint=(1, 0.3))
             else:
                 self.empty_entry = RoundedButton(text='Eintrag erstellen',
-                                            rad=30, font_size=48,
-                                            background_color=self.navi_btn_col,
-                                            size_hint=(1, 0.4))
+                                        rad=30, font_size=48,
+                                        background_color=self.chosen_btn_col,
+                                        size_hint=(1, 0.3))
             
             self.empty_entry.bind(on_press=self.open_text_popup)
 
@@ -1042,26 +1042,26 @@ class CalendarApp(App):
 
         # Setting up the buttons and labels.
         if self.language == "EN":
-            self.y_label = Label(text='Year', font_size=56,
+            self.y_label = Label(text='Year', font_size=48,
                             color=self.setdate_text_col)
-            self.m_label = Label(text='Month', font_size=56,
+            self.m_label = Label(text='Month', font_size=48,
                             color=self.setdate_text_col)
-            self.d_label = Label(text='Day', font_size=56,
+            self.d_label = Label(text='Day', font_size=48,
                             color=self.setdate_text_col)
         
         else:
-            self.d_label = Label(text='Tag', font_size=56,
+            self.d_label = Label(text='Tag', font_size=48,
                             color=self.setdate_text_col)
-            self.m_label = Label(text='Monat', font_size=56,
+            self.m_label = Label(text='Monat', font_size=48,
                             color=self.setdate_text_col)
-            self.y_label = Label(text='Jahr', font_size=56,
+            self.y_label = Label(text='Jahr', font_size=48,
                             color=self.setdate_text_col)
             
-        self.dy = Label(text=f'{self.chose_d}', font_size=48,
+        self.dy = Label(text=f'{self.chose_d}', font_size=56,
                         color=self.setdate_text_col)
-        self.mnt = Label(text=f'{month_name}', font_size=48,
+        self.mnt = Label(text=f'{month_name}', font_size=56,
                         color=self.setdate_text_col)
-        self.yr = Label(text=f'{self.chose_y}', font_size=48,
+        self.yr = Label(text=f'{self.chose_y}', font_size=56,
                         color=self.setdate_text_col)
         
         self.y_fwd = RoundedButton(text="^", font_size=64,
@@ -1077,7 +1077,7 @@ class CalendarApp(App):
         self.d_rwd = RoundedButton(text="v", font_size=46,
                                 background_color=self.popup_btn_col)
  
-        self.ok = RoundedButton(text="ok", font_size=56,
+        self.ok = RoundedButton(text="ok", font_size=48,
                                     # size_hint=(1, 0.5),
                                     background_color=self.popup_btn_col)
         
@@ -1247,26 +1247,26 @@ class CalendarApp(App):
         month_name = self.get_month_name(self.chose_m)
 
         if self.language == "EN":
-            self.y_label = Label(text='Year', font_size=56,
+            self.y_label = Label(text='Year', font_size=48,
                             color=self.setdate_text_col)
-            self.m_label = Label(text='Month', font_size=56,
+            self.m_label = Label(text='Month', font_size=48,
                             color=self.setdate_text_col)
-            self.d_label = Label(text='Day', font_size=56,
+            self.d_label = Label(text='Day', font_size=48,
                             color=self.setdate_text_col)
             
         elif self.language == "DE":
-            self.d_label = Label(text='Tag', font_size=56,
+            self.d_label = Label(text='Tag', font_size=48,
                             color=self.setdate_text_col)
-            self.m_label = Label(text='Monat', font_size=56,
+            self.m_label = Label(text='Monat', font_size=48,
                             color=self.setdate_text_col)
-            self.y_label = Label(text='Jahr', font_size=56,
+            self.y_label = Label(text='Jahr', font_size=48,
                             color=self.setdate_text_col)
             
-        self.dy = Label(text=f'{self.chose_d}', font_size=48,
+        self.dy = Label(text=f'{self.chose_d}', font_size=56,
                         color=self.setdate_text_col)
-        self.mnt = Label(text=f'{month_name}', font_size=48,
+        self.mnt = Label(text=f'{month_name}', font_size=56,
                         color=self.setdate_text_col)
-        self.yr = Label(text=f'{self.chose_y}', font_size=48,
+        self.yr = Label(text=f'{self.chose_y}', font_size=56,
                         color=self.setdate_text_col)
 
         self.label_row = BoxLayout(orientation='horizontal', size_hint=(1,1),
@@ -1322,7 +1322,7 @@ class CalendarApp(App):
         self.nr = self.chose_d
         self.input = ""
 
-    def jump_to(self,x=None):
+    def jump_to(self, instance):
         # Jump to the chosen date and open the today-view.
         self.close_setdate()
         self.current_year = self.chose_y
@@ -1331,6 +1331,7 @@ class CalendarApp(App):
         self.update_values()
         self.input = ""
         self.day_popup(self.nr)
+        self.open_text_popup(instance)
 
     def open_menu_popup(self, x=None):
         """Popup to change settings."""
@@ -1811,7 +1812,7 @@ class CalendarApp(App):
         self.credits_popup.background_color = self.bg_popups
     
         self.credits_popup.open()
-        
+
         if self.sound:
             self.credits_sound.play()
         
