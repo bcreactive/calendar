@@ -219,15 +219,15 @@ class CalendarApp(App):
 
         # A grid of enumerated buttons, starting at the correct weekday.
         if len(self.weeks) == 4:
-            self.bottom_row = GridLayout(cols=7, rows=4, spacing=10)
+            self.bottom_row = GridLayout(cols=7, rows=4, spacing=15)
             self.set_buttons()
 
         elif len(self.weeks) == 5:
-            self.bottom_row = GridLayout(cols=7, rows=5, spacing=10)
+            self.bottom_row = GridLayout(cols=7, rows=5, spacing=15)
             self.set_buttons()
 
         elif len(self.weeks) == 6:
-            self.bottom_row = GridLayout(cols=7, rows=6, spacing=10)
+            self.bottom_row = GridLayout(cols=7, rows=6, spacing=15)
             self.set_buttons()
 
         # Create the main layout by stacking the top row, middle row and grid.
@@ -237,6 +237,95 @@ class CalendarApp(App):
         self.main_layout.add_widget(self.bottom_row)
         
         return self.main_layout
+
+    def update_values(self):
+        """Update the values and the view for the main-window."""
+        self.month.text = self.get_month_name(self.current_month)
+        self.year.text = f'{self.current_year}'
+        self.weeks = self.load_month()
+        self.month_lenght = calendar.monthrange(self.current_year,
+                                           self.current_month)[1]
+        self.input = ""
+        self.entered_text = ""
+
+        self.load_colors()
+        Window.clearcolor = self.main_win_col
+        
+        # Remove the existing widgets to load the actualized content.
+        self.top_row.clear_widgets()
+        self.mid_row.clear_widgets()
+        self.bottom_row.clear_widgets()
+        self.main_layout.clear_widgets()
+
+        # Update the home-buttons text and binding.
+        today = self.check_today_visible()
+
+        if today:
+            self.home_button = RoundedButton(text="^", font_size=60,
+                                background_color=self.home_btn_col)
+            self.home_button.bind(on_press=self.set_date)
+
+        else:
+            self.home_button = RoundedButton(text="\u221A", font_size=60,
+                                background_color=self.home_btn_col)
+            self.home_button.bind(on_press=self.show_today)
+
+        # Recreate rows with updated values.
+        self.year_rwd = RoundedButton(text="<", font_size=64,
+                                background_color=self.navi_btn_col)
+        
+        self.year = Label(text=f'{self.current_year}', font_size=64,
+                          color=self.main_text_col, bold=True)
+        
+        self.year_fwd = RoundedButton(text=">", font_size=64,
+                                background_color=self.navi_btn_col)
+
+        self.spaceholder = Label(text='', font_size=20)
+
+        self.month_rwd = RoundedButton(text="<", font_size=64,
+                                background_color=self.navi_btn_col)
+        
+        self.month_name = self.get_month_name(self.current_month)
+        self.month = Label(text=f'{self.month_name}', font_size=50,
+                          color=self.main_text_col, bold=True)
+        
+        self.month_fwd = RoundedButton(text=">", font_size=64,
+                                background_color=self.navi_btn_col)
+        
+        # Bindings for buttons.
+        self.year_rwd.bind(on_press=self.dec_year)
+        self.year_fwd.bind(on_press=self.inc_year)
+        self.month_rwd.bind(on_press=self.dec_month)
+        self.month_fwd.bind(on_press=self.inc_month)
+
+        self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1),
+                                 spacing=40)
+        
+        first_row = [self.year_rwd, self.year, self.year_fwd, self.home_button,
+                     self.month_rwd, self.month, self.month_fwd]
+        for i in first_row:
+            self.top_row.add_widget(i)
+        
+        self.mid_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
+        self.day_labels = self.get_day_labels()
+        for i in self.day_labels:
+            self.mid_row.add_widget(i)
+
+        if len(self.weeks) == 4:
+            self.bottom_row = GridLayout(cols=7, rows=4, spacing=15)
+            self.set_buttons()
+        elif len(self.weeks) == 5:
+            self.bottom_row = GridLayout(cols=7, rows=6, spacing=15)
+            self.set_buttons()
+        elif len(self.weeks) == 6:
+            self.bottom_row = GridLayout(cols=7, rows=6, spacing=15)
+            self.set_buttons()
+
+        self.main_layout.add_widget(self.top_row)
+        self.main_layout.add_widget(self.mid_row)
+        self.main_layout.add_widget(self.bottom_row)
+        
+        self.credits_sound.stop()
 
     def load_json(self):
         # Load savefile.
@@ -359,11 +448,12 @@ class CalendarApp(App):
             entry = self.check_entry(i+1)
             if current_day_visible and self.current_day == i+1:
                 if entry:
-                    button = RoundedButton(text=str(i+1), font_size=105,
-                                background_color=self.today_entry_col)
+                    button = RoundedButton(text=str(i+1), font_size=102,
+                                background_color=self.today_entry_col,
+                                bold=True)
                 else:
-                    button = RoundedButton(text=str(i+1), font_size=105,
-                                background_color=self.today_col)
+                    button = RoundedButton(text=str(i+1), font_size=102,
+                                background_color=self.today_col, bold=True)
                             
             else:
                 if entry:
@@ -506,7 +596,7 @@ class CalendarApp(App):
             for i in data:
                 self.day_entry = RoundedButton(text=i, rad=30, btn_nr=nr,
                                         background_color=self.navi_btn_col,
-                                        font_size=20, size_hint=(1, 0.6))
+                                        font_size=48, size_hint=(1, 0.4))
                 self.day_entry.bind(on_press=self.open_text_popup)
 
                 self.entries.add_widget(self.day_entry)
@@ -515,13 +605,13 @@ class CalendarApp(App):
         else:
             if self.language == "EN":
                 self.empty_entry = RoundedButton(text='Add entry',
-                                            rad=30, font_size=20,
+                                            rad=30, font_size=48,
                                             background_color=
                                             self.navi_btn_col,
                                             size_hint=(1, 0.4))
             else:
                 self.empty_entry = RoundedButton(text='Eintrag erstellen',
-                                            rad=30, font_size=20,
+                                            rad=30, font_size=48,
                                             background_color=self.navi_btn_col,
                                             size_hint=(1, 0.4))
             
@@ -622,7 +712,7 @@ class CalendarApp(App):
             for i in data:
                 self.day_entry = RoundedButton(text=i, rad=30, btn_nr=nr,
                                         background_color=self.navi_btn_col,
-                                        font_size=20, size_hint=(1, 0.6))
+                                        font_size=48, size_hint=(1, 0.6))
                 self.day_entry.bind(on_press=self.open_text_popup)
 
                 self.entries.add_widget(self.day_entry)
@@ -631,13 +721,13 @@ class CalendarApp(App):
         else:
             if self.language == "EN":
                 self.empty_entry = RoundedButton(text='Add entry',
-                                            rad=30, font_size=20,
+                                            rad=30, font_size=48,
                                             background_color=
                                             self.navi_btn_col,
                                             size_hint=(1, 0.4))
             else:
                 self.empty_entry = RoundedButton(text='Eintrag erstellen',
-                                            rad=30, font_size=20,
+                                            rad=30, font_size=48,
                                             background_color=self.navi_btn_col,
                                             size_hint=(1, 0.4))
             
@@ -761,95 +851,6 @@ class CalendarApp(App):
             self.current_month == datetime.now().month):
             return True
         return False
-    
-    def update_values(self):
-        """Update the values and the view for the main-window."""
-        self.month.text = self.get_month_name(self.current_month)
-        self.year.text = f'{self.current_year}'
-        self.weeks = self.load_month()
-        self.month_lenght = calendar.monthrange(self.current_year,
-                                           self.current_month)[1]
-        self.input = ""
-        self.entered_text = ""
-
-        self.load_colors()
-        Window.clearcolor = self.main_win_col
-        
-        # Remove the existing widgets to load the actualized content.
-        self.top_row.clear_widgets()
-        self.mid_row.clear_widgets()
-        self.bottom_row.clear_widgets()
-        self.main_layout.clear_widgets()
-
-        # Update the home-buttons text and binding.
-        today = self.check_today_visible()
-
-        if today:
-            self.home_button = RoundedButton(text="^", font_size=60,
-                                background_color=self.home_btn_col)
-            self.home_button.bind(on_press=self.set_date)
-
-        else:
-            self.home_button = RoundedButton(text="\u221A", font_size=60,
-                                background_color=self.home_btn_col)
-            self.home_button.bind(on_press=self.show_today)
-
-        # Recreate rows with updated values.
-        self.year_rwd = RoundedButton(text="<", font_size=64,
-                                background_color=self.navi_btn_col)
-        
-        self.year = Label(text=f'{self.current_year}', font_size=64,
-                          color=self.main_text_col, bold=True)
-        
-        self.year_fwd = RoundedButton(text=">", font_size=64,
-                                background_color=self.navi_btn_col)
-
-        self.spaceholder = Label(text='', font_size=20)
-
-        self.month_rwd = RoundedButton(text="<", font_size=64,
-                                background_color=self.navi_btn_col)
-        
-        self.month_name = self.get_month_name(self.current_month)
-        self.month = Label(text=f'{self.month_name}', font_size=50,
-                          color=self.main_text_col, bold=True)
-        
-        self.month_fwd = RoundedButton(text=">", font_size=64,
-                                background_color=self.navi_btn_col)
-        
-        # Bindings for buttons.
-        self.year_rwd.bind(on_press=self.dec_year)
-        self.year_fwd.bind(on_press=self.inc_year)
-        self.month_rwd.bind(on_press=self.dec_month)
-        self.month_fwd.bind(on_press=self.inc_month)
-
-        self.top_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1),
-                                 spacing=40)
-        
-        first_row = [self.year_rwd, self.year, self.year_fwd, self.home_button,
-                     self.month_rwd, self.month, self.month_fwd]
-        for i in first_row:
-            self.top_row.add_widget(i)
-        
-        self.mid_row = BoxLayout(orientation='horizontal', size_hint=(1,0.1))
-        self.day_labels = self.get_day_labels()
-        for i in self.day_labels:
-            self.mid_row.add_widget(i)
-
-        if len(self.weeks) == 4:
-            self.bottom_row = GridLayout(cols=7, rows=4, spacing=10)
-            self.set_buttons()
-        elif len(self.weeks) == 5:
-            self.bottom_row = GridLayout(cols=7, rows=6, spacing=10)
-            self.set_buttons()
-        elif len(self.weeks) == 6:
-            self.bottom_row = GridLayout(cols=7, rows=6, spacing=10)
-            self.set_buttons()
-
-        self.main_layout.add_widget(self.top_row)
-        self.main_layout.add_widget(self.mid_row)
-        self.main_layout.add_widget(self.bottom_row)
-        
-        self.credits_sound.stop()
 
     def show_today(self, x=None):
         # Set the current year and month and update the view.
@@ -970,6 +971,7 @@ class CalendarApp(App):
                 if self.content:
                     entries.remove(self.content)
                 entries.append(self.entered_text)
+                entries.reverse()
                 self.save_file[date] = entries
             else:
                 new_entry = {date: [self.entered_text]}
@@ -977,6 +979,13 @@ class CalendarApp(App):
 
             with open('save_file.json', 'w') as file:
                 json.dump(self.save_file, file)
+
+        # falscher eintrag wird gelöscht, 
+        # es wird immer die letzt hinzugefügte pos entfernt anstatt der 
+        # aktiven. ev neue savefile struktur?
+
+        else:
+            del self.save_file[date]
 
         self.update_values()
         self.update_day_popup(instance)
