@@ -542,15 +542,18 @@ class CalendarApp(App):
         button_box.add_widget(close_button)
         button_box.add_widget(delete_button)
         button_box.add_widget(save_button)
+
+        spaceholder = BoxLayout(orientation='vertical', size_hint=(1, 0.9))
             
         main_box.add_widget(content_box)
         main_box.add_widget(button_box)
+        main_box.add_widget(spaceholder)
 
         # Create the Popup window with customized content
         month = self.get_month_name(self.current_month)   
         self.text_popup = Popup(title=f'{self.current_year} {month}' + 
                             f' {self.button_nr}.', content=main_box,
-                            size_hint=(0.8, 0.8), title_align='center')
+                            size_hint=(1, 1), title_align='center')
         
         if self.language == "DE":
             self.text_popup.title = (f'{self.button_nr}. {month}' +
