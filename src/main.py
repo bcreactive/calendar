@@ -38,6 +38,7 @@ class CalendarApp(App):
         super(CalendarApp, self).__init__(**kwargs)
         # Get todays date.
         self.current_year = datetime.now().year
+        print(self.current_year)
         self.current_month = datetime.now().month
         self.current_day = datetime.now().day
 
@@ -490,6 +491,7 @@ class CalendarApp(App):
                                 multiline=True)
               
         text_input.bind(text=self.on_text_input)
+        text_input.focus = True
 
         # Create and bind the cancel, delete and save buttons.
         if self.language == "EN":
@@ -531,7 +533,7 @@ class CalendarApp(App):
         else:
             delete_button.bind(on_press=self.close_text_popup)
     
-        # Create the layout of the 'today-view' by stacking the widgets.
+        # Create the layout of the day-view.
         main_box = BoxLayout(orientation='vertical', padding=(10,0,10,0))
 
         content_box = BoxLayout(orientation='vertical')
@@ -567,7 +569,6 @@ class CalendarApp(App):
     
     def close_text_popup(self, instance):
         self.text_popup.dismiss()
-
         self.update_day_popup(instance)
 
     def update_entries(self, instance):
@@ -910,6 +911,9 @@ class CalendarApp(App):
                 self.ok_sound.play()
 
     def ask_delete(self, instance):
+        if self.sound:
+            self.btn_sound.play()
+
         # Creates a popup to confirm to delete the entry.
         if self.language == "EN":
             cancel_button = RoundedButton(text='No',
@@ -986,19 +990,22 @@ class CalendarApp(App):
 
             with open('save_file.json', 'w') as file:
                 json.dump(self.save_file, file)
+            
+            if self.sound:
+                self.ok_sound.play()
 
         # falscher eintrag wird gelöscht, 
         # es wird immer die letzt hinzugefügte pos entfernt anstatt der 
         # aktiven. ev neue savefile struktur?
 
-        else:
-            del self.save_file[date]
+        # if not date in self.save_file and not self.entered_text:
+        #     del self.save_file[date]
 
         self.update_values()
         self.update_day_popup(instance)
         self.close_text_popup(instance)
-        if self.sound:
-            self.ok_sound.play()
+        # if self.sound:
+        #     self.ok_sound.play()
 
     def get_month_name(self, value):
         if self.language == "EN":
