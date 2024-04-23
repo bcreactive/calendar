@@ -231,7 +231,8 @@ class CalendarApp(App):
             self.set_buttons()
 
         # Create the main layout by stacking the top row, middle row and grid.
-        self.main_layout = BoxLayout(orientation='vertical')
+        self.main_layout = BoxLayout(orientation='vertical',
+                                     padding=(10,10,10,10))
         self.main_layout.add_widget(self.top_row)
         self.main_layout.add_widget(self.mid_row)
         self.main_layout.add_widget(self.bottom_row)
@@ -531,7 +532,7 @@ class CalendarApp(App):
             delete_button.bind(on_press=self.close_text_popup)
     
         # Create the layout of the 'today-view' by stacking the widgets.
-        main_box = BoxLayout(orientation='vertical')
+        main_box = BoxLayout(orientation='vertical', padding=(10,0,10,0))
 
         content_box = BoxLayout(orientation='vertical')
         content_box.add_widget(text_input)
@@ -590,9 +591,9 @@ class CalendarApp(App):
         key = self.check_entry(self.button_nr)
 
         # Load entries or an add button, if no saved info is available.
-
         if key:
-            self.entries = BoxLayout(orientation='vertical', spacing=10)
+            self.entries = BoxLayout(orientation='vertical', spacing=10, 
+                                     padding=(30,10,30,10))
 
             data = self.save_file.get(key)
             nr = 1
@@ -665,7 +666,8 @@ class CalendarApp(App):
             self.content_box.add_widget(self.spaceholder_4)
 
         self.day_button_box = BoxLayout(orientation='horizontal',
-                               size_hint=(1,0.18), spacing=70)
+                               size_hint=(1,0.14), spacing=70,
+                               padding=(30,10,30,10))
         
         if key:
             self.day_button_box.add_widget(self.close_button)
@@ -708,7 +710,8 @@ class CalendarApp(App):
 
         # Load entries or an add button, if no saved info is available.
         if key:
-            self.entries = BoxLayout(orientation='vertical', spacing=10)
+            self.entries = BoxLayout(orientation='vertical', spacing=10,
+                                     padding=(30,10,30,10))
 
             data = self.save_file.get(key)
             nr = 1
@@ -781,7 +784,8 @@ class CalendarApp(App):
             self.content_box.add_widget(self.spaceholder_4)
 
         self.day_button_box = BoxLayout(orientation='horizontal',
-                               size_hint=(1,0.18), spacing=70)
+                               size_hint=(1,0.14), spacing=70,
+                               padding=(30,10,30,10))
         
         if key:
             self.day_button_box.add_widget(self.close_button)
@@ -928,7 +932,7 @@ class CalendarApp(App):
         
         ok_button.bind(on_press=self.delete_entry)
 
-        main_box = BoxLayout(orientation='vertical')
+        main_box = BoxLayout(orientation='vertical', padding=(10,10,10,10))
         button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.4),
                                spacing=30)     
          
@@ -1132,7 +1136,8 @@ class CalendarApp(App):
             self.rwd_row.add_widget(i)
 
         # Create the main set-date layout by stacking the Layoutboxes.
-        self.setdate_layout = BoxLayout(orientation='vertical', spacing=20)
+        self.setdate_layout = BoxLayout(orientation='vertical', spacing=20,
+                                        padding=(10,10,10,10))
         self.setdate_layout.add_widget(self.label_row)
         self.setdate_layout.add_widget(self.fwd_row)
         self.setdate_layout.add_widget(self.date_row)
@@ -1486,9 +1491,10 @@ class CalendarApp(App):
         self.btns_title_box.add_widget(self.btn_box)
 
         # Main layoutbox for the settings.
-        self.menu_layout = BoxLayout(orientation='vertical', spacing=20)
+        self.menu_layout = BoxLayout(orientation='vertical', spacing=20,
+                                     padding=(10,10,10,10))
+        
         self.menu_layout.add_widget(self.btns_title_box)
-
         
         self.menu_popup = Popup(title='Settings', content=self.menu_layout,
                                     size_hint=(0.7, 0.7), title_align="center")
@@ -1789,12 +1795,13 @@ class CalendarApp(App):
 
             soundcloud.com/awtomatsupabreakz
 
-            Danke fürs testen!"""
+            Danke fürs Testen!"""
         
         close_button.bind(on_press=self.close_credits)
 
-        credits_box = BoxLayout(orientation='vertical', spacing=30)
-        
+        credits_box = BoxLayout(orientation='vertical', spacing=30,
+                                padding=(10,10,10,10))
+            
         credits_box.add_widget(title)
         credits_box.add_widget(close_button)
 
@@ -1804,6 +1811,7 @@ class CalendarApp(App):
         self.credits_popup.background_color = self.bg_popups
     
         self.credits_popup.open()
+        
         if self.sound:
             self.credits_sound.play()
         
