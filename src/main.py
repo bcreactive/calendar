@@ -985,29 +985,40 @@ class CalendarApp(App):
 
         if self.entered_text:
             if date in self.save_file:
-                entries = self.save_file.get(date)
-                if self.content:
-                    entries.remove(self.content)
-                entries.append(self.entered_text)
-                entries.reverse()
-                self.save_file[date] = entries
+                self.day_entries = self.save_file.get(date)
+                position = str(len(self.day_entries) + 1)
+                new_entry = {position : self.entered_text}
+                self.day_entries.update(new_entry)
+                del self.save_file[date]
+                self.save_file[date] = self.day_entries 
+
             else:
-                new_entry = {date: [self.entered_text]}
-                self.save_file.update(new_entry)
+                new_entry = {"1" : self.entered_text}
+                self.save_file[date] = new_entry
 
-            with open('save_file.json', 'w') as file:
-                json.dump(self.save_file, file)
+        # Delete the entry, if string to save is empty.
+        if not self.entered_text:
+            if date in self.save_file:
+                if len(self.save_file[date]) > 1:
+                    self.day_entries = self.save_file.get(date)
+                    position = str(self.active_entry)
+                    del self.day_entries[position]
+                    del self.save_file[date]
+                    self.save_file[date] = self.day_entries 
+                else:
+                    del self.save_file[date]
+
+        with open('save_file.json', 'w') as file:
+            json.dump(self.save_file, file)
             
-            if self.sound:
-                self.ok_sound.play()
+        if self.sound:
+            self.ok_sound.play()
+        
+        
 
-        # falscher eintrag wird gelöscht, 
-        # es wird immer die letzt hinzugefügte pos entfernt anstatt der 
-        # aktiven. ev neue savefile struktur?
 
-        # if not date in self.save_file and not self.entered_text:
-        #     del self.save_file[date]
-
+        self.day_entries = None
+        self.active_entry = None
         self.update_values()
         self.update_day_popup(instance)
         self.close_text_popup(instance)
