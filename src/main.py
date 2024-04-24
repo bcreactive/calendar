@@ -477,6 +477,7 @@ class CalendarApp(App):
         if instance.btn_nr > 0:
             content = instance.text
             self.content = content
+            self.entered_text = content
             self.active_entry = instance.btn_nr
 
             text_input = TextInput(text=content, multiline=True)
@@ -489,7 +490,9 @@ class CalendarApp(App):
                 text_input = TextInput(hint_text='Platz für Notizen...',
                                 multiline=True)
               
-        text_input.bind(text=self.on_text_input)
+        text_input.bind(text=self.on_text_input,
+                        focus=text_input.setter('focus'))
+                        
         text_input.focus = True
 
         # Create and bind the cancel, delete and save buttons.
@@ -571,8 +574,14 @@ class CalendarApp(App):
         self.update_day_popup(instance)
 
     def update_entries(self, instance):
-        self.update_day_popup(instance)
+
+        # print(self.day_entries)
+        # print(self.active_entry)
+        # self.update_day_popup(instance)
         self.save_entry(instance)
+        # print(self.day_entries)
+        # print(self.active_entry)
+        self.update_day_popup(instance)
 
     def day_popup(self, instance):
         """Create the day-view with a textbox and buttons."""
@@ -708,15 +717,14 @@ class CalendarApp(App):
 
         # Check, if an entry exists at the chosen date.
         key = self.check_entry(self.nr)
-
+        
         # Load entries or an add button, if no saved info is available.
         if key:
             self.entries = BoxLayout(orientation='vertical', spacing=10,
                                      padding=(0,10,0,10))
 
             self.day_entries = self.save_file.get(key)
-
-            nr = 1
+            
             for i in self.day_entries:
                 content = self.day_entries[i]
                 self.day_entry = RoundedButton(text=content, rad=30, 
@@ -726,7 +734,6 @@ class CalendarApp(App):
                 self.day_entry.bind(on_press=self.open_text_popup)
 
                 self.entries.add_widget(self.day_entry)
-                nr += 1
 
         else:
             if self.language == "EN":
@@ -953,7 +960,7 @@ class CalendarApp(App):
             self.ask_popup.title = 'Eintrag löschen?'
             
         self.ask_popup.background_color = self.bg_popups
-        self.ask_popup.pos_hint = {'center_x': 0.5, 'center_y': 0.25}
+        self.ask_popup.pos_hint = {'center_x': 0.5, 'center_y': 0.45}
     
         self.ask_popup.open()
         
@@ -969,7 +976,8 @@ class CalendarApp(App):
     def save_entry(self, instance):
         # Format the date and save the entered text in json safe file.
         month = len(str(self.current_month))
-        day = len(str(self.button_nr))   
+        day = len(str(self.button_nr))
+
         if month == 1 and day == 1:
             date = f'{self.current_year}0{self.current_month}0{self.button_nr}'
         elif month == 1 and day == 2:
@@ -982,27 +990,27 @@ class CalendarApp(App):
         if self.entered_text:
             if date in self.save_file:
                 self.day_entries = self.save_file.get(date)
-                # Get the highest key and increment by one for a new entry.
-                if self.day_entries:
-                    max_key = max(map(int, self.day_entries.keys())) + 1 
+                if str(self.active_entry) in self.day_entries:
+                    self.day_entries[str(self.active_entry)] =self.entered_text
                 else:
-                    max_key = 1
+                    if self.day_entries:
+                        max_key = max(map(int, self.day_entries.keys())) + 1 
+                    else:
+                        max_key = 1
 
-                new_entry = {str(max_key): self.entered_text}
-                self.day_entries.update(new_entry)
+                    new_entry = {str(max_key): self.entered_text}
+                    self.day_entries.update(new_entry)
                 self.save_file[date] = self.day_entries
-            else:
+            else: 
                 new_entry = {"1": self.entered_text}
                 self.save_file[date] = new_entry
 
-        # Delete the entry if the string to save is empty.
         if not self.entered_text:
             if date in self.save_file:
                 if len(self.save_file[date]) > 1:
                     self.day_entries = self.save_file.get(date)
                     position = str(self.active_entry)
                     del self.day_entries[position]
-                    del self.save_file[date]
                     self.save_file[date] = self.day_entries 
                 else:
                     del self.save_file[date]
