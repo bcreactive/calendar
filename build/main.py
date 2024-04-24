@@ -9,10 +9,8 @@ from kivy.uix.textinput import TextInput
 from kivy.graphics import Color, RoundedRectangle
 from kivy.core.window import Window
 from kivy.core.audio import SoundLoader
-# from plyer import notification
 
 from datetime import datetime
-# import threading
 import calendar
 import time
 import json
@@ -67,6 +65,8 @@ class CalendarApp(App):
         self.day_entry = ''  
         self.input = ""
         self.content = ""
+        self.day_entries = {}
+        self.active_entry = "1"
 
         self.start_pos = (0, 0)
         self.btns = []
@@ -470,7 +470,6 @@ class CalendarApp(App):
 
     def open_text_popup(self, instance):
         """Creates a popup with textbox to write an entry, save and delete."""
-
         if self.sound:
             self.btn_sound.play()
         
@@ -478,7 +477,8 @@ class CalendarApp(App):
         if instance.btn_nr > 0:
             content = instance.text
             self.content = content
-            
+            self.active_entry = instance.btn_nr
+
             text_input = TextInput(text=content, multiline=True)
             
         else:
@@ -489,7 +489,10 @@ class CalendarApp(App):
                 text_input = TextInput(hint_text='Platz für Notizen...',
                                 multiline=True)
               
-        text_input.bind(text=self.on_text_input)
+        text_input.bind(text=self.on_text_input,
+                        focus=text_input.setter('focus'))
+                        
+        text_input.focus = True
 
         # Create and bind the cancel, delete and save buttons.
         if self.language == "EN":
@@ -531,7 +534,7 @@ class CalendarApp(App):
         else:
             delete_button.bind(on_press=self.close_text_popup)
     
-        # Create the layout of the 'today-view' by stacking the widgets.
+        # Create the layout of the day-view.
         main_box = BoxLayout(orientation='vertical', padding=(10,0,10,0))
 
         content_box = BoxLayout(orientation='vertical')
@@ -594,16 +597,18 @@ class CalendarApp(App):
             self.entries = BoxLayout(orientation='vertical', spacing=10, 
                                      padding=(0,10,0,10))
 
-            data = self.save_file.get(key)
-            nr = 1
-            for i in data:
-                self.day_entry = RoundedButton(text=i, rad=30, btn_nr=nr,
+            self.day_entries = self.save_file.get(key)
+
+            for i in self.day_entries:
+                content = self.day_entries[i]
+                self.day_entry = RoundedButton(text=content, rad=30,
+                                        btn_nr=int(i),
                                         background_color=self.navi_btn_col,
                                         font_size=48, size_hint=(1, 0.3))
+                
                 self.day_entry.bind(on_press=self.open_text_popup)
 
                 self.entries.add_widget(self.day_entry)
-                nr += 1
         
         else:
             if self.language == "EN":
@@ -682,7 +687,6 @@ class CalendarApp(App):
         # # Create the Popup window with customized content
         self.day_pop = Popup(title=f'{self.current_year} {month}' + 
                             f' {self.button_nr}.', content=self.main_box,
-                            # size_hint=(0.8, 0.8),
                             title_align='center')
         
         if self.language == "DE":
@@ -706,16 +710,19 @@ class CalendarApp(App):
 
         # Check, if an entry exists at the chosen date.
         key = self.check_entry(self.nr)
-
+        
         # Load entries or an add button, if no saved info is available.
         if key:
             self.entries = BoxLayout(orientation='vertical', spacing=10,
                                      padding=(0,10,0,10))
 
-            data = self.save_file.get(key)
+            self.day_entries = self.save_file.get(key)
+
             nr = 1
-            for i in data:
-                self.day_entry = RoundedButton(text=i, rad=30, btn_nr=nr,
+            for i in self.day_entries:
+                content = self.day_entries[i]
+                self.day_entry = RoundedButton(text=content, rad=30, 
+                                        btn_nr=int(i),
                                         background_color=self.navi_btn_col,
                                         font_size=48, size_hint=(1, 0.3))
                 self.day_entry.bind(on_press=self.open_text_popup)
@@ -890,13 +897,12 @@ class CalendarApp(App):
 
     def delete_entry(self, instance):
         self.close_ask()
-        key = self.check_entry(self.button_nr)
+        key = self.check_entry(self.nr)
         if key:
             entries = self.save_file.get(key)
-            entries.pop(instance.btn_nr - 1)  
-            if entries:  
-                self.save_file[key] = entries
-            else: 
+            if len(entries) > 1:
+                del entries[str(self.active_entry)]
+            else:
                 del self.save_file[key]
             
             with open('save_file.json', 'w') as file:
@@ -949,6 +955,7 @@ class CalendarApp(App):
             self.ask_popup.title = 'Eintrag löschen?'
             
         self.ask_popup.background_color = self.bg_popups
+        self.ask_popup.pos_hint = {'center_x': 0.5, 'center_y': 0.45}
     
         self.ask_popup.open()
         
@@ -960,11 +967,73 @@ class CalendarApp(App):
     def close_ask(self, x=None):
         self.ask_popup.dismiss()
         self.update_values()
-        
+
+    # def save_entry(self, instance):
+    #     # Format the date and save the entered text in json safe file.
+    #     month = len(str(self.current_month))
+    #     day = len(str(self.button_nr))   
+    #     if month == 1 and day == 1:
+    #         date = f'{self.current_year}0{self.current_month}0{self.button_nr}'
+    #     elif month == 1 and day == 2:
+    #         date = f'{self.current_year}0{self.current_month}{self.button_nr}'
+    #     elif month == 2 and day == 1:
+    #         date = f'{self.current_year}{self.current_month}0{self.button_nr}'
+    #     else:
+    #         date = f'{self.current_year}{self.current_month}{self.button_nr}'
+
+    #     if self.entered_text:
+    #         if date in self.save_file:
+    #             self.day_entries = self.save_file.get(date)
+    #             # Get the highest key and increment by one for a new entry.
+    #             if not self.active_entry in self.day_entries:
+    #                 if self.day_entries:
+    #                     max_key = max(map(int, self.day_entries.keys())) + 1 
+    #                 else:
+    #                     max_key = 1
+
+    #                 new_entry = {str(max_key): self.entered_text}
+    #                 self.day_entries.update(new_entry)
+    #                 self.save_file[date] = self.day_entries
+            
+    #             elif self.active_entry in self.day_entries:
+    #             # elif self.active_entry == :
+    #                 if self.day_entries:
+    #                     # if self.active_entry == 1:
+    #                     new_entry = {self.active_entry : self.entered_text}
+    #                     self.day_entries.update(new_entry)
+    #                     self.save_file[date] = self.day_entries
+
+    #         else: 
+    #             new_entry = {"1": self.entered_text}
+    #             self.save_file[date] = new_entry
+
+    #     # Delete the entry if the string to save is empty.
+    #     if not self.entered_text:
+    #         if date in self.save_file:
+    #             if len(self.save_file[date]) > 1:
+    #                 self.day_entries = self.save_file.get(date)
+    #                 position = str(self.active_entry)
+    #                 del self.day_entries[position]
+    #                 self.save_file[date] = self.day_entries 
+    #             else:
+    #                 del self.save_file[date]
+
+    #     with open('save_file.json', 'w') as file:
+    #         json.dump(self.save_file, file)
+
+    #     if self.sound:
+    #         self.ok_sound.play()
+
+    #     self.day_entries = None
+    #     self.active_entry = None
+    #     self.update_values()
+    #     self.update_day_popup(instance)
+    #     self.close_text_popup(instance)
     def save_entry(self, instance):
-        # Format the date and save the entered text in json safefile.
+        # Format the date and save the entered text in json safe file.
         month = len(str(self.current_month))
-        day = len(str(self.button_nr))   
+        day = len(str(self.button_nr))
+
         if month == 1 and day == 1:
             date = f'{self.current_year}0{self.current_month}0{self.button_nr}'
         elif month == 1 and day == 2:
@@ -976,34 +1045,61 @@ class CalendarApp(App):
 
         if self.entered_text:
             if date in self.save_file:
-                entries = self.save_file.get(date)
-                if self.content:
-                    entries.remove(self.content)
-                entries.append(self.entered_text)
-                entries.reverse()
-                self.save_file[date] = entries
-            else:
-                new_entry = {date: [self.entered_text]}
-                self.save_file.update(new_entry)
+                self.day_entries = self.save_file.get(date)
+                if self.active_entry in self.day_entries:
+                    self.day_entries[self.active_entry] = self.entered_text
+                    with open('save_file.json', 'w') as file:
+                        json.dump(self.save_file, file)
 
-            with open('save_file.json', 'w') as file:
-                json.dump(self.save_file, file)
-            
-            if self.sound:
-                self.ok_sound.play()
+                    if self.sound:
+                        self.ok_sound.play()
 
-        # falscher eintrag wird gelöscht, 
-        # es wird immer die letzt hinzugefügte pos entfernt anstatt der 
-        # aktiven. ev neue savefile struktur?
+                    self.day_entries = None
+                    self.active_entry = None
+                    self.update_values()
+                    self.update_day_popup(instance)
+                    self.close_text_popup(instance)
+                    return
+                
+                else:
+                    if self.day_entries:
+                        max_key = max(map(int, self.day_entries.keys())) + 1 
+                    else:
+                        max_key = 1
 
-        # if not date in self.save_file and not self.entered_text:
-        #     del self.save_file[date]
+                    new_entry = {str(max_key): self.entered_text}
+                    self.day_entries.update(new_entry)
+                self.save_file[date] = self.day_entries
+            else: 
+                new_entry = {"1": self.entered_text}
+                self.save_file[date] = new_entry
+        # else:
+        #     if date in self.save_file:
+        #         if self.active_entry in self.save_file[date]:
+        #             del self.save_file[date][self.active_entry]
+        #             if not self.save_file[date]:
+        #                 del self.save_file[date]
+        if not self.entered_text:
+            if date in self.save_file:
+                if len(self.save_file[date]) > 1:
+                    self.day_entries = self.save_file.get(date)
+                    position = str(self.active_entry)
+                    del self.day_entries[position]
+                    self.save_file[date] = self.day_entries 
+                else:
+                    del self.save_file[date]
 
+        with open('save_file.json', 'w') as file:
+            json.dump(self.save_file, file)
+
+        if self.sound:
+            self.ok_sound.play()
+
+        self.day_entries = None
+        self.active_entry = None
         self.update_values()
         self.update_day_popup(instance)
         self.close_text_popup(instance)
-        # if self.sound:
-        #     self.ok_sound.play()
 
     def get_month_name(self, value):
         if self.language == "EN":
@@ -1852,5 +1948,4 @@ class RoundedButton(Button):
 
 if __name__ == '__main__':
     calendar_app = CalendarApp()
-    # threading.Thread(target=calendar_app.check_notification).start()
     calendar_app.run()

@@ -4,7 +4,7 @@ apk compiled using buildozer
 i used the google colab notebook to compile the apk from my main.py and save_file.json files:
 
 
-when !buildozer init is executed, you need to edit the generated buildozer.spec file:
+when !buildozer init is executed, you need to edit the generated buildozer.spec file (or use the spec in build folder):
 
 include json and mp3 files and fix screen orientation:
 
