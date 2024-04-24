@@ -685,7 +685,6 @@ class CalendarApp(App):
         # # Create the Popup window with customized content
         self.day_pop = Popup(title=f'{self.current_year} {month}' + 
                             f' {self.button_nr}.', content=self.main_box,
-                            # size_hint=(0.8, 0.8),
                             title_align='center')
         
         if self.language == "DE":
@@ -954,6 +953,7 @@ class CalendarApp(App):
             self.ask_popup.title = 'Eintrag löschen?'
             
         self.ask_popup.background_color = self.bg_popups
+        self.ask_popup.pos_hint = {'center_x': 0.5, 'center_y': 0.25}
     
         self.ask_popup.open()
         
@@ -1018,57 +1018,6 @@ class CalendarApp(App):
         self.update_values()
         self.update_day_popup(instance)
         self.close_text_popup(instance)
-    
-    # def save_entry(self, instance):
-    #     # Format the date and save the entered text in json safefile.
-    #     month = len(str(self.current_month))
-    #     day = len(str(self.button_nr))   
-    #     if month == 1 and day == 1:
-    #         date = f'{self.current_year}0{self.current_month}0{self.button_nr}'
-    #     elif month == 1 and day == 2:
-    #         date = f'{self.current_year}0{self.current_month}{self.button_nr}'
-    #     elif month == 2 and day == 1:
-    #         date = f'{self.current_year}{self.current_month}0{self.button_nr}'
-    #     else:
-    #         date = f'{self.current_year}{self.current_month}{self.button_nr}'
-
-    #     if self.entered_text:
-    #         if date in self.save_file:
-    #             self.day_entries = self.save_file.get(date)
-    #             # self.day_entries = self.renumber_keys(self.day_entries, self.active_entry)
-    #             position = str(len(self.day_entries) + 1)
-    #             new_entry = {position : self.entered_text}
-    #             self.day_entries.update(new_entry)
-    #             del self.save_file[date]
-    #             self.save_file[date] = self.day_entries 
-
-    #         else:
-    #             new_entry = {"1" : self.entered_text}
-    #             self.save_file[date] = new_entry
-
-    #     # Delete the entry, if string to save is empty.
-    #     if not self.entered_text:
-    #         if date in self.save_file:
-    #             if len(self.save_file[date]) > 1:
-    #                 self.day_entries = self.save_file.get(date)
-    #                 position = str(self.active_entry)
-    #                 del self.day_entries[position]
-    #                 del self.save_file[date]
-    #                 self.save_file[date] = self.day_entries 
-    #             else:
-    #                 del self.save_file[date]
-
-    #     with open('save_file.json', 'w') as file:
-    #         json.dump(self.save_file, file)
-            
-    #     if self.sound:
-    #         self.ok_sound.play()
-
-    #     self.day_entries = None
-    #     self.active_entry = None
-    #     self.update_values()
-    #     self.update_day_popup(instance)
-    #     self.close_text_popup(instance)
 
     def get_month_name(self, value):
         if self.language == "EN":
