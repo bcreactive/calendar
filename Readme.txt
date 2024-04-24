@@ -9,10 +9,7 @@ Damit kann direkt auf den aktuellen Monat gewechselt werden. Wischen nach unten 
 der Standardeinstellung die Einstellungen: Es können die Farbpalette und die X/Y-Achsen für
 das swiping geändert werden, sowie die Button-Sounds an-/ausgeschaltet werden.
 
-Builds: Benutzung auf eigenes Risiko!/Use builds at your own risk!)
+Build: Benutzung auf eigenes Risiko! / Use build at your own risk!)
 -------------------------------------------------------------------
 
-Windows: exe mit Pyinstaller erstellt. Wichtig ist, dass
-die Datei save_file.json im gleichen Verzeichnis liegt wie die calendar.exe.
 
-Android: apk mit buildozer erstellt. 
