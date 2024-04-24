@@ -68,6 +68,8 @@ class CalendarApp(App):
         self.day_entry = ''  
         self.input = ""
         self.content = ""
+        self.day_entries = {}
+        self.active_entry = "1"
 
         self.start_pos = (0, 0)
         self.btns = []
@@ -479,7 +481,8 @@ class CalendarApp(App):
         if instance.btn_nr > 0:
             content = instance.text
             self.content = content
-            
+            self.active_entry = instance.btn_nr
+
             text_input = TextInput(text=content, multiline=True)
             
         else:
@@ -596,16 +599,18 @@ class CalendarApp(App):
             self.entries = BoxLayout(orientation='vertical', spacing=10, 
                                      padding=(0,10,0,10))
 
-            data = self.save_file.get(key)
-            nr = 1
-            for i in data:
-                self.day_entry = RoundedButton(text=i, rad=30, btn_nr=nr,
+            self.day_entries = self.save_file.get(key)
+
+            for i in self.day_entries:
+                content = self.day_entries[i]
+                self.day_entry = RoundedButton(text=content, rad=30,
+                                        btn_nr=int(i),
                                         background_color=self.navi_btn_col,
                                         font_size=48, size_hint=(1, 0.3))
+                
                 self.day_entry.bind(on_press=self.open_text_popup)
 
                 self.entries.add_widget(self.day_entry)
-                nr += 1
         
         else:
             if self.language == "EN":
@@ -714,10 +719,13 @@ class CalendarApp(App):
             self.entries = BoxLayout(orientation='vertical', spacing=10,
                                      padding=(0,10,0,10))
 
-            data = self.save_file.get(key)
+            self.day_entries = self.save_file.get(key)
+
             nr = 1
-            for i in data:
-                self.day_entry = RoundedButton(text=i, rad=30, btn_nr=nr,
+            for i in self.day_entries:
+                content = self.day_entries[i]
+                self.day_entry = RoundedButton(text=content, rad=30, 
+                                        btn_nr=int(i),
                                         background_color=self.navi_btn_col,
                                         font_size=48, size_hint=(1, 0.3))
                 self.day_entry.bind(on_press=self.open_text_popup)
@@ -892,13 +900,12 @@ class CalendarApp(App):
 
     def delete_entry(self, instance):
         self.close_ask()
-        key = self.check_entry(self.button_nr)
+        key = self.check_entry(self.nr)
         if key:
             entries = self.save_file.get(key)
-            entries.pop(instance.btn_nr - 1)  
-            if entries:  
-                self.save_file[key] = entries
-            else: 
+            if len(entries) > 1:
+                del entries[str(self.active_entry)]
+            else:
                 del self.save_file[key]
             
             with open('save_file.json', 'w') as file:
