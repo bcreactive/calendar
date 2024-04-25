@@ -433,14 +433,23 @@ class CalendarApp(App):
 
     def set_buttons(self):
         """Setting up the day-buttongrid."""
+        
         # Set the placeholder labels to have the buttons start at correct day.
+        prev_month_len = calendar.monthrange(self.current_year,
+                                           self.current_month - 1)[1]
+        
+        days = []
         for i in range(self.week_start):
-            label = Label(text="")
-            self.bottom_row.add_widget(label)
+            days.append(str(prev_month_len))
+            prev_month_len -= 1
+        days.reverse()
 
-        self.current_day = datetime.now().day
+        for i in days:
+            button = RoundedButton(text=i, background_color=self.popup_btn_col)
+            self.bottom_row.add_widget(button)
 
         # Set button-grid for the days.
+        self.current_day = datetime.now().day
         current_day_visible = self.check_today_visible()
 
         self.btns = []
@@ -1350,8 +1359,8 @@ class CalendarApp(App):
         self.current_year = self.chose_y
         self.current_month = self.chose_m
         self.current_day = self.chose_d
-        entry = self.check_entry(self.current_day)
 
+        entry = self.check_entry(self.current_day)
         if entry:
             self.day_popup(self.current_day)
         else:
