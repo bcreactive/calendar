@@ -70,6 +70,8 @@ class CalendarApp(App):
 
         self.start_pos = (0, 0)
         self.btns = []
+        self.prev_btns = []
+        self.next_btns = []
         self.nr = 0
         self.touch_down_time = 0
 
@@ -90,7 +92,16 @@ class CalendarApp(App):
         for i in self.btns:
             if i.collide_point(touch.x, touch.y):
                 self.nr = int(i.text)
-        
+
+    # add collidetest for the prev and next btns here!
+        # for i in self.prev_btns:
+        #     if i.collide_point(touch.x, touch.y):
+        #         if self.current_month > 1:
+        #             self.current_month -= 1
+        #         else:
+        #             self.current_month = 12
+        #         self.nr = self.get_prev_day() 
+
     def on_touch_up(self, instance, touch):
         # Prevent from swipe actions when close buttons are hold.
         touch_up_time = time.time()
@@ -433,10 +444,9 @@ class CalendarApp(App):
 
     def set_buttons(self):
         """Setting up the day-buttongrid."""
-        
+
         # Set the placeholder labels to have the buttons start at correct day.
-        prev_month_len = calendar.monthrange(self.current_year,
-                                           self.current_month - 1)[1]
+        prev_month_len = self.get_prev_month_len()
         
         days = []
         for i in range(self.week_start):
@@ -444,9 +454,11 @@ class CalendarApp(App):
             prev_month_len -= 1
         days.reverse()
 
+        self.prev_btns = []
         for i in days:
-            button = RoundedButton(text=i, background_color=self.popup_btn_col)
+            button = RoundedButton(text=i, background_color=self.navi_btn_col)
             self.bottom_row.add_widget(button)
+            self.prev_btns.append(button)
 
         # Set button-grid for the days.
         self.current_day = datetime.now().day
@@ -477,6 +489,56 @@ class CalendarApp(App):
             self.bottom_row.add_widget(button)
             self.btns.append(button)
 
+        amount_next_btns = self.amount_next_btns()
+        if amount_next_btns:
+            days = []
+            for i in range(1, amount_next_btns + 1):
+                days.append(str(i))
+        #         # prev_month_len -= 1
+        #     # days.reverse()
+        # print(days)
+
+            self.prev_btns = []
+            for i in days:
+                button = RoundedButton(text=i,
+                                       background_color=self.navi_btn_col)
+                self.bottom_row.add_widget(button)
+                self.next_btns.append(button)
+
+    def get_prev_month_len(self):
+        month = self.current_month - 1
+        year = self.current_year
+        if month > 12:
+            month = 1
+            year += 1
+        if month < 1:
+            month = 12
+            year -= 1
+
+        prev_month_len = calendar.monthrange(year, month)[1]
+        return prev_month_len
+
+    def amount_next_btns(self):
+        x = 0
+        amount = 0
+
+        for i in self.btns:
+            x += 1
+        for i in self.prev_btns:
+            x += 1
+
+        if len(self.weeks) == 4:
+            if x < 28:
+                amount = 28 - x
+        elif len(self.weeks) == 5:
+            if x < 35:
+                amount = 35 - x
+        elif len(self.weeks) == 6:
+            if x < 42:
+                amount = 42 - x
+        
+        return amount
+
     def open_text_popup(self, instance):
         """Creates a popup with textbox to write an entry, save and delete."""
         if self.sound:
@@ -487,21 +549,22 @@ class CalendarApp(App):
             content = instance.text
             self.content = content
             self.entered_text = content
+            
             self.active_entry = instance.btn_nr
 
             # need to test best results with focus
-            text_input = TextInput(text=content, multiline=True, focus=True)
+            text_input = TextInput(text=content, multiline=True)
             
         else:
             if self.language == "EN":
-                text_input = TextInput(hint_text='Write here...',  focus=True,
+                text_input = TextInput(hint_text='Write here...',
                                 multiline=True)
             else:
                 text_input = TextInput(hint_text='Platz für Notizen...', 
-                                       focus=True, multiline=True)
+                                       multiline=True)
               
-        text_input.bind(text=self.on_text_input,)
-                        # focus=text_input.setter('focus'))
+        text_input.bind(text=self.on_text_input,
+                        focus=text_input.setter('focus'))
                         
         # text_input.focus = True
 
@@ -1013,6 +1076,8 @@ class CalendarApp(App):
             if date in self.save_file:
                 if len(self.save_file[date]) > 1:
                     self.day_entries = self.save_file.get(date)
+                    # if str(self.active_entry) in self.day_entries:
+                    # self.day_entries[str(self.active_entry)] =self.entered_text
                     position = str(self.active_entry)
                     del self.day_entries[position]
                     self.save_file[date] = self.day_entries 
