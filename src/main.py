@@ -480,20 +480,21 @@ class CalendarApp(App):
             self.entered_text = content
             self.active_entry = instance.btn_nr
 
-            text_input = TextInput(text=content, multiline=True)
+            # need to test best results with focus
+            text_input = TextInput(text=content, multiline=True, focus=True)
             
         else:
             if self.language == "EN":
-                text_input = TextInput(hint_text='Write here...',
+                text_input = TextInput(hint_text='Write here...',  focus=True,
                                 multiline=True)
             else:
-                text_input = TextInput(hint_text='Platz für Notizen...',
-                                multiline=True)
+                text_input = TextInput(hint_text='Platz für Notizen...', 
+                                       focus=True, multiline=True)
               
-        text_input.bind(text=self.on_text_input,
-                        focus=text_input.setter('focus'))
+        text_input.bind(text=self.on_text_input,)
+                        # focus=text_input.setter('focus'))
                         
-        text_input.focus = True
+        # text_input.focus = True
 
         # Create and bind the cancel, delete and save buttons.
         if self.language == "EN":
@@ -574,13 +575,7 @@ class CalendarApp(App):
         self.update_day_popup(instance)
 
     def update_entries(self, instance):
-
-        # print(self.day_entries)
-        # print(self.active_entry)
-        # self.update_day_popup(instance)
         self.save_entry(instance)
-        # print(self.day_entries)
-        # print(self.active_entry)
         self.update_day_popup(instance)
 
     def day_popup(self, instance):
@@ -1355,10 +1350,15 @@ class CalendarApp(App):
         self.current_year = self.chose_y
         self.current_month = self.chose_m
         self.current_day = self.chose_d
+        entry = self.check_entry(self.current_day)
+
+        if entry:
+            self.day_popup(self.current_day)
+        else:
+            self.open_text_popup(instance)
+
         self.update_values()
         self.input = ""
-        self.day_popup(self.nr)
-        self.open_text_popup(instance)
 
     def open_menu_popup(self, x=None):
         """Popup to change settings."""
