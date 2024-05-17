@@ -21,7 +21,7 @@ import json
 
 
 class CalendarApp(App):
-    """This class creates a simple kivy calendar-app for android. When clicking
+    """This class creates a simple Kivy calendar-app for Android. When clicking
     on a day-button, users can write, edit, save and delete an entry in the 
     'today-view'. Swipe motions left or right increase/decrease the displayed
     month. To jump to a specific date swipe up or click the '^'-button to set a 
@@ -64,7 +64,6 @@ class CalendarApp(App):
         self.entered_text = ''
         self.day_entry = ''  
         self.input = ""
-        self.content = ""
         self.day_entries = {}
         self.active_entry = "1"
 
@@ -84,7 +83,6 @@ class CalendarApp(App):
         self.credits_playing = False
 
     def on_touch_down(self, instance, touch):
-        # Actions taken, when touching the screen.
         self.touch_down_time = time.time()
         self.start_pos = touch.pos
         self.touch_x = touch.x
@@ -92,15 +90,17 @@ class CalendarApp(App):
         for i in self.btns:
             if i.collide_point(touch.x, touch.y):
                 self.nr = int(i.text)
+                return
 
-    # add collidetest for the prev and next btns here!
         # for i in self.prev_btns:
         #     if i.collide_point(touch.x, touch.y):
-        #         if self.current_month > 1:
-        #             self.current_month -= 1
-        #         else:
-        #             self.current_month = 12
-        #         self.nr = self.get_prev_day() 
+        #         self.nr = int(i.text)
+        #         return
+            
+        # for i in self.next_btns:
+        #     if i.collide_point(touch.x, touch.y):
+        #         self.nr = int(i.text)
+        #         return
 
     def on_touch_up(self, instance, touch):
         # Prevent from swipe actions when close buttons are hold.
@@ -171,6 +171,30 @@ class CalendarApp(App):
         else:
             self.input = "click"
             self.buttons_locked = False
+
+    # def check_prevday_popup(self, instance):
+    #     self.dec_month()
+            
+    #     # Check, if clicked or swiped, when the move starts on a day-button.
+    #     if abs(self.touch_x - self.start_pos[0]) > 40 or abs(
+    #         self.touch_y - self.start_pos[1]) > 40:
+    #         self.input = "swipe"
+    #         self.buttons_locked = True
+    #     else:
+    #         self.input = "click"
+    #         self.buttons_locked = False
+
+    # def check_nextday_popup(self, instance):
+    #     self.inc_month()
+            
+    #     # Check, if clicked or swiped, when the move starts on a day-button.
+    #     if abs(self.touch_x - self.start_pos[0]) > 40 or abs(
+    #         self.touch_y - self.start_pos[1]) > 40:
+    #         self.input = "swipe"
+    #         self.buttons_locked = True
+    #     else:
+    #         self.input = "click"
+    #         self.buttons_locked = False
 
     def build(self):
         """Create the main view when the app is launched."""
@@ -459,6 +483,7 @@ class CalendarApp(App):
             button = RoundedButton(text=i, background_color=self.navi_btn_col)
             self.bottom_row.add_widget(button)
             self.prev_btns.append(button)
+            # button.bind(on_press=self.check_prevday_popup)
 
         # Set button-grid for the days.
         self.current_day = datetime.now().day
@@ -494,9 +519,6 @@ class CalendarApp(App):
             days = []
             for i in range(1, amount_next_btns + 1):
                 days.append(str(i))
-        #         # prev_month_len -= 1
-        #     # days.reverse()
-        # print(days)
 
             self.prev_btns = []
             for i in days:
@@ -504,6 +526,7 @@ class CalendarApp(App):
                                        background_color=self.navi_btn_col)
                 self.bottom_row.add_widget(button)
                 self.next_btns.append(button)
+                # button.bind(on_press=self.check_nextday_popup)
 
     def get_prev_month_len(self):
         month = self.current_month - 1
@@ -543,16 +566,12 @@ class CalendarApp(App):
         """Creates a popup with textbox to write an entry, save and delete."""
         if self.sound:
             self.btn_sound.play()
-        
-        self.content = ""
+
         if instance.btn_nr > 0:
             content = instance.text
-            self.content = content
             self.entered_text = content
-            
             self.active_entry = instance.btn_nr
 
-            # need to test best results with focus
             text_input = TextInput(text=content, multiline=True)
             
         else:
@@ -563,10 +582,10 @@ class CalendarApp(App):
                 text_input = TextInput(hint_text='Platz für Notizen...', 
                                        multiline=True)
               
-        text_input.bind(text=self.on_text_input,
-                        focus=text_input.setter('focus'))
+        text_input.bind(text=self.on_text_input)
+                        # focus=text_input.setter('focus'))
                         
-        # text_input.focus = True
+        text_input.focus = True
 
         # Create and bind the cancel, delete and save buttons.
         if self.language == "EN":
@@ -618,7 +637,9 @@ class CalendarApp(App):
                                size_hint=(1,0.18), spacing=70)
             
         button_box.add_widget(close_button)
-        button_box.add_widget(delete_button)
+        # remove the delete button from the textbox, if creating a new entry.
+        if self.entered_text:
+            button_box.add_widget(delete_button)
         button_box.add_widget(save_button)
 
         spaceholder = BoxLayout(orientation='vertical', size_hint=(1, 0.9))
@@ -643,6 +664,7 @@ class CalendarApp(App):
         self.input = ""
     
     def close_text_popup(self, instance):
+        self.entered_text = ''
         self.text_popup.dismiss()
         self.update_day_popup(instance)
 
@@ -970,13 +992,14 @@ class CalendarApp(App):
     def delete_entry(self, instance):
         self.close_ask()
         key = self.check_entry(self.nr)
-        if key:
+        if key and not key == None:
             entries = self.save_file.get(key)
             if len(entries) > 1:
                 del entries[str(self.active_entry)]
+                self.save_file[key] = entries
             else:
                 del self.save_file[key]
-            
+                    
             with open('save_file.json', 'w') as file:
                 json.dump(self.save_file, file)
 
@@ -1021,16 +1044,16 @@ class CalendarApp(App):
         main_box.add_widget(button_box)
 
         self.ask_popup = Popup(title='erase entry?', content=main_box,
-                                size_hint=(0.5, 0.3), title_align='center')
-     
+                                    size_hint=(0.5, 0.3), title_align='center')
+        
         if self.language == "DE":
             self.ask_popup.title = 'Eintrag löschen?'
-            
+                
         self.ask_popup.background_color = self.bg_popups
         self.ask_popup.pos_hint = {'center_x': 0.5, 'center_y': 0.45}
-    
-        self.ask_popup.open()
         
+        self.ask_popup.open()
+
     def prep_close_ask(self, x=None):
         self.close_ask()
         if self.sound:
@@ -1072,29 +1095,22 @@ class CalendarApp(App):
                 new_entry = {"1": self.entered_text}
                 self.save_file[date] = new_entry
 
+            with open('save_file.json', 'w') as file:
+                json.dump(self.save_file, file)
+
+            if self.sound:
+                self.ok_sound.play()
+
+            self.day_entries = None
+            self.active_entry = None
+            self.update_values()
+            self.update_day_popup(instance)
+            self.close_text_popup(instance)
+            return
+        
         if not self.entered_text:
-            if date in self.save_file:
-                if len(self.save_file[date]) > 1:
-                    self.day_entries = self.save_file.get(date)
-                    # if str(self.active_entry) in self.day_entries:
-                    # self.day_entries[str(self.active_entry)] =self.entered_text
-                    position = str(self.active_entry)
-                    del self.day_entries[position]
-                    self.save_file[date] = self.day_entries 
-                else:
-                    del self.save_file[date]
-
-        with open('save_file.json', 'w') as file:
-            json.dump(self.save_file, file)
-
-        if self.sound:
-            self.ok_sound.play()
-
-        self.day_entries = None
-        self.active_entry = None
-        self.update_values()
-        self.update_day_popup(instance)
-        self.close_text_popup(instance)
+            self.close_text_popup(instance)
+            self.active_entry = None
 
     def get_month_name(self, value):
         if self.language == "EN":
