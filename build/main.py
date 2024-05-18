@@ -94,14 +94,14 @@ class CalendarApp(App):
                 self.nr = int(i.text)
                 return
             
-        # for i in self.prev_btns:
-        #     if i.collide_point(touch.x, touch.y):
-        #         self.nr = int(i.text)
-        #         return
+        for i in self.prev_btns:
+            if i.collide_point(touch.x, touch.y):
+                self.nr = int(i.text)
+                return
             
-        # for i in self.next_btns:
-        #     if i.collide_point(touch.x, touch.y):
-        #         self.nr = int(i.text)
+        for i in self.next_btns:
+            if i.collide_point(touch.x, touch.y):
+                self.nr = int(i.text)
 
     def on_touch_up(self, instance, touch):
         # Prevent from swipe actions when close buttons are hold.
@@ -173,29 +173,29 @@ class CalendarApp(App):
             self.input = "click"
             self.buttons_locked = False
 
-    # def check_prevday_popup(self, instance):
-    #     # Check, if clicked or swiped, when the move starts on a day-button.
-    #     if abs(self.touch_x - self.start_pos[0]) > 40 or abs(
-    #         self.touch_y - self.start_pos[1]) > 40:
-    #         self.input = "swipe"
-    #         self.buttons_locked = True
-    #     else:
-    #         # self.dec_month()  
-    #         self.input = "click"
-    #         # self.buttons_locked = False
-    #         self.button_nr = int(instance.text)
-    #         self.day_popup(self.button_nr)
+    def check_prevday_popup(self, instance):
+        # Check, if clicked or swiped, when the move starts on a day-button.
+        if abs(self.touch_x - self.start_pos[0]) > 40 or abs(
+            self.touch_y - self.start_pos[1]) > 40:
+            self.input = "swipe"
+            self.buttons_locked = True
+        else:
+            self.dec_month()  
+            self.input = "click"
+            # self.buttons_locked = False
+            self.button_nr = int(instance.text)
+            self.day_popup(self.button_nr)
 
-    # def check_nextday_popup(self, instance):
-    #     # Check, if clicked or swiped, when the move starts on a day-button.
-    #     if abs(self.touch_x - self.start_pos[0]) > 40 or abs(
-    #         self.touch_y - self.start_pos[1]) > 40:
-    #         self.input = "swipe"
-    #         self.buttons_locked = True
-    #     else:
-    #         self.inc_month()
-    #         self.input = "click"
-    #         self.buttons_locked = False
+    def check_nextday_popup(self, instance):
+        # Check, if clicked or swiped, when the move starts on a day-button.
+        if abs(self.touch_x - self.start_pos[0]) > 40 or abs(
+            self.touch_y - self.start_pos[1]) > 40:
+            self.input = "swipe"
+            self.buttons_locked = True
+        else:
+            self.inc_month()
+            self.input = "click"
+            self.buttons_locked = False
 
     def build(self):
         """Create the main view when the app is launched."""
@@ -475,16 +475,17 @@ class CalendarApp(App):
         
         days = []
         for i in range(self.week_start):
-            days.append(str(prev_month_len))
+            days.append(prev_month_len)
             prev_month_len -= 1
         days.reverse()
 
         self.prev_btns = []
         for i in days:
-            button = Label(text=i, color=self.navi_btn_col, font_size='30sp')
+            button = RoundedButton(text=str(i), font_size=25,
+                                background_color=self.navi_btn_col)
             self.bottom_row.add_widget(button)
             self.prev_btns.append(button)
-            # button.bind(on_press=self.check_prevday_popup)
+            button.bind(on_press=self.check_prevday_popup)
 
         # Set button-grid for the days of the current month.
         self.current_day = datetime.now().day
@@ -520,15 +521,14 @@ class CalendarApp(App):
         if amount_next_btns:
             days = []
             for i in range(1, amount_next_btns + 1):
-                days.append(str(i))
+                days.append(i)
 
-            self.prev_btns = []
             for i in days:
-                button = Label(text=i, color=self.navi_btn_col,
-                               font_size='30sp')
+                button = RoundedButton(text=str(i), font_size=25,
+                                background_color=self.navi_btn_col)
                 self.bottom_row.add_widget(button)
                 self.next_btns.append(button)
-                # button.bind(on_press=self.check_nextday_popup)
+                button.bind(on_press=self.check_nextday_popup)
 
     def get_prev_month_len(self):
         month = self.current_month - 1
@@ -1052,7 +1052,7 @@ class CalendarApp(App):
         main_box.add_widget(button_box)
 
         self.ask_popup = Popup(title='erase entry?', content=main_box,
-                                    size_hint=(0.5, 0.3), title_align='center')
+                                    size_hint=(0.8, 0.3), title_align='center')
         
         if self.language == "DE":
             self.ask_popup.title = 'Eintrag löschen?'
@@ -1612,7 +1612,7 @@ class CalendarApp(App):
         self.btn_box.add_widget(self.lang_btn)
         self.btn_box.add_widget(self.about_btn)
 
-        self.btns_title_box = BoxLayout(orientation='horizontal', spacing=20)
+        self.btns_title_box = BoxLayout(orientation='horizontal', spacing=30)
         self.btns_title_box.add_widget(self.title_box)
         self.btns_title_box.add_widget(self.btn_box)
 
@@ -1870,7 +1870,7 @@ class CalendarApp(App):
         self.btn_box.add_widget(self.lang_btn)
         self.btn_box.add_widget(self.about_btn)
 
-        self.btns_title_box = BoxLayout(orientation='horizontal', spacing=20)
+        self.btns_title_box = BoxLayout(orientation='horizontal', spacing=30)
         self.btns_title_box.add_widget(self.title_box)
         self.btns_title_box.add_widget(self.btn_box)
 
