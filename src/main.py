@@ -9,6 +9,7 @@ from kivy.uix.textinput import TextInput
 from kivy.graphics import Color, RoundedRectangle, Ellipse
 from kivy.core.window import Window
 from kivy.core.audio import SoundLoader
+from kivy.clock import Clock
 
 from datetime import datetime
 import calendar
@@ -584,7 +585,6 @@ class CalendarApp(App):
                                        multiline=True)
               
         text_input.bind(text=self.on_text_input)
-                        # focus=text_input.setter('focus'))
                         
         text_input.focus = True
 
@@ -638,7 +638,7 @@ class CalendarApp(App):
                                size_hint=(1,0.18), spacing=70)
             
         button_box.add_widget(close_button)
-        # remove the delete button from the textbox, if creating a new entry.
+        # Remove the delete button from the textbox, if creating a new entry.
         if self.entered_text:
             button_box.add_widget(delete_button)
         button_box.add_widget(save_button)
@@ -652,15 +652,21 @@ class CalendarApp(App):
         # Create the Popup window with customized content
         month = self.get_month_name(self.current_month)   
         self.text_popup = Popup(title=f'{self.current_year} {month}' + 
-                            f' {self.button_nr}.', content=main_box,
+                            f' {self.current_day}.', content=main_box,
                             size_hint=(1, 1), title_align='center')
         
         if self.language == "DE":
-            self.text_popup.title = (f'{self.button_nr}. {month}' +
+            self.text_popup.title = (f'{self.current_day}. {month}' +
                                     f' {self.current_year}')
 
         self.text_popup.background_color = self.bg_popups
         
+        # Use Clock to schedule setting the focus after popup is fully rendered
+        def set_focus(dt):
+            text_input.focus = True
+
+        Clock.schedule_once(set_focus, 0)
+
         self.text_popup.open()
         self.input = ""
     
@@ -668,7 +674,7 @@ class CalendarApp(App):
         self.entered_text = ''
         self.active_entry = None
         self.text_popup.dismiss()
-        self.update_day_popup(instance)
+        self.update_day_popup(self.current_day)
 
     def update_entries(self, instance):
         self.save_entry(instance)
@@ -796,7 +802,7 @@ class CalendarApp(App):
         self.day_pop.open()
         self.input = ""
 
-    def update_day_popup(self, instance): 
+    def update_day_popup(self, x=None): 
         """Update the day view."""
 
         self.close_day_popup()
@@ -1259,7 +1265,6 @@ class CalendarApp(App):
         self.setdate_layout.add_widget(self.spaceholder_1)
         self.setdate_layout.add_widget(self.ok)
 
-        
         self.setdate_popup = Popup(title='Jump to date:',
                                     content=self.setdate_layout,
                                    size_hint=(0.6, 0.6), title_align='center')
@@ -1447,6 +1452,7 @@ class CalendarApp(App):
         if entry:
             self.day_popup(self.current_day)
         else:
+            self.day_popup(self.current_day)
             self.open_text_popup(instance)
 
         self.update_values()
@@ -1940,7 +1946,7 @@ class CalendarApp(App):
         self.sound = self.save_file["sound"]
         self.credits_sound.stop()
 
-   
+
 class RoundedButton(Button):
     """This class creates buttons with rounded edges."""
     
