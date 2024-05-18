@@ -1052,7 +1052,7 @@ class CalendarApp(App):
         main_box.add_widget(button_box)
 
         self.ask_popup = Popup(title='erase entry?', content=main_box,
-                                    size_hint=(0.5, 0.3), title_align='center')
+                                    size_hint=(0.8, 0.3), title_align='center')
         
         if self.language == "DE":
             self.ask_popup.title = 'Eintrag löschen?'
@@ -1612,7 +1612,7 @@ class CalendarApp(App):
         self.btn_box.add_widget(self.lang_btn)
         self.btn_box.add_widget(self.about_btn)
 
-        self.btns_title_box = BoxLayout(orientation='horizontal', spacing=20)
+        self.btns_title_box = BoxLayout(orientation='horizontal', spacing=30)
         self.btns_title_box.add_widget(self.title_box)
         self.btns_title_box.add_widget(self.btn_box)
 
