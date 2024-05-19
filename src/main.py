@@ -570,7 +570,21 @@ class CalendarApp(App):
             self.btn_sound.play()
 
         if instance.btn_nr > 0:
-            content = instance.text
+            month = len(str(self.current_month))
+            day = len(str(self.button_nr))
+
+            if month == 1 and day == 1:
+                date = f'{self.current_year}0{self.current_month}0{self.button_nr}'
+            elif month == 1 and day == 2:
+                date = f'{self.current_year}0{self.current_month}{self.button_nr}'
+            elif month == 2 and day == 1:
+                date = f'{self.current_year}{self.current_month}0{self.button_nr}'
+            else:
+                date = f'{self.current_year}{self.current_month}{self.button_nr}'
+
+            entries = self.save_file[date]
+            content = entries.get(str(instance.btn_nr))
+        
             self.entered_text = content
             self.active_entry = instance.btn_nr
 
@@ -587,6 +601,7 @@ class CalendarApp(App):
         text_input.bind(text=self.on_text_input)
                         
         text_input.focus = True
+        text_input.keyboard_mode = 'auto'
 
         # Create and bind the cancel, delete and save buttons.
         if self.language == "EN":
@@ -652,20 +667,20 @@ class CalendarApp(App):
         # Create the Popup window with customized content
         month = self.get_month_name(self.current_month)   
         self.text_popup = Popup(title=f'{self.current_year} {month}' + 
-                            f' {self.current_day}.', content=main_box,
+                            f' {self.button_nr}.', content=main_box,
                             size_hint=(1, 1), title_align='center')
         
         if self.language == "DE":
-            self.text_popup.title = (f'{self.current_day}. {month}' +
+            self.text_popup.title = (f'{self.button_nr}. {month}' +
                                     f' {self.current_year}')
 
         self.text_popup.background_color = self.bg_popups
         
-        # Use Clock to schedule setting the focus after popup is fully rendered
-        def set_focus(dt):
-            text_input.focus = True
+        # # Use Clock to schedule setting the focus after popup is fully rendered
+        # def set_focus(dt):
+        #     text_input.focus = True
 
-        Clock.schedule_once(set_focus, 0)
+        # Clock.schedule_once(set_focus, 0)
 
         self.text_popup.open()
         self.input = ""
@@ -704,8 +719,13 @@ class CalendarApp(App):
             self.day_entries = self.save_file.get(key)
 
             for i in self.day_entries:
-                content = self.day_entries[i]
-                self.day_entry = RoundedButton(text=content, rad=30,
+                full_text = self.day_entries[i]
+                if len(full_text) >= 22:
+                    btn_text = full_text[:16] + ' ...'
+                else:
+                    btn_text = full_text
+                    
+                self.day_entry = RoundedButton(text=btn_text, rad=30,
                                         btn_nr=int(i),
                                         background_color=self.navi_btn_col,
                                         font_size=48, size_hint=(1, 0.3))
@@ -823,8 +843,13 @@ class CalendarApp(App):
             self.day_entries = self.save_file.get(key)
             
             for i in self.day_entries:
-                content = self.day_entries[i]
-                self.day_entry = RoundedButton(text=content, rad=30, 
+                full_text = self.day_entries[i]
+                if len(full_text) >= 22:
+                    btn_text = full_text[:16] + ' ...'
+                else:
+                    btn_text = full_text
+
+                self.day_entry = RoundedButton(text=btn_text, rad=30, 
                                         btn_nr=int(i),
                                         background_color=self.navi_btn_col,
                                         font_size=48, size_hint=(1, 0.3))
