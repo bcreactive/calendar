@@ -74,6 +74,8 @@ class CalendarApp(App):
         self.next_btns = []
         self.nr = 0
         self.touch_down_time = 0
+        self.prev_btn = False
+        self.next_btn = False
 
         # Load sounds.
         self.swipe_r_sound = SoundLoader.load('swipe_r.mp3')
@@ -97,11 +99,13 @@ class CalendarApp(App):
         for i in self.prev_btns:
             if i.collide_point(touch.x, touch.y):
                 self.nr = int(i.text)
+                self.prev_btn = True
                 return
             
         for i in self.next_btns:
             if i.collide_point(touch.x, touch.y):
                 self.nr = int(i.text)
+                self.next_btn = True
 
     def on_touch_up(self, instance, touch):
         # Prevent from swipe actions when close buttons are hold.
@@ -115,10 +119,11 @@ class CalendarApp(App):
 
                 if self.swipe_x_default:
                     if touch.x > self.touch_x + 80:
-                        self.dec_month()       
+                        self.dec_month()     
+                      
                     elif touch.x < self.touch_x - 80:
                         self.inc_month()
-                    
+                       
                     if self.swipe_y_default:
                         if touch.y > self.touch_y + 250:
                             self.set_date()   
@@ -163,39 +168,17 @@ class CalendarApp(App):
         self.input = ""
         self.start_pos = (0,0)
 
-    def check_day_popup(self, instance):
-        # Check, if clicked or swiped, when the move starts on a day-button.
-        if abs(self.touch_x - self.start_pos[0]) > 40 or abs(
-            self.touch_y - self.start_pos[1]) > 40:
-            self.input = "swipe"
-            self.buttons_locked = True
-        else:
-            self.input = "click"
-            self.buttons_locked = False
+    def set_click(self, instance):
+        self.input = "click"
 
-    def check_prevday_popup(self, instance):
-        # Check, if clicked or swiped, when the move starts on a day-button.
-        if abs(self.touch_x - self.start_pos[0]) > 40 or abs(
-            self.touch_y - self.start_pos[1]) > 40:
-            self.input = "swipe"
-            self.buttons_locked = True
-        else:
-            self.dec_month()  
-            self.input = "click"
-            # self.buttons_locked = False
-            self.button_nr = int(instance.text)
-            self.day_popup(self.button_nr)
+    def set_prevday_click(self, instance):
+        self.input = "click"
+        self.button_nr = int(instance.text)
+        self.prev_btn = True
 
-    def check_nextday_popup(self, instance):
-        # Check, if clicked or swiped, when the move starts on a day-button.
-        if abs(self.touch_x - self.start_pos[0]) > 40 or abs(
-            self.touch_y - self.start_pos[1]) > 40:
-            self.input = "swipe"
-            self.buttons_locked = True
-        else:
-            self.inc_month()
-            self.input = "click"
-            self.buttons_locked = False
+    def set_nextday_click(self, instance):
+        self.input = "click"
+        self.next_btn = True
 
     def build(self):
         """Create the main view when the app is launched."""
@@ -485,7 +468,7 @@ class CalendarApp(App):
                                 background_color=self.navi_btn_col)
             self.bottom_row.add_widget(button)
             self.prev_btns.append(button)
-            button.bind(on_press=self.check_prevday_popup)
+            button.bind(on_press=self.set_prevday_click)
 
         # Set button-grid for the days of the current month.
         self.current_day = datetime.now().day
@@ -512,7 +495,7 @@ class CalendarApp(App):
                     button = RoundedButton(text=str(i+1), font_size=50,
                                 background_color=self.empty_col)
                      
-            button.bind(on_press=self.check_day_popup)
+            button.bind(on_press=self.set_click)
             self.bottom_row.add_widget(button)
             self.btns.append(button)
 
@@ -528,7 +511,7 @@ class CalendarApp(App):
                                 background_color=self.navi_btn_col)
                 self.bottom_row.add_widget(button)
                 self.next_btns.append(button)
-                button.bind(on_press=self.check_nextday_popup)
+                button.bind(on_press=self.set_nextday_click)
 
     def get_prev_month_len(self):
         month = self.current_month - 1
@@ -681,8 +664,8 @@ class CalendarApp(App):
     def close_text_popup(self, instance):
         self.entered_text = ''
         self.active_entry = None
+        self.update_day_popup(self.button_nr)
         self.text_popup.dismiss()
-        self.update_day_popup(self.current_day)
 
     def update_entries(self, instance):
         self.save_entry(instance)
@@ -695,7 +678,12 @@ class CalendarApp(App):
             self.btn_sound.play()
         self.credits_sound.stop()
 
+        if self.prev_btn:
+            self.dec_month()
+        if self.next_btn:
+            self.inc_month()
         month = self.get_month_name(self.current_month)
+
         if isinstance(instance, int):
             self.button_nr = instance
         else:
@@ -1010,6 +998,12 @@ class CalendarApp(App):
             return False
 
     def close_day_popup(self, x=None):
+        if self.prev_btn:
+            self.prev_btn = False
+        if self.next_btn:
+            self.next_btn = False
+            
+        self.update_values()
         self.input = ""
         self.day_pop.dismiss()
         if self.sound:
