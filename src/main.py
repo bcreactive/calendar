@@ -675,13 +675,6 @@ class CalendarApp(App):
                                     f' {self.current_year}')
 
         self.text_popup.background_color = self.bg_popups
-        
-        # # Use Clock to schedule setting the focus after popup is fully rendered
-        # def set_focus(dt):
-        #     text_input.focus = True
-
-        # Clock.schedule_once(set_focus, 0)
-
         self.text_popup.open()
         self.input = ""
     
