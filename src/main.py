@@ -203,8 +203,11 @@ class CalendarApp(App):
 
         self.spaceholder = Label(text='', font_size=20)
 
-        self.home_button = RoundedButton(text="^", font_size=60,
-                                background_color=self.home_btn_col)
+        # self.home_button = RoundedButton(text="^", font_size=60,
+        #                         background_color=self.home_btn_col)
+        self.home_button = RoundedButton(text=f'{self.current_day}',
+                                        font_size=50,
+                                        background_color=self.home_btn_col)
 
         self.month_rwd = RoundedButton(text="<", font_size=64,
                                 background_color=self.navi_btn_col)
@@ -260,6 +263,7 @@ class CalendarApp(App):
 
     def update_values(self):
         """Update the values and the view for the main-window."""
+
         self.month.text = self.get_month_name(self.current_month)
         self.year.text = f'{self.current_year}'
         self.weeks = self.load_month()
@@ -281,12 +285,17 @@ class CalendarApp(App):
         today = self.check_today_visible()
 
         if today:
-            self.home_button = RoundedButton(text="^", font_size=60,
-                                background_color=self.home_btn_col)
+            # self.home_button = RoundedButton(text="^", font_size=60,
+            #                     background_color=self.home_btn_col)
+            self.home_button = RoundedButton(text=f'{self.current_day}',
+                                        font_size=50,
+                                        background_color=self.home_btn_col)
             self.home_button.bind(on_press=self.set_date)
 
         else:
-            self.home_button = RoundedButton(text="\u221A", font_size=60,
+            # self.home_button = RoundedButton(text="\u221A", font_size=60,
+                                # background_color=self.home_btn_col)
+            self.home_button = RoundedButton(text="^", font_size=60,
                                 background_color=self.home_btn_col)
             self.home_button.bind(on_press=self.show_today)
 
@@ -671,7 +680,7 @@ class CalendarApp(App):
         self.save_entry(instance)
         self.update_day_popup(instance)
 
-    def day_popup(self, instance):
+    def day_popup(self, instance): 
         """Create the day-view with a textbox and buttons."""
 
         if self.sound:
@@ -701,10 +710,19 @@ class CalendarApp(App):
 
             for i in self.day_entries:
                 full_text = self.day_entries[i]
-                if len(full_text) >= 22:
-                    btn_text = full_text[:16] + ' ...'
+                line_break = full_text.find('\n')
+                
+                if line_break and not line_break == -1:   
+                    if line_break >= 16: 
+                        btn_text = full_text[:16] + ' ...'
+                    else:
+                        btn_text = full_text[:line_break] + ' ...'
+                        
                 else:
-                    btn_text = full_text
+                    if len(full_text) >= 22:
+                        btn_text = full_text[:16] + ' ...'
+                    else:
+                        btn_text = full_text
                     
                 self.day_entry = RoundedButton(text=btn_text, rad=30,
                                         btn_nr=int(i),
@@ -825,10 +843,19 @@ class CalendarApp(App):
             
             for i in self.day_entries:
                 full_text = self.day_entries[i]
-                if len(full_text) >= 22:
-                    btn_text = full_text[:16] + ' ...'
+                line_break = full_text.find('\n')
+                
+                if line_break and not line_break == -1:   
+                    if line_break >= 16: 
+                        btn_text = full_text[:16] + ' ...'
+                    else:
+                        btn_text = full_text[:line_break] + ' ...'
+
                 else:
-                    btn_text = full_text
+                    if len(full_text) >= 22:
+                        btn_text = full_text[:16] + ' ...'
+                    else:
+                        btn_text = full_text
 
                 self.day_entry = RoundedButton(text=btn_text, rad=30, 
                                         btn_nr=int(i),
