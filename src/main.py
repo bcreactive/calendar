@@ -6,10 +6,10 @@ from kivy.uix.label import Label
 from kivy.utils import get_color_from_hex
 from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
-from kivy.graphics import Color, RoundedRectangle, Ellipse
+from kivy.graphics import Color, RoundedRectangle
 from kivy.core.window import Window
 from kivy.core.audio import SoundLoader
-from kivy.clock import Clock
+# from kivy.clock import Clock
 
 from datetime import datetime
 import calendar
@@ -580,14 +580,14 @@ class CalendarApp(App):
             self.entered_text = content
             self.active_entry = instance.btn_nr
 
-            text_input = TextInput(text=content, multiline=True)
+            self.text_input = TextInput(text=content, multiline=True)
             
         else:
             if self.language == "EN":
-                text_input = TextInput(hint_text='Write here...',
+                self.text_input = TextInput(hint_text='Write here...',
                                 multiline=True)
             else:
-                text_input = TextInput(hint_text='Platz für Notizen...', 
+                self.text_input = TextInput(hint_text='Platz für Notizen...', 
                                        multiline=True)
                 
             if self.active_entry == 'new':
@@ -595,10 +595,7 @@ class CalendarApp(App):
             else:
                 self.active_entry = instance.btn_nr
               
-        text_input.bind(text=self.on_text_input)
-                        
-        text_input.focus = True
-        text_input.keyboard_mode = 'auto'
+        self.text_input.bind(text=self.on_text_input)
 
         # Create and bind the cancel, delete and save buttons.
         if self.language == "EN":
@@ -644,7 +641,7 @@ class CalendarApp(App):
         main_box = BoxLayout(orientation='vertical', padding=(10,0,10,0))
 
         content_box = BoxLayout(orientation='vertical')
-        content_box.add_widget(text_input)
+        content_box.add_widget(self.text_input)
 
         button_box = BoxLayout(orientation='horizontal',
                                size_hint=(1,0.18), spacing=70)
@@ -663,7 +660,7 @@ class CalendarApp(App):
 
         # Create the Popup window with customized content
         month = self.get_month_name(self.current_month)   
-        self.text_popup = Popup(title=f'{self.current_year} {month}' + 
+        self.text_popup = TextPopup(self, title=f'{self.current_year} {month}' + 
                             f' {self.button_nr}.', content=main_box,
                             size_hint=(1, 1), title_align='center')
         
@@ -1990,6 +1987,15 @@ class CalendarApp(App):
         self.credits_popup.dismiss()
         self.sound = self.save_file["sound"]
         self.credits_sound.stop()
+
+
+class TextPopup(Popup):
+    def __init__(self, app, **kwargs):
+        super(TextPopup, self).__init__(**kwargs)
+        self.app = app
+    
+    def on_open(self):
+        self.app.text_input.focus = True
 
 
 class RoundedButton(Button):
