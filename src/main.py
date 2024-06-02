@@ -578,7 +578,11 @@ class CalendarApp(App):
             content = entries.get(str(instance.btn_nr))
         
             self.entered_text = content
-            self.active_entry = instance.btn_nr
+            
+            if self.active_entry == 'new':
+                self.active_entry = 1
+            else:
+                self.active_entry = instance.btn_nr
 
             text_input = TextInput(text=content, multiline=True)
             
@@ -589,6 +593,11 @@ class CalendarApp(App):
             else:
                 text_input = TextInput(hint_text='Platz für Notizen...', 
                                        multiline=True)
+                
+            if self.active_entry == 'new':
+                self.active_entry = 1
+            else:
+                self.active_entry = instance.btn_nr
               
         text_input.bind(text=self.on_text_input)
                         
@@ -723,11 +732,11 @@ class CalendarApp(App):
                         btn_text = full_text[:16] + ' ...'
                     else:
                         btn_text = full_text
-                    
+     
                 self.day_entry = RoundedButton(text=btn_text, rad=30,
                                         btn_nr=int(i),
                                         background_color=self.navi_btn_col,
-                                        font_size=48, size_hint=(1, 0.3))
+                                        font_size=48, size_hint=(1, 0.2))
                 
                 self.day_entry.bind(on_press=self.open_text_popup)
 
@@ -739,14 +748,15 @@ class CalendarApp(App):
                                             rad=30, font_size=48,
                                             background_color=
                                             self.chosen_btn_col,
-                                            size_hint=(1, 0.3))
+                                            size_hint=(1, 0.2))
             else:
                 self.empty_entry = RoundedButton(text='Eintrag erstellen',
                                         rad=30, font_size=48,
                                         background_color=self.chosen_btn_col,
-                                        size_hint=(1, 0.3))
+                                        size_hint=(1, 0.2))
             
             self.empty_entry.bind(on_press=self.open_text_popup)
+            self.active_entry = "new"
 
         # Create and bind the cancel, delete and save buttons.
         if self.language == "EN":
@@ -860,7 +870,7 @@ class CalendarApp(App):
                 self.day_entry = RoundedButton(text=btn_text, rad=30, 
                                         btn_nr=int(i),
                                         background_color=self.navi_btn_col,
-                                        font_size=48, size_hint=(1, 0.3))
+                                        font_size=48, size_hint=(1, 0.2))
                 self.day_entry.bind(on_press=self.open_text_popup)
 
                 self.entries.add_widget(self.day_entry)
@@ -871,12 +881,12 @@ class CalendarApp(App):
                                             rad=30, font_size=48,
                                             background_color=
                                             self.chosen_btn_col,
-                                            size_hint=(1, 0.3))
+                                            size_hint=(1, 0.2))
             else:
                 self.empty_entry = RoundedButton(text='Eintrag erstellen',
                                         rad=30, font_size=48,
                                         background_color=self.chosen_btn_col,
-                                        size_hint=(1, 0.3))
+                                        size_hint=(1, 0.2))
             
             self.empty_entry.bind(on_press=self.open_text_popup)
 
