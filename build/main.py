@@ -6,10 +6,10 @@ from kivy.uix.label import Label
 from kivy.utils import get_color_from_hex
 from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
-from kivy.graphics import Color, RoundedRectangle, Ellipse
+from kivy.graphics import Color, RoundedRectangle
 from kivy.core.window import Window
 from kivy.core.audio import SoundLoader
-from kivy.clock import Clock
+# from kivy.clock import Clock
 
 from datetime import datetime
 import calendar
@@ -261,7 +261,7 @@ class CalendarApp(App):
         
         return self.main_layout
 
-    def update_values(self):
+    def update_main_window(self):
         """Update the values and the view for the main-window."""
 
         self.month.text = self.get_month_name(self.current_month)
@@ -580,20 +580,22 @@ class CalendarApp(App):
             self.entered_text = content
             self.active_entry = instance.btn_nr
 
-            text_input = TextInput(text=content, multiline=True)
+            self.text_input = TextInput(text=content, multiline=True)
             
         else:
             if self.language == "EN":
-                text_input = TextInput(hint_text='Write here...',
+                self.text_input = TextInput(hint_text='Write here...',
                                 multiline=True)
             else:
-                text_input = TextInput(hint_text='Platz für Notizen...', 
+                self.text_input = TextInput(hint_text='Platz für Notizen...', 
                                        multiline=True)
+                
+            if self.active_entry == 'new':
+                self.active_entry = 1
+            else:
+                self.active_entry = instance.btn_nr
               
-        text_input.bind(text=self.on_text_input)
-                        
-        text_input.focus = True
-        text_input.keyboard_mode = 'auto'
+        self.text_input.bind(text=self.on_text_input)
 
         # Create and bind the cancel, delete and save buttons.
         if self.language == "EN":
@@ -639,10 +641,11 @@ class CalendarApp(App):
         main_box = BoxLayout(orientation='vertical', padding=(10,0,10,0))
 
         content_box = BoxLayout(orientation='vertical')
-        content_box.add_widget(text_input)
+        content_box.add_widget(self.text_input)
 
         button_box = BoxLayout(orientation='horizontal',
-                               size_hint=(1,0.18), spacing=70)
+                               size_hint=(1,0.18), spacing=50,
+                               padding=(10,10,10,10))
             
         button_box.add_widget(close_button)
         # Remove the delete button from the textbox, if creating a new entry.
@@ -650,7 +653,7 @@ class CalendarApp(App):
             button_box.add_widget(delete_button)
         button_box.add_widget(save_button)
 
-        spaceholder = BoxLayout(orientation='vertical', size_hint=(1, 0.9))
+        spaceholder = BoxLayout(orientation='vertical', size_hint=(1, 0.85))
             
         main_box.add_widget(content_box)
         main_box.add_widget(button_box)
@@ -658,7 +661,7 @@ class CalendarApp(App):
 
         # Create the Popup window with customized content
         month = self.get_month_name(self.current_month)   
-        self.text_popup = Popup(title=f'{self.current_year} {month}' + 
+        self.text_popup = TextPopup(self, title=f'{self.current_year} {month}' + 
                             f' {self.button_nr}.', content=main_box,
                             size_hint=(1, 1), title_align='center')
         
@@ -747,6 +750,7 @@ class CalendarApp(App):
                                         size_hint=(1, 0.2))
             
             self.empty_entry.bind(on_press=self.open_text_popup)
+            self.active_entry = "new"
 
         # Create and bind the cancel, delete and save buttons.
         if self.language == "EN":
@@ -960,14 +964,14 @@ class CalendarApp(App):
     def inc_year(self, x=None):
         # Increase year in main-window.
         self.current_year += 1
-        self.update_values()
+        self.update_main_window()
         if self.sound:
             self.swipe_l_sound.play()
     
     def dec_year(self, x=None):
         # Decrease year in main-window.
         self.current_year -= 1
-        self.update_values()
+        self.update_main_window()
         if self.sound:
             self.swipe_l_sound.play()
 
@@ -978,7 +982,7 @@ class CalendarApp(App):
             self.current_year += 1
         else:
             self.current_month += 1
-        self.update_values()
+        self.update_main_window()
         if self.sound:
             self.swipe_l_sound.play()
 
@@ -989,7 +993,7 @@ class CalendarApp(App):
             self.current_year -= 1
         else:
             self.current_month -= 1
-        self.update_values()
+        self.update_main_window()
         if self.sound:
             self.swipe_l_sound.play()
     
@@ -1004,7 +1008,7 @@ class CalendarApp(App):
         # Set the current year and month and update the view.
         self.current_year = datetime.now().year
         self.current_month = datetime.now().month
-        self.update_values()
+        self.update_main_window()
 
     def check_entry(self, number):
         # Format the date and check if an entry is saved for the passed date.
@@ -1030,7 +1034,7 @@ class CalendarApp(App):
         if self.next_btn:
             self.next_btn = False
             
-        self.update_values()
+        self.update_main_window()
         self.input = ""
         self.day_pop.dismiss()
         if self.sound:
@@ -1050,7 +1054,7 @@ class CalendarApp(App):
             with open('save_file.json', 'w') as file:
                 json.dump(self.save_file, file)
 
-            self.update_values()
+            self.update_main_window()
             self.close_text_popup(instance)
 
             if self.sound:
@@ -1108,7 +1112,7 @@ class CalendarApp(App):
 
     def close_ask(self, x=None):
         self.ask_popup.dismiss()
-        self.update_values()
+        self.update_main_window()
 
     def save_entry(self, instance):
         # Format the date and save the entered text in json safe file.
@@ -1150,7 +1154,7 @@ class CalendarApp(App):
 
             self.day_entries = None
             self.active_entry = None
-            self.update_values()
+            self.update_main_window()
             self.update_day_popup(instance)
             self.close_text_popup(instance)
             return
@@ -1322,7 +1326,7 @@ class CalendarApp(App):
 
     def close_setdate(self, x=None):
         self.setdate_popup.dismiss()
-        self.update_values()
+        self.update_main_window()
 
     def inc_y(self, x=None):
         # Increase set-date year.
@@ -1494,7 +1498,7 @@ class CalendarApp(App):
             self.day_popup(self.current_day)
             self.open_text_popup(instance)
 
-        self.update_values()
+        self.update_main_window()
         self.input = ""
 
     def open_menu_popup(self, x=None):
@@ -1673,28 +1677,28 @@ class CalendarApp(App):
 
     def colorset_1(self, instance):
         self.color_set = 1
-        self.update_values()
+        self.update_main_window()
         self.update_menu(instance)
         if self.sound:
             self.btn_sound.play()
 
     def colorset_2(self, instance):
         self.color_set = 2
-        self.update_values()
+        self.update_main_window()
         self.update_menu(instance)
         if self.sound:
             self.btn_sound.play()
 
     def colorset_3(self, instance):
         self.color_set = 3
-        self.update_values()
+        self.update_main_window()
         self.update_menu(instance)
         if self.sound:
             self.btn_sound.play()
     
     def colorset_4(self, instance):
         self.color_set = 4
-        self.update_values()
+        self.update_main_window()
         self.update_menu(instance)
         if self.sound:
             self.btn_sound.play()
@@ -1731,7 +1735,7 @@ class CalendarApp(App):
             self.language = "EN"
         else:
             self.language = "DE"
-        self.update_values()
+        self.update_main_window()
         self.update_menu(instance)
         if self.sound:
             self.btn_sound.play()
@@ -1984,6 +1988,15 @@ class CalendarApp(App):
         self.credits_popup.dismiss()
         self.sound = self.save_file["sound"]
         self.credits_sound.stop()
+
+
+class TextPopup(Popup):
+    def __init__(self, app, **kwargs):
+        super(TextPopup, self).__init__(**kwargs)
+        self.app = app
+    
+    def on_open(self):
+        self.app.text_input.focus = True
 
 
 class RoundedButton(Button):

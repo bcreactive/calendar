@@ -644,7 +644,8 @@ class CalendarApp(App):
         content_box.add_widget(self.text_input)
 
         button_box = BoxLayout(orientation='horizontal',
-                               size_hint=(1,0.18), spacing=70)
+                               size_hint=(1,0.18), spacing=50,
+                               padding=(10,10,10,10))
             
         button_box.add_widget(close_button)
         # Remove the delete button from the textbox, if creating a new entry.
@@ -652,7 +653,7 @@ class CalendarApp(App):
             button_box.add_widget(delete_button)
         button_box.add_widget(save_button)
 
-        spaceholder = BoxLayout(orientation='vertical', size_hint=(1, 0.9))
+        spaceholder = BoxLayout(orientation='vertical', size_hint=(1, 0.85))
             
         main_box.add_widget(content_box)
         main_box.add_widget(button_box)
