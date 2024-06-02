@@ -261,7 +261,7 @@ class CalendarApp(App):
         
         return self.main_layout
 
-    def update_values(self):
+    def update_main_window(self):
         """Update the values and the view for the main-window."""
 
         self.month.text = self.get_month_name(self.current_month)
@@ -578,11 +578,7 @@ class CalendarApp(App):
             content = entries.get(str(instance.btn_nr))
         
             self.entered_text = content
-            
-            if self.active_entry == 'new':
-                self.active_entry = 1
-            else:
-                self.active_entry = instance.btn_nr
+            self.active_entry = instance.btn_nr
 
             text_input = TextInput(text=content, multiline=True)
             
@@ -970,14 +966,14 @@ class CalendarApp(App):
     def inc_year(self, x=None):
         # Increase year in main-window.
         self.current_year += 1
-        self.update_values()
+        self.update_main_window()
         if self.sound:
             self.swipe_l_sound.play()
     
     def dec_year(self, x=None):
         # Decrease year in main-window.
         self.current_year -= 1
-        self.update_values()
+        self.update_main_window()
         if self.sound:
             self.swipe_l_sound.play()
 
@@ -988,7 +984,7 @@ class CalendarApp(App):
             self.current_year += 1
         else:
             self.current_month += 1
-        self.update_values()
+        self.update_main_window()
         if self.sound:
             self.swipe_l_sound.play()
 
@@ -999,7 +995,7 @@ class CalendarApp(App):
             self.current_year -= 1
         else:
             self.current_month -= 1
-        self.update_values()
+        self.update_main_window()
         if self.sound:
             self.swipe_l_sound.play()
     
@@ -1014,7 +1010,7 @@ class CalendarApp(App):
         # Set the current year and month and update the view.
         self.current_year = datetime.now().year
         self.current_month = datetime.now().month
-        self.update_values()
+        self.update_main_window()
 
     def check_entry(self, number):
         # Format the date and check if an entry is saved for the passed date.
@@ -1040,7 +1036,7 @@ class CalendarApp(App):
         if self.next_btn:
             self.next_btn = False
             
-        self.update_values()
+        self.update_main_window()
         self.input = ""
         self.day_pop.dismiss()
         if self.sound:
@@ -1060,7 +1056,7 @@ class CalendarApp(App):
             with open('save_file.json', 'w') as file:
                 json.dump(self.save_file, file)
 
-            self.update_values()
+            self.update_main_window()
             self.close_text_popup(instance)
 
             if self.sound:
@@ -1118,7 +1114,7 @@ class CalendarApp(App):
 
     def close_ask(self, x=None):
         self.ask_popup.dismiss()
-        self.update_values()
+        self.update_main_window()
 
     def save_entry(self, instance):
         # Format the date and save the entered text in json safe file.
@@ -1160,7 +1156,7 @@ class CalendarApp(App):
 
             self.day_entries = None
             self.active_entry = None
-            self.update_values()
+            self.update_main_window()
             self.update_day_popup(instance)
             self.close_text_popup(instance)
             return
@@ -1332,7 +1328,7 @@ class CalendarApp(App):
 
     def close_setdate(self, x=None):
         self.setdate_popup.dismiss()
-        self.update_values()
+        self.update_main_window()
 
     def inc_y(self, x=None):
         # Increase set-date year.
@@ -1504,7 +1500,7 @@ class CalendarApp(App):
             self.day_popup(self.current_day)
             self.open_text_popup(instance)
 
-        self.update_values()
+        self.update_main_window()
         self.input = ""
 
     def open_menu_popup(self, x=None):
@@ -1683,28 +1679,28 @@ class CalendarApp(App):
 
     def colorset_1(self, instance):
         self.color_set = 1
-        self.update_values()
+        self.update_main_window()
         self.update_menu(instance)
         if self.sound:
             self.btn_sound.play()
 
     def colorset_2(self, instance):
         self.color_set = 2
-        self.update_values()
+        self.update_main_window()
         self.update_menu(instance)
         if self.sound:
             self.btn_sound.play()
 
     def colorset_3(self, instance):
         self.color_set = 3
-        self.update_values()
+        self.update_main_window()
         self.update_menu(instance)
         if self.sound:
             self.btn_sound.play()
     
     def colorset_4(self, instance):
         self.color_set = 4
-        self.update_values()
+        self.update_main_window()
         self.update_menu(instance)
         if self.sound:
             self.btn_sound.play()
@@ -1741,7 +1737,7 @@ class CalendarApp(App):
             self.language = "EN"
         else:
             self.language = "DE"
-        self.update_values()
+        self.update_main_window()
         self.update_menu(instance)
         if self.sound:
             self.btn_sound.play()
