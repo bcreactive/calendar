@@ -1054,7 +1054,7 @@ class CalendarApp(App):
         self.current_year -= 1
         self.update_main_window()
         if self.sound:
-            self.swipe_l_sound.play()
+            self.swipe_r_sound.play()
 
     def inc_month(self, x=None):
         # Increase month in main-window.
@@ -1076,7 +1076,7 @@ class CalendarApp(App):
             self.current_month -= 1
         self.update_main_window()
         if self.sound:
-            self.swipe_l_sound.play()
+            self.swipe_r_sound.play()
     
     def check_today_visible(self):
         # Check, if the current date is visible on screen.

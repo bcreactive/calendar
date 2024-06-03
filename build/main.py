@@ -11,7 +11,7 @@ from kivy.core.window import Window
 from kivy.core.audio import SoundLoader
 # from kivy.clock import Clock
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import calendar
 import time
 import json
@@ -24,12 +24,12 @@ import json
 class CalendarApp(App):
     """This class creates a simple Kivy calendar-app for Android. When clicking
     on a day-button, users can write, edit, save and delete an entry in the 
-    'today-view'. Swipe motions left or right increase/decrease the displayed
-    month. To jump to a specific date swipe up or click the '^'-button to set a 
-    date using the up and down buttons. If the displayed month is not the 
-    current one, the '^'-button becomes a home-button to switch to the actual
-    month. Swipe down to display the settings-popup where you can chose a
-    colorset, change swipe-directions, disable/enable buttonsounds and change
+    'day-view'. Swipe motions left or right increase/decrease the displayed
+    month. To jump to a specific date swipe up or click the top-center button
+    to set a date using the up and down buttons. If the displayed month is not
+    the current one, the '^'-button becomes a home-button to switch to the
+    actual month. Swipe down to display the settings-popup where you can chose
+    a colorset, change swipe-directions, disable/enable buttonsounds and change
     the language."""
 
     def __init__(self, **kwargs):
@@ -515,6 +515,7 @@ class CalendarApp(App):
             for i in range(1, amount_next_btns + 1):
                 days.append(i)
 
+            self.next_btns = []
             for i in days:
                 button = RoundedButton(text=str(i), font_size=25,
                                 background_color=self.navi_btn_col)
@@ -555,6 +556,29 @@ class CalendarApp(App):
                 amount = 42 - x
         
         return amount
+
+    def get_day_name(self):
+        if not self.nr == 0:
+            day = datetime(self.current_year, self.current_month, self.nr)
+            day_name = day.strftime('%A')
+            if self.language == 'EN':
+                return day_name
+            else:
+                if day_name == 'Monday':
+                    day_name = 'Montag'
+                elif day_name == 'Tuesday':
+                    day_name = 'Dienstag'
+                elif day_name == 'Wednesday':
+                    day_name = 'Mittwoch'
+                elif day_name == 'Thursday':
+                    day_name = 'Donnerstag'
+                elif day_name == 'Friday':
+                    day_name = 'Freitag'
+                elif day_name == 'Saturday':
+                    day_name = 'Samstag'
+                elif day_name == 'Sunday':
+                    day_name = 'Sonntag'
+                return day_name
 
     def open_text_popup(self, instance):
         """Creates a popup with textbox to write an entry, save and delete."""
@@ -661,12 +685,13 @@ class CalendarApp(App):
 
         # Create the Popup window with customized content
         month = self.get_month_name(self.current_month)   
-        self.text_popup = TextPopup(self, title=f'{self.current_year} {month}' + 
-                            f' {self.button_nr}.', content=main_box,
+        dayname = self.get_day_name()
+        self.text_popup = TextPopup(self, title=f'{month} {self.button_nr}. ' + 
+                            f'{self.current_year} {dayname}', content=main_box,
                             size_hint=(1, 1), title_align='center')
         
         if self.language == "DE":
-            self.text_popup.title = (f'{self.button_nr}. {month}' +
+            self.text_popup.title = (f'{dayname} {self.button_nr}. {month}' +
                                     f' {self.current_year}')
 
         self.text_popup.background_color = self.bg_popups
@@ -683,6 +708,32 @@ class CalendarApp(App):
         self.save_entry(instance)
         self.update_day_popup(instance)
 
+    def inc_day(self, instance):
+        date = datetime(self.current_year, self.current_month, self.nr)
+        if self.swipe_x_default:
+            next_day = date + timedelta(days=1)
+        else:
+            next_day = date - timedelta(days=1)
+        self.current_year = next_day.year
+        self.current_month = next_day.month
+        self.nr = next_day.day
+        self.active_entry = None
+        self.close_day_popup()
+        self.day_popup(self.nr)
+
+    def dec_day(self, instance):
+        date = datetime(self.current_year, self.current_month, self.nr)
+        if self.swipe_x_default:
+            prev_day = date - timedelta(days=1)
+        else:
+            prev_day = date + timedelta(days=1)
+        self.current_year = prev_day.year
+        self.current_month = prev_day.month
+        self.nr = prev_day.day
+        self.active_entry = None
+        self.close_day_popup()
+        self.day_popup(self.nr)
+
     def day_popup(self, instance): 
         """Create the day-view with a textbox and buttons."""
 
@@ -694,7 +745,9 @@ class CalendarApp(App):
             self.dec_month()
         if self.next_btn:
             self.inc_month()
+
         month = self.get_month_name(self.current_month)
+        dayname = self.get_day_name()
 
         if isinstance(instance, int):
             self.button_nr = instance
@@ -752,7 +805,20 @@ class CalendarApp(App):
             self.empty_entry.bind(on_press=self.open_text_popup)
             self.active_entry = "new"
 
-        # Create and bind the cancel, delete and save buttons.
+        # Create and bind the inc/dec nav-buttons.
+        self.left_button = RoundedButton(text='<',
+                                         background_color=self.popup_btn_col,
+                                         font_size=48, size_hint=(0.35,1))
+        
+        self.left_button.bind(on_press=self.dec_day)
+        
+        self.right_button = RoundedButton(text='>',
+                                         background_color=self.popup_btn_col,
+                                         font_size=48, size_hint=(0.35,1))
+        
+        self.right_button.bind(on_press=self.inc_day)
+        
+        # Create and bind the close and add button.
         if self.language == "EN":
             self.close_button = RoundedButton(text='Close', 
                                     background_color=self.popup_btn_col,
@@ -780,14 +846,13 @@ class CalendarApp(App):
         self.spaceholder_5 = Label(size_hint=(0.2,0.2))
         self.spaceholder_6 = Label(size_hint=(0.2,0.2))
 
-        # # Create the layout of the 'today-view' by stacking the widgets.
+        # # Create the layout of the 'day-view'.
         self.main_box = BoxLayout(orientation='vertical', spacing=20)
 
         # content_box
-        self.content_box = BoxLayout(orientation='vertical')
+        self.content_box = BoxLayout(orientation='vertical', spacing=20)
 
         if key:
-            
             self.content_box.add_widget(self.spaceholder_3)
             self.content_box.add_widget(self.entries)
             self.content_box.add_widget(self.spaceholder_4)
@@ -795,29 +860,31 @@ class CalendarApp(App):
             self.content_box.add_widget(self.spaceholder_3)
             self.content_box.add_widget(self.empty_entry)
             self.content_box.add_widget(self.spaceholder_4)
-
+        
         self.day_button_box = BoxLayout(orientation='horizontal',
-                               size_hint=(1,0.14), spacing=70,
-                               padding=(30,10,30,10))
+                               size_hint=(1,0.14), spacing=30,
+                               padding=(10,10,10,10))
         
         if key:
+            self.day_button_box.add_widget(self.left_button)
             self.day_button_box.add_widget(self.close_button)
             self.day_button_box.add_widget(self.add_button)
+            self.day_button_box.add_widget(self.right_button)
         else:
-            self.day_button_box.add_widget(self.spaceholder_5)
+            self.day_button_box.add_widget(self.left_button)
             self.day_button_box.add_widget(self.close_button)
-            self.day_button_box.add_widget(self.spaceholder_6)
-            
+            self.day_button_box.add_widget(self.right_button)
+        
         self.main_box.add_widget(self.content_box)
         self.main_box.add_widget(self.day_button_box)
 
         # # Create the Popup window with customized content
-        self.day_pop = Popup(title=f'{self.current_year} {month}' + 
-                            f' {self.button_nr}.', content=self.main_box,
-                            title_align='center')
+        self.day_pop = Popup(title=f'{month} {self.button_nr}. ' + 
+                            f'{self.current_year} {dayname}',
+                            content=self.main_box, title_align='center')
         
         if self.language == "DE":
-            self.day_pop.title = (f'{self.button_nr}. {month}' +
+            self.day_pop.title = (f'{dayname} {self.button_nr}. {month}' +
                                     f' {self.current_year}')
 
         self.day_pop.background_color = self.bg_popups
@@ -834,6 +901,7 @@ class CalendarApp(App):
         self.main_box.clear_widgets()
 
         month = self.get_month_name(self.current_month)
+        dayname = self.get_day_name()
 
         # Check, if an entry exists at the chosen date.
         key = self.check_entry(self.nr)
@@ -883,6 +951,19 @@ class CalendarApp(App):
                                         size_hint=(1, 0.2))
             
             self.empty_entry.bind(on_press=self.open_text_popup)
+        
+        # Create and bind the inc/dec nav-buttons.
+        self.left_button = RoundedButton(text='<',
+                                         background_color=self.popup_btn_col,
+                                         font_size=48, size_hint=(0.35,1))
+        
+        self.left_button.bind(on_press=self.dec_day)
+        
+        self.right_button = RoundedButton(text='>',
+                                         background_color=self.popup_btn_col,
+                                         font_size=48, size_hint=(0.35,1))
+        
+        self.right_button.bind(on_press=self.inc_day)
 
         # Create and bind the cancel, delete and save buttons.
         if self.language == "EN":
@@ -916,10 +997,9 @@ class CalendarApp(App):
         self.main_box = BoxLayout(orientation='vertical', spacing=20)
 
         # content_box
-        self.content_box = BoxLayout(orientation='vertical')
+        self.content_box = BoxLayout(orientation='vertical', spacing=20)
 
         if key:
-            
             self.content_box.add_widget(self.spaceholder_3)
             self.content_box.add_widget(self.entries)
             self.content_box.add_widget(self.spaceholder_4)
@@ -933,24 +1013,25 @@ class CalendarApp(App):
                                padding=(30,10,30,10))
         
         if key:
+            self.day_button_box.add_widget(self.left_button)
             self.day_button_box.add_widget(self.close_button)
             self.day_button_box.add_widget(self.add_button)
+            self.day_button_box.add_widget(self.right_button)
         else:
-            self.day_button_box.add_widget(self.spaceholder_5)
+            self.day_button_box.add_widget(self.left_button)
             self.day_button_box.add_widget(self.close_button)
-            self.day_button_box.add_widget(self.spaceholder_6)
-            
+            self.day_button_box.add_widget(self.right_button)
+        
         self.main_box.add_widget(self.content_box)
         self.main_box.add_widget(self.day_button_box)
 
         # # Create the Popup window with customized content
-        self.day_pop = Popup(title=f'{self.current_year} {month}' + 
-                            f' {self.button_nr}.', content=self.main_box,
-                            # size_hint=(0.8, 0.8),
-                            title_align='center')
+        self.day_pop = Popup(title=f'{month} {self.button_nr}. ' + 
+                            f'{self.current_year} {dayname}',
+                            content=self.main_box, title_align='center')
         
         if self.language == "DE":
-            self.day_pop.title = (f'{self.button_nr}. {month}' +
+            self.day_pop.title = (f'{dayname} {self.button_nr}. {month}' +
                                     f' {self.current_year}')
 
         self.day_pop.background_color = self.bg_popups
@@ -973,7 +1054,7 @@ class CalendarApp(App):
         self.current_year -= 1
         self.update_main_window()
         if self.sound:
-            self.swipe_l_sound.play()
+            self.swipe_r_sound.play()
 
     def inc_month(self, x=None):
         # Increase month in main-window.
@@ -995,7 +1076,7 @@ class CalendarApp(App):
             self.current_month -= 1
         self.update_main_window()
         if self.sound:
-            self.swipe_l_sound.play()
+            self.swipe_r_sound.play()
     
     def check_today_visible(self):
         # Check, if the current date is visible on screen.
@@ -1949,8 +2030,6 @@ class CalendarApp(App):
             by bc-reactive:
             github.com/bcreactive
 
-            soundcloud.com/awtomatsupabreakz
-
             thanks for testing!""",
 
             background_color=self.popup_btn_col,
@@ -1961,8 +2040,6 @@ class CalendarApp(App):
             
             von bc-reactive:
             github.com/bcreactive
-
-            soundcloud.com/awtomatsupabreakz
 
             Danke fürs Testen!"""
         
