@@ -515,6 +515,7 @@ class CalendarApp(App):
             for i in range(1, amount_next_btns + 1):
                 days.append(i)
 
+            self.next_btns = []
             for i in days:
                 button = RoundedButton(text=str(i), font_size=25,
                                 background_color=self.navi_btn_col)
@@ -555,6 +556,29 @@ class CalendarApp(App):
                 amount = 42 - x
         
         return amount
+
+    def get_day_name(self):
+        if not self.nr == 0:
+            day = datetime(self.current_year, self.current_month, self.nr)
+            day_name = day.strftime('%A')
+            if self.language == 'EN':
+                return day_name
+            else:
+                if day_name == 'Monday':
+                    day_name = 'Montag'
+                elif day_name == 'Tuesday':
+                    day_name = 'Dienstag'
+                elif day_name == 'Wednesday':
+                    day_name = 'Mittwoch'
+                elif day_name == 'Thursday':
+                    day_name = 'Donnerstag'
+                elif day_name == 'Friday':
+                    day_name = 'Freitag'
+                elif day_name == 'Saturday':
+                    day_name = 'Samstag'
+                elif day_name == 'Sunday':
+                    day_name = 'Sonntag'
+                return day_name
 
     def open_text_popup(self, instance):
         """Creates a popup with textbox to write an entry, save and delete."""
@@ -661,12 +685,13 @@ class CalendarApp(App):
 
         # Create the Popup window with customized content
         month = self.get_month_name(self.current_month)   
-        self.text_popup = TextPopup(self, title=f'{self.current_year} {month}' + 
-                            f' {self.button_nr}.', content=main_box,
+        dayname = self.get_day_name()
+        self.text_popup = TextPopup(self, title=f'{month} {self.button_nr}. ' + 
+                            f'{self.current_year} {dayname}', content=main_box,
                             size_hint=(1, 1), title_align='center')
         
         if self.language == "DE":
-            self.text_popup.title = (f'{self.button_nr}. {month}' +
+            self.text_popup.title = (f'{dayname} {self.button_nr}. {month}' +
                                     f' {self.current_year}')
 
         self.text_popup.background_color = self.bg_popups
@@ -694,7 +719,9 @@ class CalendarApp(App):
             self.dec_month()
         if self.next_btn:
             self.inc_month()
+
         month = self.get_month_name(self.current_month)
+        dayname = self.get_day_name()
 
         if isinstance(instance, int):
             self.button_nr = instance
@@ -780,14 +807,13 @@ class CalendarApp(App):
         self.spaceholder_5 = Label(size_hint=(0.2,0.2))
         self.spaceholder_6 = Label(size_hint=(0.2,0.2))
 
-        # # Create the layout of the 'today-view' by stacking the widgets.
+        # # Create the layout of the 'day-view'.
         self.main_box = BoxLayout(orientation='vertical', spacing=20)
 
         # content_box
-        self.content_box = BoxLayout(orientation='vertical')
+        self.content_box = BoxLayout(orientation='vertical', spacing=20)
 
         if key:
-            
             self.content_box.add_widget(self.spaceholder_3)
             self.content_box.add_widget(self.entries)
             self.content_box.add_widget(self.spaceholder_4)
@@ -812,12 +838,12 @@ class CalendarApp(App):
         self.main_box.add_widget(self.day_button_box)
 
         # # Create the Popup window with customized content
-        self.day_pop = Popup(title=f'{self.current_year} {month}' + 
-                            f' {self.button_nr}.', content=self.main_box,
-                            title_align='center')
+        self.day_pop = Popup(title=f'{month} {self.button_nr}. ' + 
+                            f'{self.current_year} {dayname}',
+                            content=self.main_box, title_align='center')
         
         if self.language == "DE":
-            self.day_pop.title = (f'{self.button_nr}. {month}' +
+            self.day_pop.title = (f'{dayname} {self.button_nr}. {month}' +
                                     f' {self.current_year}')
 
         self.day_pop.background_color = self.bg_popups
@@ -834,6 +860,7 @@ class CalendarApp(App):
         self.main_box.clear_widgets()
 
         month = self.get_month_name(self.current_month)
+        dayname = self.get_day_name()
 
         # Check, if an entry exists at the chosen date.
         key = self.check_entry(self.nr)
@@ -916,7 +943,7 @@ class CalendarApp(App):
         self.main_box = BoxLayout(orientation='vertical', spacing=20)
 
         # content_box
-        self.content_box = BoxLayout(orientation='vertical')
+        self.content_box = BoxLayout(orientation='vertical', spacing=20)
 
         if key:
             
@@ -944,13 +971,12 @@ class CalendarApp(App):
         self.main_box.add_widget(self.day_button_box)
 
         # # Create the Popup window with customized content
-        self.day_pop = Popup(title=f'{self.current_year} {month}' + 
-                            f' {self.button_nr}.', content=self.main_box,
-                            # size_hint=(0.8, 0.8),
-                            title_align='center')
+        self.day_pop = Popup(title=f'{month} {self.button_nr}. ' + 
+                            f'{self.current_year} {dayname}',
+                            content=self.main_box, title_align='center')
         
         if self.language == "DE":
-            self.day_pop.title = (f'{self.button_nr}. {month}' +
+            self.day_pop.title = (f'{dayname} {self.button_nr}. {month}' +
                                     f' {self.current_year}')
 
         self.day_pop.background_color = self.bg_popups
@@ -1949,8 +1975,6 @@ class CalendarApp(App):
             by bc-reactive:
             github.com/bcreactive
 
-            soundcloud.com/awtomatsupabreakz
-
             thanks for testing!""",
 
             background_color=self.popup_btn_col,
@@ -1961,8 +1985,6 @@ class CalendarApp(App):
             
             von bc-reactive:
             github.com/bcreactive
-
-            soundcloud.com/awtomatsupabreakz
 
             Danke fürs Testen!"""
         
