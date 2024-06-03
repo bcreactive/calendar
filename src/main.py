@@ -11,7 +11,7 @@ from kivy.core.window import Window
 from kivy.core.audio import SoundLoader
 # from kivy.clock import Clock
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import calendar
 import time
 import json
@@ -709,10 +709,24 @@ class CalendarApp(App):
         self.update_day_popup(instance)
 
     def inc_day(self, instance):
-        print('inc')
+        date = datetime(self.current_year, self.current_month, self.nr)
+        next_day = date + timedelta(days=1)
+        self.current_year = next_day.year
+        self.current_month = next_day.month
+        self.nr = next_day.day
+        self.active_entry = None
+        self.close_day_popup()
+        self.day_popup(self.nr)
 
     def dec_day(self, instance):
-        print('dec')
+        date = datetime(self.current_year, self.current_month, self.nr)
+        prev_day = date - timedelta(days=1)
+        self.current_year = prev_day.year
+        self.current_month = prev_day.month
+        self.nr = prev_day.day
+        self.active_entry = None
+        self.close_day_popup()
+        self.day_popup(self.nr)
 
     def day_popup(self, instance): 
         """Create the day-view with a textbox and buttons."""
@@ -788,13 +802,13 @@ class CalendarApp(App):
         # Create and bind the inc/dec nav-buttons.
         self.left_button = RoundedButton(text='<',
                                          background_color=self.popup_btn_col,
-                                         font_size=48, size_hint=(0.05,0.8))
+                                         font_size=48, size_hint=(0.04,0.6))
         
         self.left_button.bind(on_press=self.dec_day)
         
         self.right_button = RoundedButton(text='>',
                                          background_color=self.popup_btn_col,
-                                         font_size=48, size_hint=(0.05,0.8))
+                                         font_size=48, size_hint=(0.04,0.6))
         
         self.right_button.bind(on_press=self.inc_day)
         
@@ -942,13 +956,13 @@ class CalendarApp(App):
         # Create and bind the inc/dec nav-buttons.
         self.left_button = RoundedButton(text='<',
                                          background_color=self.popup_btn_col,
-                                         font_size=48, size_hint=(0.05,0.8))
+                                         font_size=48, size_hint=(0.04,0.6))
         
         self.left_button.bind(on_press=self.dec_day)
         
         self.right_button = RoundedButton(text='>',
                                          background_color=self.popup_btn_col,
-                                         font_size=48, size_hint=(0.05,0.8))
+                                         font_size=48, size_hint=(0.04,0.6))
         
         self.right_button.bind(on_press=self.inc_day)
 
