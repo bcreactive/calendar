@@ -710,7 +710,10 @@ class CalendarApp(App):
 
     def inc_day(self, instance):
         date = datetime(self.current_year, self.current_month, self.nr)
-        next_day = date + timedelta(days=1)
+        if self.swipe_x_default:
+            next_day = date + timedelta(days=1)
+        else:
+            next_day = date - timedelta(days=1)
         self.current_year = next_day.year
         self.current_month = next_day.month
         self.nr = next_day.day
@@ -720,7 +723,10 @@ class CalendarApp(App):
 
     def dec_day(self, instance):
         date = datetime(self.current_year, self.current_month, self.nr)
-        prev_day = date - timedelta(days=1)
+        if self.swipe_x_default:
+            prev_day = date - timedelta(days=1)
+        else:
+            prev_day = date + timedelta(days=1)
         self.current_year = prev_day.year
         self.current_month = prev_day.month
         self.nr = prev_day.day
