@@ -24,12 +24,12 @@ import json
 class CalendarApp(App):
     """This class creates a simple Kivy calendar-app for Android. When clicking
     on a day-button, users can write, edit, save and delete an entry in the 
-    'today-view'. Swipe motions left or right increase/decrease the displayed
-    month. To jump to a specific date swipe up or click the '^'-button to set a 
-    date using the up and down buttons. If the displayed month is not the 
-    current one, the '^'-button becomes a home-button to switch to the actual
-    month. Swipe down to display the settings-popup where you can chose a
-    colorset, change swipe-directions, disable/enable buttonsounds and change
+    'day-view'. Swipe motions left or right increase/decrease the displayed
+    month. To jump to a specific date swipe up or click the top-center button
+    to set a date using the up and down buttons. If the displayed month is not
+    the current one, the '^'-button becomes a home-button to switch to the
+    actual month. Swipe down to display the settings-popup where you can chose
+    a colorset, change swipe-directions, disable/enable buttonsounds and change
     the language."""
 
     def __init__(self, **kwargs):
@@ -808,17 +808,17 @@ class CalendarApp(App):
         # Create and bind the inc/dec nav-buttons.
         self.left_button = RoundedButton(text='<',
                                          background_color=self.popup_btn_col,
-                                         font_size=48, size_hint=(0.04,0.6))
+                                         font_size=48, size_hint=(0.35,1))
         
         self.left_button.bind(on_press=self.dec_day)
         
         self.right_button = RoundedButton(text='>',
                                          background_color=self.popup_btn_col,
-                                         font_size=48, size_hint=(0.04,0.6))
+                                         font_size=48, size_hint=(0.35,1))
         
         self.right_button.bind(on_press=self.inc_day)
         
-        # Create and bind the cancel, delete and save buttons.
+        # Create and bind the close and add button.
         if self.language == "EN":
             self.close_button = RoundedButton(text='Close', 
                                     background_color=self.popup_btn_col,
@@ -852,9 +852,6 @@ class CalendarApp(App):
         # content_box
         self.content_box = BoxLayout(orientation='vertical', spacing=20)
 
-        # nav_box
-        self.nav_box = BoxLayout(orientation='horizontal', spacing = 20)
-
         if key:
             self.content_box.add_widget(self.spaceholder_3)
             self.content_box.add_widget(self.entries)
@@ -865,23 +862,20 @@ class CalendarApp(App):
             self.content_box.add_widget(self.spaceholder_4)
         
         self.day_button_box = BoxLayout(orientation='horizontal',
-                               size_hint=(1,0.14), spacing=70,
-                               padding=(30,10,30,10))
+                               size_hint=(1,0.14), spacing=30,
+                               padding=(10,10,10,10))
         
         if key:
+            self.day_button_box.add_widget(self.left_button)
             self.day_button_box.add_widget(self.close_button)
             self.day_button_box.add_widget(self.add_button)
+            self.day_button_box.add_widget(self.right_button)
         else:
-            self.day_button_box.add_widget(self.spaceholder_5)
+            self.day_button_box.add_widget(self.left_button)
             self.day_button_box.add_widget(self.close_button)
-            self.day_button_box.add_widget(self.spaceholder_6)
-            
-        # self.main_box.add_widget(self.content_box)
-        self.nav_box.add_widget(self.left_button)
-        self.nav_box.add_widget(self.content_box)
-        self.nav_box.add_widget(self.right_button)
+            self.day_button_box.add_widget(self.right_button)
         
-        self.main_box.add_widget(self.nav_box)
+        self.main_box.add_widget(self.content_box)
         self.main_box.add_widget(self.day_button_box)
 
         # # Create the Popup window with customized content
@@ -902,7 +896,6 @@ class CalendarApp(App):
         """Update the day view."""
 
         self.close_day_popup()
-        self.nav_box.clear_widgets()
         self.content_box.clear_widgets()
         self.day_button_box.clear_widgets()
         self.main_box.clear_widgets()
@@ -962,13 +955,13 @@ class CalendarApp(App):
         # Create and bind the inc/dec nav-buttons.
         self.left_button = RoundedButton(text='<',
                                          background_color=self.popup_btn_col,
-                                         font_size=48, size_hint=(0.04,0.6))
+                                         font_size=48, size_hint=(0.35,1))
         
         self.left_button.bind(on_press=self.dec_day)
         
         self.right_button = RoundedButton(text='>',
                                          background_color=self.popup_btn_col,
-                                         font_size=48, size_hint=(0.04,0.6))
+                                         font_size=48, size_hint=(0.35,1))
         
         self.right_button.bind(on_press=self.inc_day)
 
@@ -1007,7 +1000,6 @@ class CalendarApp(App):
         self.content_box = BoxLayout(orientation='vertical', spacing=20)
 
         if key:
-            
             self.content_box.add_widget(self.spaceholder_3)
             self.content_box.add_widget(self.entries)
             self.content_box.add_widget(self.spaceholder_4)
@@ -1021,19 +1013,16 @@ class CalendarApp(App):
                                padding=(30,10,30,10))
         
         if key:
+            self.day_button_box.add_widget(self.left_button)
             self.day_button_box.add_widget(self.close_button)
             self.day_button_box.add_widget(self.add_button)
+            self.day_button_box.add_widget(self.right_button)
         else:
-            self.day_button_box.add_widget(self.spaceholder_5)
+            self.day_button_box.add_widget(self.left_button)
             self.day_button_box.add_widget(self.close_button)
-            self.day_button_box.add_widget(self.spaceholder_6)
-            
-        # self.main_box.add_widget(self.content_box)
-        self.nav_box.add_widget(self.left_button)
-        self.nav_box.add_widget(self.content_box)
-        self.nav_box.add_widget(self.right_button)
+            self.day_button_box.add_widget(self.right_button)
         
-        self.main_box.add_widget(self.nav_box)
+        self.main_box.add_widget(self.content_box)
         self.main_box.add_widget(self.day_button_box)
 
         # # Create the Popup window with customized content
