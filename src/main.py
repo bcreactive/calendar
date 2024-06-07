@@ -56,6 +56,13 @@ class CalendarApp(App):
         self.sound = self.save_file['sound']
         self.language = self.save_file['language']
 
+        # Load sounds.
+        self.swipe_r_sound = SoundLoader.load('swipe_r.mp3')
+        self.swipe_l_sound = SoundLoader.load('swipe_l.mp3')
+        self.ok_sound = SoundLoader.load('ok.mp3')
+        self.btn_sound = SoundLoader.load('btn.mp3')
+        self.credits_sound = SoundLoader.load('credits.mp3')
+
         self.load_colors()
         Window.clearcolor = self.main_win_col
 
@@ -76,12 +83,6 @@ class CalendarApp(App):
         self.prev_btn = False
         self.next_btn = False
 
-        # Load sounds.
-        self.swipe_r_sound = SoundLoader.load('swipe_r.mp3')
-        self.swipe_l_sound = SoundLoader.load('swipe_l.mp3')
-        self.ok_sound = SoundLoader.load('ok.mp3')
-        self.btn_sound = SoundLoader.load('btn.mp3')
-        self.credits_sound = SoundLoader.load('credits.mp3')
         self.credits_playing = False
 
     def build(self):
@@ -1327,7 +1328,6 @@ class CalendarApp(App):
                                 background_color=self.popup_btn_col)
  
         self.ok = RoundedButton(text="ok", font_size=48,
-                                    # size_hint=(1, 0.5),
                                     background_color=self.popup_btn_col)
         
         self.spaceholder_1 = Label(text='', font_size=64, size_hint=(1, 0.2))
@@ -1405,79 +1405,6 @@ class CalendarApp(App):
         self.nr = self.chose_d
         self.setdate_popup.open()
     
-    def prep_close(self, x=None):
-        self.close_setdate()
-        if self.sound:
-            self.btn_sound.play()
-
-    def close_setdate(self, x=None):
-        self.setdate_popup.dismiss()
-        self.update_main_window()
-
-    def inc_y(self, x=None):
-        # Increase set-date year.
-        self.chose_y += 1
-        self.update_setdate()
-        if self.sound:
-            self.btn_sound.play()
-
-    def dec_y(self, x=None):
-        # Decrease set-date year.
-        self.chose_y -= 1
-        self.update_setdate()
-        if self.sound:
-            self.btn_sound.play()
-        
-    def inc_m(self, x=None):
-        # Increase set-date month.
-        if self.chose_m == 12:
-            self.chose_m = 1
-            self.update_setdate()
-            return
-        self.chose_m += 1
-        self.update_setdate()
-        if self.sound:
-            self.btn_sound.play()
-    
-    def dec_m(self, x=None):
-        # Decrease set-date month.
-        if self.chose_m == 1:
-            self.chose_m = 12
-            self.update_setdate()
-            return
-        self.chose_m -= 1
-        self.update_setdate()
-        if self.sound:
-            self.btn_sound.play()
-
-    def inc_d(self, x=None):
-        # Increase set-date day.
-        days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
-        if self.chose_d >= days:
-            self.chose_d = 1
-            self.update_setdate()
-            return
-        self.chose_d += 1
-        self.update_setdate()
-        if self.sound:
-            self.btn_sound.play()
-    
-    def dec_d(self, x=None):
-        # Decrease set-date day.
-        days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
-        if self.chose_d <= 1:
-            self.chose_d = days
-            self.update_setdate()
-            return
-        self.chose_d -= 1
-        self.update_setdate()
-        if self.sound:
-            self.btn_sound.play()
-
-    def get_days_in_month(self, year, month):
-        days_in_month = calendar.monthrange(year, month)
-        return days_in_month
-
     def update_setdate(self):
         """Update the values and the view for the set-date popup."""
         # Remove the existing widgets to load the actualized content.
@@ -1569,6 +1496,79 @@ class CalendarApp(App):
 
         self.nr = self.chose_d
         self.input = ""
+    
+    def prep_close(self, x=None):
+        self.close_setdate()
+        if self.sound:
+            self.btn_sound.play()
+
+    def close_setdate(self, x=None):
+        self.setdate_popup.dismiss()
+        self.update_main_window()
+
+    def inc_y(self, x=None):
+        # Increase set-date year.
+        self.chose_y += 1
+        self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
+
+    def dec_y(self, x=None):
+        # Decrease set-date year.
+        self.chose_y -= 1
+        self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
+        
+    def inc_m(self, x=None):
+        # Increase set-date month.
+        if self.chose_m == 12:
+            self.chose_m = 1
+            self.update_setdate()
+            return
+        self.chose_m += 1
+        self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
+    
+    def dec_m(self, x=None):
+        # Decrease set-date month.
+        if self.chose_m == 1:
+            self.chose_m = 12
+            self.update_setdate()
+            return
+        self.chose_m -= 1
+        self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
+
+    def inc_d(self, x=None):
+        # Increase set-date day.
+        days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
+        if self.chose_d >= days:
+            self.chose_d = 1
+            self.update_setdate()
+            return
+        self.chose_d += 1
+        self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
+    
+    def dec_d(self, x=None):
+        # Decrease set-date day.
+        days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
+        if self.chose_d <= 1:
+            self.chose_d = days
+            self.update_setdate()
+            return
+        self.chose_d -= 1
+        self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
+
+    def get_days_in_month(self, year, month):
+        days_in_month = calendar.monthrange(year, month)
+        return days_in_month
 
     def jump_to(self, instance):
         # Jump to the chosen date and open the today-view.
@@ -1576,6 +1576,8 @@ class CalendarApp(App):
         self.current_year = self.chose_y
         self.current_month = self.chose_m
         self.current_day = self.chose_d
+        # self.nr = self.chose_d
+        # self.close_setdate()
 
         entry = self.check_entry(self.current_day)
         if entry:
