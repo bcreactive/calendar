@@ -55,13 +55,7 @@ class CalendarApp(App):
         self.swipe_y_default = self.save_file['inv_y']
         self.sound = self.save_file['sound']
         self.language = self.save_file['language']
-
-        # Load sounds.
-        self.swipe_r_sound = SoundLoader.load('swipe_r.mp3')
-        self.swipe_l_sound = SoundLoader.load('swipe_l.mp3')
-        self.ok_sound = SoundLoader.load('ok.mp3')
-        self.btn_sound = SoundLoader.load('btn.mp3')
-        self.credits_sound = SoundLoader.load('credits.mp3')
+        self.quick_delete = self.save_file['delete']
 
         self.load_colors()
         Window.clearcolor = self.main_win_col
@@ -83,6 +77,12 @@ class CalendarApp(App):
         self.prev_btn = False
         self.next_btn = False
 
+        # Load sounds.
+        self.swipe_r_sound = SoundLoader.load('swipe_r.mp3')
+        self.swipe_l_sound = SoundLoader.load('swipe_l.mp3')
+        self.ok_sound = SoundLoader.load('ok.mp3')
+        self.btn_sound = SoundLoader.load('btn.mp3')
+        self.credits_sound = SoundLoader.load('credits.mp3')
         self.credits_playing = False
 
     def build(self):
@@ -176,6 +176,7 @@ class CalendarApp(App):
 
         self.input = ""
         self.start_pos = (0,0)
+
 
     # Main view
     def main_window(self):
@@ -648,6 +649,7 @@ class CalendarApp(App):
         self.week_start = weeks[0].index(1)
         return weeks
     
+
     # Day view
     def day_popup(self, instance): 
         """Create the day-view with a textbox and buttons."""
@@ -758,8 +760,10 @@ class CalendarApp(App):
 
         self.spaceholder_3 = Label(size_hint=(1,0.2))
         self.spaceholder_4 = Label(size_hint=(1,0.2))
-        self.spaceholder_5 = Label(size_hint=(0.2,0.2))
-        self.spaceholder_6 = Label(size_hint=(0.2,0.2))
+        self.spaceholder_5 = Label(size_hint=(1,0.2))
+        self.spaceholder_6 = Label(size_hint=(1,0.2))
+        self.spaceholder_7 = Label(size_hint=(1,0.2))
+        self.spaceholder_8 = Label(size_hint=(1,0.2))
 
         # # Create the layout of the 'day-view'.
         self.main_box = BoxLayout(orientation='vertical', spacing=20)
@@ -768,9 +772,24 @@ class CalendarApp(App):
         self.content_box = BoxLayout(orientation='vertical', spacing=20)
 
         if key:
-            self.content_box.add_widget(self.spaceholder_3)
-            self.content_box.add_widget(self.entries)
-            self.content_box.add_widget(self.spaceholder_4)
+            if len(self.day_entries) == 1:
+                self.content_box.add_widget(self.spaceholder_3)
+                self.content_box.add_widget(self.spaceholder_4)
+                self.content_box.add_widget(self.spaceholder_5)
+                self.content_box.add_widget(self.entries)
+                self.content_box.add_widget(self.spaceholder_6)
+                self.content_box.add_widget(self.spaceholder_7)
+                self.content_box.add_widget(self.spaceholder_8)
+            elif len(self.day_entries) == 2:
+                self.content_box.add_widget(self.spaceholder_3)
+                self.content_box.add_widget(self.spaceholder_4)
+                self.content_box.add_widget(self.entries)
+                self.content_box.add_widget(self.spaceholder_5)
+                self.content_box.add_widget(self.spaceholder_6)
+            else:
+                self.content_box.add_widget(self.spaceholder_3)
+                self.content_box.add_widget(self.entries)
+                self.content_box.add_widget(self.spaceholder_4)
         else:
             self.content_box.add_widget(self.spaceholder_3)
             self.content_box.add_widget(self.empty_entry)
@@ -915,9 +934,24 @@ class CalendarApp(App):
         self.content_box = BoxLayout(orientation='vertical', spacing=20)
 
         if key:
-            self.content_box.add_widget(self.spaceholder_3)
-            self.content_box.add_widget(self.entries)
-            self.content_box.add_widget(self.spaceholder_4)
+            if len(self.day_entries) == 1:
+                self.content_box.add_widget(self.spaceholder_3)
+                self.content_box.add_widget(self.spaceholder_4)
+                self.content_box.add_widget(self.spaceholder_5)
+                self.content_box.add_widget(self.entries)
+                self.content_box.add_widget(self.spaceholder_6)
+                self.content_box.add_widget(self.spaceholder_7)
+                self.content_box.add_widget(self.spaceholder_8)
+            elif len(self.day_entries) == 2:
+                self.content_box.add_widget(self.spaceholder_3)
+                self.content_box.add_widget(self.spaceholder_4)
+                self.content_box.add_widget(self.entries)
+                self.content_box.add_widget(self.spaceholder_5)
+                self.content_box.add_widget(self.spaceholder_6)
+            else:
+                self.content_box.add_widget(self.spaceholder_3)
+                self.content_box.add_widget(self.entries)
+                self.content_box.add_widget(self.spaceholder_4)
         else:
             self.content_box.add_widget(self.spaceholder_3)
             self.content_box.add_widget(self.empty_entry)
@@ -1022,6 +1056,7 @@ class CalendarApp(App):
         self.day_pop.dismiss()
         if self.sound:
             self.btn_sound.play()
+
 
     # Textpopup
     def open_text_popup(self, instance):
@@ -1155,9 +1190,11 @@ class CalendarApp(App):
     def on_text_input(self, instance, x=None):
         self.entered_text = instance.text
 
+
     # Save and delete entries.
     def delete_entry(self, instance):
-        self.close_ask()
+        if not self.quick_delete:
+            self.close_ask()
         key = self.check_entry(self.nr)
         if key and not key == None:
             entries = self.save_file.get(key)
@@ -1177,49 +1214,52 @@ class CalendarApp(App):
                 self.ok_sound.play()
 
     def ask_delete(self, instance):
-        if self.sound:
-            self.btn_sound.play()
+        if not self.quick_delete:
+            if self.sound:
+                self.btn_sound.play()
 
-        # Creates a popup to confirm to delete the entry.
-        if self.language == "EN":
-            cancel_button = RoundedButton(text='No',
-                                    background_color=self.popup_btn_col,
-                                    font_size=40)
+            # Creates a popup to confirm to delete the entry.
+            if self.language == "EN":
+                cancel_button = RoundedButton(text='No',
+                                        background_color=self.popup_btn_col,
+                                        font_size=40)
+            else:
+                cancel_button = RoundedButton(text='Nein',
+                                        background_color=self.popup_btn_col,
+                                        font_size=40)
+            cancel_button.bind(on_press=self.prep_close_ask)
+
+            if self.language == "EN":
+                ok_button = RoundedButton(text='Ok',
+                                        background_color=self.popup_btn_col,
+                                        font_size=40)
+            else:
+                ok_button = RoundedButton(text='Ja',
+                                        background_color=self.popup_btn_col,
+                                        font_size=40)
+            
+            ok_button.bind(on_press=self.delete_entry)
+
+            main_box = BoxLayout(orientation='vertical', padding=(10,10,10,10))
+            button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.4),
+                                spacing=30)     
+            
+            button_box.add_widget(cancel_button)
+            button_box.add_widget(ok_button)
+            main_box.add_widget(button_box)
+
+            self.ask_popup = Popup(title='erase entry?', content=main_box,
+                                        size_hint=(0.8, 0.3), title_align='center')
+            
+            if self.language == "DE":
+                self.ask_popup.title = 'Eintrag löschen?'
+                    
+            self.ask_popup.background_color = self.bg_popups
+            self.ask_popup.pos_hint = {'center_x': 0.5, 'center_y': 0.45}
+            
+            self.ask_popup.open()
         else:
-            cancel_button = RoundedButton(text='Nein',
-                                    background_color=self.popup_btn_col,
-                                    font_size=40)
-        cancel_button.bind(on_press=self.prep_close_ask)
-
-        if self.language == "EN":
-            ok_button = RoundedButton(text='Ok',
-                                    background_color=self.popup_btn_col,
-                                    font_size=40)
-        else:
-            ok_button = RoundedButton(text='Ja',
-                                    background_color=self.popup_btn_col,
-                                    font_size=40)
-        
-        ok_button.bind(on_press=self.delete_entry)
-
-        main_box = BoxLayout(orientation='vertical', padding=(10,10,10,10))
-        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.4),
-                               spacing=30)     
-         
-        button_box.add_widget(cancel_button)
-        button_box.add_widget(ok_button)
-        main_box.add_widget(button_box)
-
-        self.ask_popup = Popup(title='erase entry?', content=main_box,
-                                    size_hint=(0.8, 0.3), title_align='center')
-        
-        if self.language == "DE":
-            self.ask_popup.title = 'Eintrag löschen?'
-                
-        self.ask_popup.background_color = self.bg_popups
-        self.ask_popup.pos_hint = {'center_x': 0.5, 'center_y': 0.45}
-        
-        self.ask_popup.open()
+            self.delete_entry(instance)
 
     def prep_close_ask(self, x=None):
         self.close_ask()
@@ -1279,6 +1319,7 @@ class CalendarApp(App):
             self.close_text_popup(instance)
             self.active_entry = None
 
+
     # Set-date popup.
     def set_date(self, x=None):
         """Create the set-date view to chose a date and jump to day-view."""
@@ -1328,6 +1369,7 @@ class CalendarApp(App):
                                 background_color=self.popup_btn_col)
  
         self.ok = RoundedButton(text="ok", font_size=48,
+                                    # size_hint=(1, 0.5),
                                     background_color=self.popup_btn_col)
         
         self.spaceholder_1 = Label(text='', font_size=64, size_hint=(1, 0.2))
@@ -1405,6 +1447,79 @@ class CalendarApp(App):
         self.nr = self.chose_d
         self.setdate_popup.open()
     
+    def prep_close(self, x=None):
+        self.close_setdate()
+        if self.sound:
+            self.btn_sound.play()
+
+    def close_setdate(self, x=None):
+        self.setdate_popup.dismiss()
+        self.update_main_window()
+
+    def inc_y(self, x=None):
+        # Increase set-date year.
+        self.chose_y += 1
+        self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
+
+    def dec_y(self, x=None):
+        # Decrease set-date year.
+        self.chose_y -= 1
+        self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
+        
+    def inc_m(self, x=None):
+        # Increase set-date month.
+        if self.chose_m == 12:
+            self.chose_m = 1
+            self.update_setdate()
+            return
+        self.chose_m += 1
+        self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
+    
+    def dec_m(self, x=None):
+        # Decrease set-date month.
+        if self.chose_m == 1:
+            self.chose_m = 12
+            self.update_setdate()
+            return
+        self.chose_m -= 1
+        self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
+
+    def inc_d(self, x=None):
+        # Increase set-date day.
+        days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
+        if self.chose_d >= days:
+            self.chose_d = 1
+            self.update_setdate()
+            return
+        self.chose_d += 1
+        self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
+    
+    def dec_d(self, x=None):
+        # Decrease set-date day.
+        days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
+        if self.chose_d <= 1:
+            self.chose_d = days
+            self.update_setdate()
+            return
+        self.chose_d -= 1
+        self.update_setdate()
+        if self.sound:
+            self.btn_sound.play()
+
+    def get_days_in_month(self, year, month):
+        days_in_month = calendar.monthrange(year, month)
+        return days_in_month
+
     def update_setdate(self):
         """Update the values and the view for the set-date popup."""
         # Remove the existing widgets to load the actualized content.
@@ -1496,79 +1611,6 @@ class CalendarApp(App):
 
         self.nr = self.chose_d
         self.input = ""
-    
-    def prep_close(self, x=None):
-        self.close_setdate()
-        if self.sound:
-            self.btn_sound.play()
-
-    def close_setdate(self, x=None):
-        self.setdate_popup.dismiss()
-        self.update_main_window()
-
-    def inc_y(self, x=None):
-        # Increase set-date year.
-        self.chose_y += 1
-        self.update_setdate()
-        if self.sound:
-            self.btn_sound.play()
-
-    def dec_y(self, x=None):
-        # Decrease set-date year.
-        self.chose_y -= 1
-        self.update_setdate()
-        if self.sound:
-            self.btn_sound.play()
-        
-    def inc_m(self, x=None):
-        # Increase set-date month.
-        if self.chose_m == 12:
-            self.chose_m = 1
-            self.update_setdate()
-            return
-        self.chose_m += 1
-        self.update_setdate()
-        if self.sound:
-            self.btn_sound.play()
-    
-    def dec_m(self, x=None):
-        # Decrease set-date month.
-        if self.chose_m == 1:
-            self.chose_m = 12
-            self.update_setdate()
-            return
-        self.chose_m -= 1
-        self.update_setdate()
-        if self.sound:
-            self.btn_sound.play()
-
-    def inc_d(self, x=None):
-        # Increase set-date day.
-        days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
-        if self.chose_d >= days:
-            self.chose_d = 1
-            self.update_setdate()
-            return
-        self.chose_d += 1
-        self.update_setdate()
-        if self.sound:
-            self.btn_sound.play()
-    
-    def dec_d(self, x=None):
-        # Decrease set-date day.
-        days = self.get_days_in_month(self.chose_y, self.chose_m)[1]
-        if self.chose_d <= 1:
-            self.chose_d = days
-            self.update_setdate()
-            return
-        self.chose_d -= 1
-        self.update_setdate()
-        if self.sound:
-            self.btn_sound.play()
-
-    def get_days_in_month(self, year, month):
-        days_in_month = calendar.monthrange(year, month)
-        return days_in_month
 
     def jump_to(self, instance):
         # Jump to the chosen date and open the today-view.
@@ -1576,8 +1618,6 @@ class CalendarApp(App):
         self.current_year = self.chose_y
         self.current_month = self.chose_m
         self.current_day = self.chose_d
-        # self.nr = self.chose_d
-        # self.close_setdate()
 
         entry = self.check_entry(self.current_day)
         if entry:
@@ -1588,6 +1628,7 @@ class CalendarApp(App):
 
         self.update_main_window()
         self.input = ""
+
 
     # Menu popup.
     def open_menu_popup(self, x=None):
@@ -1712,6 +1753,34 @@ class CalendarApp(App):
 
         self.spaceholder_2 = Label(text='', font_size=64, size_hint=(1, 0.7))
 
+        # Labels, buttons, bindings for delete settings.
+        if self.language == "EN":
+            self.del_title = Label(text='Erase', font_size=48,
+                                color=self.setdate_text_col)
+        else:
+            self.del_title = Label(text='Löschen', font_size=48,
+                                color=self.setdate_text_col)
+
+        if self.quick_delete:
+            if self.language == "EN":
+                self.delete_btn = RoundedButton(text='Instant', font_size=48,
+                                         background_color=self.chosen_btn_col)
+            else:
+                self.delete_btn = RoundedButton(text='Sofort', font_size=48,
+                                        background_color=self.chosen_btn_col)
+        else:
+            if self.language == "EN":
+                self.delete_btn = RoundedButton(text='Confirm', font_size=48,
+                                         background_color=self.popup_btn_col)
+            else:
+                self.delete_btn = RoundedButton(text='Bestätigen',
+                                        background_color=self.popup_btn_col,
+                                        font_size=48,)
+            
+        self.delete_btn.bind(on_release=self.switch_erase_mode)
+
+        # self.spaceholder_3 = Label(text='', font_size=64, size_hint=(1, 0.7))
+
         # Boxes in boxes with titles and buttons.
         self.title_box = BoxLayout(orientation='vertical', spacing=30,
                                    size_hint=(0.4, 1))
@@ -1719,6 +1788,7 @@ class CalendarApp(App):
         self.title_box.add_widget(self.invert_title)
         self.title_box.add_widget(self.sound_title)
         self.title_box.add_widget(self.language_title)
+        self.title_box.add_widget(self.del_title)
         self.title_box.add_widget(self.spaceholder_2)
 
         self.clr_btns = BoxLayout(orientation='horizontal', spacing=20)
@@ -1737,11 +1807,15 @@ class CalendarApp(App):
         self.lang_btn = BoxLayout(orientation='horizontal')
         self.lang_btn.add_widget(self.language_button)
 
+        self.del_btn = BoxLayout(orientation='horizontal', spacing=0)
+        self.del_btn.add_widget(self.delete_btn)
+
         self.btn_box = BoxLayout(orientation='vertical', spacing=30)
         self.btn_box.add_widget(self.clr_btns)
         self.btn_box.add_widget(self.inv_btns)
         self.btn_box.add_widget(self.snd_btn)
         self.btn_box.add_widget(self.lang_btn)
+        self.btn_box.add_widget(self.del_btn)
         self.btn_box.add_widget(self.about_btn)
 
         self.btns_title_box = BoxLayout(orientation='horizontal', spacing=30)
@@ -1829,6 +1903,15 @@ class CalendarApp(App):
         if self.sound:
             self.btn_sound.play()
 
+    def switch_erase_mode(self, instance):
+        if self.quick_delete:
+            self.quick_delete = False
+        else:
+            self.quick_delete = True
+        self.update_menu(instance)
+        if self.sound:
+            self.btn_sound.play()
+
     def close_menu(self, x=None):
         self.menu_popup.dismiss()
         if self.sound:
@@ -1845,6 +1928,7 @@ class CalendarApp(App):
         self.clr_btns.clear_widgets()
         self.inv_btns.clear_widgets()
         self.snd_btn.clear_widgets()
+        self.del_btn.clear_widgets()
         self.menu_layout.clear_widgets()
         
         # Update labels, buttons, bindings for color settings.
@@ -1970,6 +2054,32 @@ class CalendarApp(App):
         
         self.language_button.bind(on_release=self.switch_language)
 
+        # Labels, buttons, bindings for delete settings.
+        if self.language == "EN":
+            self.del_title = Label(text='Erase', font_size=48,
+                                color=self.setdate_text_col)
+        else:
+            self.del_title = Label(text='Löschen', font_size=48,
+                                color=self.setdate_text_col)
+
+        if self.quick_delete:
+            if self.language == "EN":
+                self.delete_btn = RoundedButton(text='Instant', font_size=48,
+                                         background_color=self.chosen_btn_col)
+            else:
+                self.delete_btn = RoundedButton(text='Sofort', font_size=48,
+                                        background_color=self.chosen_btn_col)
+        else:
+            if self.language == "EN":
+                self.delete_btn = RoundedButton(text='Confirm', font_size=48,
+                                         background_color=self.popup_btn_col)
+            else:
+                self.delete_btn = RoundedButton(text='Bestätigen',
+                                        background_color=self.popup_btn_col,
+                                        font_size=48,)
+            
+        self.delete_btn.bind(on_release=self.switch_erase_mode)
+
         # Boxes in boxes with titles and buttons.
         self.title_box = BoxLayout(orientation='vertical', spacing=30,
                                    size_hint=(0.4, 1))
@@ -1977,6 +2087,7 @@ class CalendarApp(App):
         self.title_box.add_widget(self.invert_title)
         self.title_box.add_widget(self.sound_title)
         self.title_box.add_widget(self.language_title)
+        self.title_box.add_widget(self.del_title)
         self.title_box.add_widget(self.spaceholder_2)
 
         self.clr_btns = BoxLayout(orientation='horizontal', spacing=20)
@@ -1994,12 +2105,16 @@ class CalendarApp(App):
 
         self.lang_btn = BoxLayout(orientation='horizontal', spacing=0)
         self.lang_btn.add_widget(self.language_button)
+    
+        self.del_btn = BoxLayout(orientation='horizontal', spacing=0)
+        self.del_btn.add_widget(self.delete_btn)
 
         self.btn_box = BoxLayout(orientation='vertical', spacing=30)
         self.btn_box.add_widget(self.clr_btns)
         self.btn_box.add_widget(self.inv_btns)
         self.btn_box.add_widget(self.snd_btn)
         self.btn_box.add_widget(self.lang_btn)
+        self.btn_box.add_widget(self.del_btn)
         self.btn_box.add_widget(self.about_btn)
 
         self.btns_title_box = BoxLayout(orientation='horizontal', spacing=30)
