@@ -28,8 +28,8 @@ class CalendarApp(App):
     to set a date using the up and down buttons. If the displayed month is not
     the current one, the '^'-button becomes a home-button to switch to the
     actual month. Swipe down to display the settings-popup where you can chose
-    a colorset, change swipe-directions, disable/enable buttonsounds and change
-    the language/date format."""
+    a colorset, change swipe-directions, disable/enable buttonsounds, change
+    the language/date format and delete mode."""
 
     def __init__(self, **kwargs):
         """Initalizing attributes."""
@@ -92,6 +92,7 @@ class CalendarApp(App):
         main_layout.bind(on_touch_down=self.on_touch_down, 
                          on_touch_up=self.on_touch_up)
         return main_layout
+
 
     # Touch, click and swipe related.
     def on_touch_down(self, instance, touch):
