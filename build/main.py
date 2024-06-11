@@ -9,7 +9,12 @@ from kivy.uix.textinput import TextInput
 from kivy.graphics import Color, RoundedRectangle
 from kivy.core.window import Window
 from kivy.core.audio import SoundLoader
+# from kivy.utils import platform
+# from kivy.logger import Logger
 # from kivy.clock import Clock
+# from kivy.clock import mainthread
+# from plyer import notification
+
 
 from datetime import datetime, timedelta
 import calendar
@@ -29,8 +34,8 @@ class CalendarApp(App):
     to set a date using the up and down buttons. If the displayed month is not
     the current one, the '^'-button becomes a home-button to switch to the
     actual month. Swipe down to display the settings-popup where you can chose
-    a colorset, change swipe-directions, disable/enable buttonsounds and change
-    the language."""
+    a colorset, change swipe-directions, disable/enable buttonsounds, change
+    the language/date format and delete mode."""
 
     def __init__(self, **kwargs):
         """Initalizing attributes."""
@@ -56,9 +61,22 @@ class CalendarApp(App):
         self.swipe_y_default = self.save_file['inv_y']
         self.sound = self.save_file['sound']
         self.language = self.save_file['language']
+        self.quick_delete = self.save_file['delete']
 
+        # Load icon.
+        self.icon = 'icon.png'
+
+        # Load colors.
         self.load_colors()
         Window.clearcolor = self.main_win_col
+
+        # Load sounds.
+        self.swipe_r_sound = SoundLoader.load('swipe_r.mp3')
+        self.swipe_l_sound = SoundLoader.load('swipe_l.mp3')
+        self.ok_sound = SoundLoader.load('ok.mp3')
+        self.btn_sound = SoundLoader.load('btn.mp3')
+        self.credits_sound = SoundLoader.load('credits.mp3')
+        self.credits_playing = False
 
         self.month_name = self.get_month_name(self.current_month)       
         self.day_labels = self.get_day_labels()
@@ -77,14 +95,20 @@ class CalendarApp(App):
         self.prev_btn = False
         self.next_btn = False
 
-        # Load sounds.
-        self.swipe_r_sound = SoundLoader.load('swipe_r.mp3')
-        self.swipe_l_sound = SoundLoader.load('swipe_l.mp3')
-        self.ok_sound = SoundLoader.load('ok.mp3')
-        self.btn_sound = SoundLoader.load('btn.mp3')
-        self.credits_sound = SoundLoader.load('credits.mp3')
-        self.credits_playing = False
+        # # Initialize the ReminderService
+        # self.reminder_service = ReminderService(self)
+        # self.reminder_service.start()
 
+    def build(self):
+        """Create the main view when the app is launched."""
+
+        main_layout = self.main_window()
+        main_layout.bind(on_touch_down=self.on_touch_down, 
+                         on_touch_up=self.on_touch_up)
+        return main_layout
+
+
+    # Touch, click and swipe related.
     def on_touch_down(self, instance, touch):
         self.touch_down_time = time.time()
         self.start_pos = touch.pos
@@ -168,26 +192,8 @@ class CalendarApp(App):
         self.input = ""
         self.start_pos = (0,0)
 
-    def set_click(self, instance):
-        self.input = "click"
 
-    def set_prevday_click(self, instance):
-        self.input = "click"
-        self.button_nr = int(instance.text)
-        self.prev_btn = True
-
-    def set_nextday_click(self, instance):
-        self.input = "click"
-        self.next_btn = True
-
-    def build(self):
-        """Create the main view when the app is launched."""
-
-        main_layout = self.main_window()
-        main_layout.bind(on_touch_down=self.on_touch_down, 
-                         on_touch_up=self.on_touch_up)
-        return main_layout
-    
+    # Main view
     def main_window(self):
         """Main view with buttons to navigate and to chose a day."""
 
@@ -241,15 +247,15 @@ class CalendarApp(App):
 
         # A grid of enumerated buttons, starting at the correct weekday.
         if len(self.weeks) == 4:
-            self.bottom_row = GridLayout(cols=7, rows=4, spacing=15)
+            self.bottom_row = GridLayout(cols=7, rows=4, spacing=20)
             self.set_buttons()
 
         elif len(self.weeks) == 5:
-            self.bottom_row = GridLayout(cols=7, rows=5, spacing=15)
+            self.bottom_row = GridLayout(cols=7, rows=5, spacing=20)
             self.set_buttons()
 
         elif len(self.weeks) == 6:
-            self.bottom_row = GridLayout(cols=7, rows=6, spacing=15)
+            self.bottom_row = GridLayout(cols=7, rows=6, spacing=20)
             self.set_buttons()
 
         # Create the main layout by stacking the top row, middle row and grid.
@@ -341,13 +347,13 @@ class CalendarApp(App):
             self.mid_row.add_widget(i)
 
         if len(self.weeks) == 4:
-            self.bottom_row = GridLayout(cols=7, rows=4, spacing=15)
+            self.bottom_row = GridLayout(cols=7, rows=4, spacing=20)
             self.set_buttons()
         elif len(self.weeks) == 5:
-            self.bottom_row = GridLayout(cols=7, rows=6, spacing=15)
+            self.bottom_row = GridLayout(cols=7, rows=6, spacing=20)
             self.set_buttons()
         elif len(self.weeks) == 6:
-            self.bottom_row = GridLayout(cols=7, rows=6, spacing=15)
+            self.bottom_row = GridLayout(cols=7, rows=6, spacing=20)
             self.set_buttons()
 
         self.main_layout.add_widget(self.top_row)
@@ -363,22 +369,6 @@ class CalendarApp(App):
             return data
 
     def load_colors(self):
-        # if self.color_set == 1: #green
-        #     self.main_win_col = (0.7, 1, 0.1, 1)
-        #     self.empty_col = (0, 0.6, 0.3)
-        #     self.entry_col = get_color_from_hex('#13ecb9')
-        #     self.today_col = get_color_from_hex('#9523fa')#ff69b4
-        #     self.today_entry_col = get_color_from_hex('#ee23fa')
-        #     self.navi_btn_col = get_color_from_hex('#0a748a')
-        #     self.home_btn_col = get_color_from_hex('#50befc')
-        #     self.main_text_col = get_color_from_hex('#03573b')
-
-        #     # Colors for popups.
-        #     self.bg_popups = (0,1,1,1)
-        #     self.popup_btn_col = get_color_from_hex('#0a748a')
-        #     self.chosen_btn_col = (1,0.3,1.1,1)
-        #     self.setdate_text_col = (0.5,0.75,1,1)
-
         if self.color_set == 1: #metroid
             self.main_win_col = get_color_from_hex('#222034')
             self.empty_col = get_color_from_hex('#5fcde4')
@@ -395,53 +385,37 @@ class CalendarApp(App):
             self.chosen_btn_col = get_color_from_hex('#5fcde4')
             self.setdate_text_col = get_color_from_hex('#d77bba')
 
-        elif self.color_set == 2: #sepia
-            self.main_win_col = get_color_from_hex('#87738f')
+        elif self.color_set == 2: #space
+            self.main_win_col = get_color_from_hex('#282c3c')
             self.empty_col = get_color_from_hex('#d4b8b8')
-            self.entry_col = get_color_from_hex('#c090a9')
-            self.today_col = get_color_from_hex('#966888')
-            self.today_entry_col = get_color_from_hex('#88a3bc')
-            self.navi_btn_col = get_color_from_hex('#88a3bc')
-            self.home_btn_col = get_color_from_hex('#bda499')
-            self.main_text_col = get_color_from_hex('#bda499')
+            self.entry_col = get_color_from_hex('#966888')
+            self.today_col = get_color_from_hex('#b8ccd8')
+            self.today_entry_col = get_color_from_hex('#d480bb')
+            self.navi_btn_col = get_color_from_hex('#64878c')
+            self.home_btn_col = get_color_from_hex('#64878c')
+            self.main_text_col = get_color_from_hex('#afe9df')
 
             # Colors for popups.
-            self.bg_popups = get_color_from_hex('#c68bb4')#966888
-            self.popup_btn_col = get_color_from_hex('#87738f')
+            self.bg_popups = get_color_from_hex('#282c3c')
+            self.popup_btn_col = get_color_from_hex('#966888')
             self.chosen_btn_col = get_color_from_hex('#d4b8b8')
-            self.setdate_text_col = get_color_from_hex('#bda499')
+            self.setdate_text_col = get_color_from_hex('#afe9df')
         
-        # elif self.color_set == 2: #space
-        #     self.main_win_col = get_color_from_hex('#282c3c')
-        #     self.empty_col = get_color_from_hex('#d4b8b8')
-        #     self.entry_col = get_color_from_hex('#966888')
-        #     self.today_col = get_color_from_hex('#b8ccd8')
-        #     self.today_entry_col = get_color_from_hex('#d480bb')
-        #     self.navi_btn_col = get_color_from_hex('#64878c')
-        #     self.home_btn_col = get_color_from_hex('#64878c')
-        #     self.main_text_col = get_color_from_hex('#afe9df')
-
-        #     # Colors for popups.
-        #     self.bg_popups = get_color_from_hex('#282c3c')
-        #     self.popup_btn_col = get_color_from_hex('#966888')
-        #     self.chosen_btn_col = get_color_from_hex('#d4b8b8')
-        #     self.setdate_text_col = get_color_from_hex('#afe9df')
-
-        elif self.color_set == 3: #b/w
-            self.main_win_col = get_color_from_hex('#ffffff')
-            self.empty_col = get_color_from_hex('#c1b9b9')
-            self.entry_col = get_color_from_hex('#6c6767')
-            self.today_col = get_color_from_hex('#000000')
-            self.today_entry_col = get_color_from_hex('#424242')
-            self.navi_btn_col = get_color_from_hex('#4f4f4f')
-            self.home_btn_col = get_color_from_hex('#000000')
-            self.main_text_col = get_color_from_hex('#818181')
+        elif self.color_set == 3: #green
+            self.main_win_col = (0.7, 1, 0.1, 1)
+            self.empty_col = (0, 0.6, 0.3)
+            self.entry_col = get_color_from_hex('#13ecb9')
+            self.today_col = get_color_from_hex('#9523fa')#ff69b4
+            self.today_entry_col = get_color_from_hex('#ee23fa')
+            self.navi_btn_col = get_color_from_hex('#0a748a')
+            self.home_btn_col = get_color_from_hex('#50befc')
+            self.main_text_col = get_color_from_hex('#03573b')
 
             # Colors for popups.
-            self.bg_popups = get_color_from_hex('#ffffff')
-            self.popup_btn_col = get_color_from_hex('#4f4f4f')
-            self.chosen_btn_col = get_color_from_hex('#a09d9d')
-            self.setdate_text_col = get_color_from_hex('#ffffff')
+            self.bg_popups = (0,1,1,1)
+            self.popup_btn_col = get_color_from_hex('#0a748a')
+            self.chosen_btn_col = (1,0.3,1.1,1)
+            self.setdate_text_col = (0.5,0.75,1,1)
 
         elif self.color_set == 4: #forest
             self.main_win_col = get_color_from_hex('#181c19')
@@ -458,6 +432,38 @@ class CalendarApp(App):
             self.popup_btn_col = get_color_from_hex('#5d9b79')
             self.chosen_btn_col = get_color_from_hex('#97edca')
             self.setdate_text_col = get_color_from_hex('#c6b858')
+
+        # elif self.color_set == 2: #sepia
+        #     self.main_win_col = get_color_from_hex('#87738f')
+        #     self.empty_col = get_color_from_hex('#d4b8b8')
+        #     self.entry_col = get_color_from_hex('#c090a9')
+        #     self.today_col = get_color_from_hex('#966888')
+        #     self.today_entry_col = get_color_from_hex('#88a3bc')
+        #     self.navi_btn_col = get_color_from_hex('#88a3bc')
+        #     self.home_btn_col = get_color_from_hex('#bda499')
+        #     self.main_text_col = get_color_from_hex('#bda499')
+
+        #     # Colors for popups.
+        #     self.bg_popups = get_color_from_hex('#c68bb4')#966888
+        #     self.popup_btn_col = get_color_from_hex('#87738f')
+        #     self.chosen_btn_col = get_color_from_hex('#d4b8b8')
+        #     self.setdate_text_col = get_color_from_hex('#bda499')    
+
+        # elif self.color_set == 3: #b/w
+        #     self.main_win_col = get_color_from_hex('#ffffff')
+        #     self.empty_col = get_color_from_hex('#c1b9b9')
+        #     self.entry_col = get_color_from_hex('#6c6767')
+        #     self.today_col = get_color_from_hex('#000000')
+        #     self.today_entry_col = get_color_from_hex('#424242')
+        #     self.navi_btn_col = get_color_from_hex('#4f4f4f')
+        #     self.home_btn_col = get_color_from_hex('#000000')
+        #     self.main_text_col = get_color_from_hex('#818181')
+
+        #     # Colors for popups.
+        #     self.bg_popups = get_color_from_hex('#ffffff')
+        #     self.popup_btn_col = get_color_from_hex('#4f4f4f')
+        #     self.chosen_btn_col = get_color_from_hex('#a09d9d')
+        #     self.setdate_text_col = get_color_from_hex('#ffffff')
 
     def set_buttons(self):
         """Setting up the day-buttongrid."""
@@ -523,6 +529,18 @@ class CalendarApp(App):
                 self.next_btns.append(button)
                 button.bind(on_press=self.set_nextday_click)
 
+    def set_click(self, instance):
+        self.input = "click"
+
+    def set_prevday_click(self, instance):
+        self.input = "click"
+        self.button_nr = int(instance.text)
+        self.prev_btn = True
+
+    def set_nextday_click(self, instance):
+        self.input = "click"
+        self.next_btn = True
+
     def get_prev_month_len(self):
         month = self.current_month - 1
         year = self.current_year
@@ -580,160 +598,74 @@ class CalendarApp(App):
                     day_name = 'Sonntag'
                 return day_name
 
-    def open_text_popup(self, instance):
-        """Creates a popup with textbox to write an entry, save and delete."""
+    def inc_year(self, x=None):
+        # Increase year in main-window.
+        self.current_year += 1
+        self.update_main_window()
         if self.sound:
-            self.btn_sound.play()
-
-        if instance.btn_nr > 0:
-            month = len(str(self.current_month))
-            day = len(str(self.button_nr))
-
-            if month == 1 and day == 1:
-                date = f'{self.current_year}0{self.current_month}0{self.button_nr}'
-            elif month == 1 and day == 2:
-                date = f'{self.current_year}0{self.current_month}{self.button_nr}'
-            elif month == 2 and day == 1:
-                date = f'{self.current_year}{self.current_month}0{self.button_nr}'
-            else:
-                date = f'{self.current_year}{self.current_month}{self.button_nr}'
-
-            entries = self.save_file[date]
-            content = entries.get(str(instance.btn_nr))
-        
-            self.entered_text = content
-            self.active_entry = instance.btn_nr
-
-            self.text_input = TextInput(text=content, multiline=True)
-            
-        else:
-            if self.language == "EN":
-                self.text_input = TextInput(hint_text='Write here...',
-                                multiline=True)
-            else:
-                self.text_input = TextInput(hint_text='Platz für Notizen...', 
-                                       multiline=True)
-                
-            if self.active_entry == 'new':
-                self.active_entry = 1
-            else:
-                self.active_entry = instance.btn_nr
-              
-        self.text_input.bind(text=self.on_text_input)
-
-        # Create and bind the cancel, delete and save buttons.
-        if self.language == "EN":
-            close_button = RoundedButton(text='Close', 
-                                    background_color=self.popup_btn_col,
-                                    font_size=48)
-        else:
-            close_button = RoundedButton(text='Zurück', 
-                                    background_color=self.popup_btn_col,
-                                    font_size=48)
-            
-        close_button.bind(on_press=self.close_text_popup)
-
-        if self.language == "EN":
-            save_button = RoundedButton(text='Save', 
-                                    background_color=self.popup_btn_col,
-                                    font_size=48)
-        else:
-            save_button = RoundedButton(text='Sichern', 
-                                    background_color=self.popup_btn_col,
-                                    font_size=48)
-            
-        save_button.bind(on_press=self.update_entries)
-
-        if self.language == "EN":
-            delete_button = RoundedButton(text='Delete', 
-                                    background_color=self.popup_btn_col,
-                                    font_size=48)
-        else:
-            delete_button = RoundedButton(text='Löschen', 
-                                    background_color=self.popup_btn_col,
-                                    font_size=48)
-            
-        # Close popup without confirmation, if no entry is saved.
-        entry = self.check_entry(self.nr)
-
-        if entry:
-            delete_button.bind(on_press=self.ask_delete)
-        else:
-            delete_button.bind(on_press=self.close_text_popup)
+            self.swipe_l_sound.play()
     
-        # Create the layout of the day-view.
-        main_box = BoxLayout(orientation='vertical', padding=(10,0,10,0))
+    def dec_year(self, x=None):
+        # Decrease year in main-window.
+        self.current_year -= 1
+        self.update_main_window()
+        if self.sound:
+            self.swipe_r_sound.play()
 
-        content_box = BoxLayout(orientation='vertical')
-        content_box.add_widget(self.text_input)
+    def inc_month(self, x=None):
+        # Increase month in main-window.
+        if self.current_month == 12:
+            self.current_month = 1
+            self.current_year += 1
+        else:
+            self.current_month += 1
+        self.update_main_window()
+        if self.sound:
+            self.swipe_l_sound.play()
 
-        button_box = BoxLayout(orientation='horizontal',
-                               size_hint=(1,0.18), spacing=50,
-                               padding=(10,10,10,10))
-            
-        button_box.add_widget(close_button)
-        # Remove the delete button from the textbox, if creating a new entry.
-        if self.entered_text:
-            button_box.add_widget(delete_button)
-        button_box.add_widget(save_button)
-
-        spaceholder = BoxLayout(orientation='vertical', size_hint=(1, 0.85))
-            
-        main_box.add_widget(content_box)
-        main_box.add_widget(button_box)
-        main_box.add_widget(spaceholder)
-
-        # Create the Popup window with customized content
-        month = self.get_month_name(self.current_month)   
-        dayname = self.get_day_name()
-        self.text_popup = TextPopup(self, title=f'{month} {self.button_nr}. ' + 
-                            f'{self.current_year} {dayname}', content=main_box,
-                            size_hint=(1, 1), title_align='center')
-        
-        if self.language == "DE":
-            self.text_popup.title = (f'{dayname} {self.button_nr}. {month}' +
-                                    f' {self.current_year}')
-
-        self.text_popup.background_color = self.bg_popups
-        self.text_popup.open()
-        self.input = ""
+    def dec_month(self, x=None):
+        # Decrease month in main-window.
+        if self.current_month == 1:
+            self.current_month = 12
+            self.current_year -= 1
+        else:
+            self.current_month -= 1
+        self.update_main_window()
+        if self.sound:
+            self.swipe_r_sound.play()
     
-    def close_text_popup(self, instance):
-        self.entered_text = ''
-        self.active_entry = None
-        self.update_day_popup(self.button_nr)
-        self.text_popup.dismiss()
-
-    def update_entries(self, instance):
-        self.save_entry(instance)
-        self.update_day_popup(instance)
-
-    def inc_day(self, instance):
-        date = datetime(self.current_year, self.current_month, self.nr)
-        if self.swipe_x_default:
-            next_day = date + timedelta(days=1)
+    def get_month_name(self, value):
+        if self.language == "EN":
+            months = ["Jan", "Feb", "March", "April", "Mai", "June", "July",
+                    "Aug", "Sept", "Oct", "Nov", "Dec"]
         else:
-            next_day = date - timedelta(days=1)
-        self.current_year = next_day.year
-        self.current_month = next_day.month
-        self.nr = next_day.day
-        self.active_entry = None
-        self.close_day_popup()
-        self.day_popup(self.nr)
-
-    def dec_day(self, instance):
-        date = datetime(self.current_year, self.current_month, self.nr)
-        if self.swipe_x_default:
-            prev_day = date - timedelta(days=1)
+            months = ["Jan", "Feb", "März", "April", "Mai", "Juni", "Juli",
+                    "Aug", "Sept", "Okt", "Nov", "Dez"]
+            
+        return months[value-1]
+       
+    def get_day_labels(self):
+        if self.language == "EN":
+            day_names = ["Mon", "Tue", "Wed", "Thu", "Fry", "Sat", "Sun"]
         else:
-            prev_day = date + timedelta(days=1)
-        self.current_year = prev_day.year
-        self.current_month = prev_day.month
-        self.nr = prev_day.day
-        self.active_entry = None
-        self.close_day_popup()
-        self.day_popup(self.nr)
+            day_names = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
 
+        labels = []
+        for i in day_names:
+            label = Label(text=f'{i}', color=self.main_text_col, font_size=40,
+                          bold=True)
+            labels.append(label)
+
+        return labels
+       
+    def load_month(self):
+        # Get the weeks in lists and get the 1. weekday of the month.
+        weeks = calendar.monthcalendar(self.current_year, self.current_month)
+        self.week_start = weeks[0].index(1)
+        return weeks
+    
+
+    # Day view
     def day_popup(self, instance): 
         """Create the day-view with a textbox and buttons."""
 
@@ -843,8 +775,10 @@ class CalendarApp(App):
 
         self.spaceholder_3 = Label(size_hint=(1,0.2))
         self.spaceholder_4 = Label(size_hint=(1,0.2))
-        self.spaceholder_5 = Label(size_hint=(0.2,0.2))
-        self.spaceholder_6 = Label(size_hint=(0.2,0.2))
+        self.spaceholder_5 = Label(size_hint=(1,0.2))
+        self.spaceholder_6 = Label(size_hint=(1,0.2))
+        self.spaceholder_7 = Label(size_hint=(1,0.2))
+        self.spaceholder_8 = Label(size_hint=(1,0.2))
 
         # # Create the layout of the 'day-view'.
         self.main_box = BoxLayout(orientation='vertical', spacing=20)
@@ -853,9 +787,24 @@ class CalendarApp(App):
         self.content_box = BoxLayout(orientation='vertical', spacing=20)
 
         if key:
-            self.content_box.add_widget(self.spaceholder_3)
-            self.content_box.add_widget(self.entries)
-            self.content_box.add_widget(self.spaceholder_4)
+            if len(self.day_entries) == 1:
+                self.content_box.add_widget(self.spaceholder_3)
+                self.content_box.add_widget(self.spaceholder_4)
+                self.content_box.add_widget(self.spaceholder_5)
+                self.content_box.add_widget(self.entries)
+                self.content_box.add_widget(self.spaceholder_6)
+                self.content_box.add_widget(self.spaceholder_7)
+                self.content_box.add_widget(self.spaceholder_8)
+            elif len(self.day_entries) == 2:
+                self.content_box.add_widget(self.spaceholder_3)
+                self.content_box.add_widget(self.spaceholder_4)
+                self.content_box.add_widget(self.entries)
+                self.content_box.add_widget(self.spaceholder_5)
+                self.content_box.add_widget(self.spaceholder_6)
+            else:
+                self.content_box.add_widget(self.spaceholder_3)
+                self.content_box.add_widget(self.entries)
+                self.content_box.add_widget(self.spaceholder_4)
         else:
             self.content_box.add_widget(self.spaceholder_3)
             self.content_box.add_widget(self.empty_entry)
@@ -1000,9 +949,24 @@ class CalendarApp(App):
         self.content_box = BoxLayout(orientation='vertical', spacing=20)
 
         if key:
-            self.content_box.add_widget(self.spaceholder_3)
-            self.content_box.add_widget(self.entries)
-            self.content_box.add_widget(self.spaceholder_4)
+            if len(self.day_entries) == 1:
+                self.content_box.add_widget(self.spaceholder_3)
+                self.content_box.add_widget(self.spaceholder_4)
+                self.content_box.add_widget(self.spaceholder_5)
+                self.content_box.add_widget(self.entries)
+                self.content_box.add_widget(self.spaceholder_6)
+                self.content_box.add_widget(self.spaceholder_7)
+                self.content_box.add_widget(self.spaceholder_8)
+            elif len(self.day_entries) == 2:
+                self.content_box.add_widget(self.spaceholder_3)
+                self.content_box.add_widget(self.spaceholder_4)
+                self.content_box.add_widget(self.entries)
+                self.content_box.add_widget(self.spaceholder_5)
+                self.content_box.add_widget(self.spaceholder_6)
+            else:
+                self.content_box.add_widget(self.spaceholder_3)
+                self.content_box.add_widget(self.entries)
+                self.content_box.add_widget(self.spaceholder_4)
         else:
             self.content_box.add_widget(self.spaceholder_3)
             self.content_box.add_widget(self.empty_entry)
@@ -1039,45 +1003,32 @@ class CalendarApp(App):
         self.day_pop.open()
         self.input = ""
         
-    def on_text_input(self, instance, x=None):
-        self.entered_text = instance.text
-        
-    def inc_year(self, x=None):
-        # Increase year in main-window.
-        self.current_year += 1
-        self.update_main_window()
-        if self.sound:
-            self.swipe_l_sound.play()
-    
-    def dec_year(self, x=None):
-        # Decrease year in main-window.
-        self.current_year -= 1
-        self.update_main_window()
-        if self.sound:
-            self.swipe_r_sound.play()
-
-    def inc_month(self, x=None):
-        # Increase month in main-window.
-        if self.current_month == 12:
-            self.current_month = 1
-            self.current_year += 1
+    def inc_day(self, instance):
+        date = datetime(self.current_year, self.current_month, self.nr)
+        if self.swipe_x_default:
+            next_day = date + timedelta(days=1)
         else:
-            self.current_month += 1
-        self.update_main_window()
-        if self.sound:
-            self.swipe_l_sound.play()
+            next_day = date - timedelta(days=1)
+        self.current_year = next_day.year
+        self.current_month = next_day.month
+        self.nr = next_day.day
+        self.active_entry = None
+        self.close_day_popup()
+        self.day_popup(self.nr)
 
-    def dec_month(self, x=None):
-        # Decrease month in main-window.
-        if self.current_month == 1:
-            self.current_month = 12
-            self.current_year -= 1
+    def dec_day(self, instance):
+        date = datetime(self.current_year, self.current_month, self.nr)
+        if self.swipe_x_default:
+            prev_day = date - timedelta(days=1)
         else:
-            self.current_month -= 1
-        self.update_main_window()
-        if self.sound:
-            self.swipe_r_sound.play()
-    
+            prev_day = date + timedelta(days=1)
+        self.current_year = prev_day.year
+        self.current_month = prev_day.month
+        self.nr = prev_day.day
+        self.active_entry = None
+        self.close_day_popup()
+        self.day_popup(self.nr)
+
     def check_today_visible(self):
         # Check, if the current date is visible on screen.
         if (self.current_year == datetime.now().year and
@@ -1121,8 +1072,145 @@ class CalendarApp(App):
         if self.sound:
             self.btn_sound.play()
 
+
+    # Textpopup
+    def open_text_popup(self, instance):
+        """Creates a popup with textbox to write an entry, save and delete."""
+        if self.sound:
+            self.btn_sound.play()
+
+        if instance.btn_nr > 0:
+            month = len(str(self.current_month))
+            day = len(str(self.button_nr))
+
+            if month == 1 and day == 1:
+                date = f'{self.current_year}0{self.current_month}0{self.button_nr}'
+            elif month == 1 and day == 2:
+                date = f'{self.current_year}0{self.current_month}{self.button_nr}'
+            elif month == 2 and day == 1:
+                date = f'{self.current_year}{self.current_month}0{self.button_nr}'
+            else:
+                date = f'{self.current_year}{self.current_month}{self.button_nr}'
+
+            entries = self.save_file[date]
+            content = entries.get(str(instance.btn_nr))
+        
+            self.entered_text = content
+            self.active_entry = instance.btn_nr
+
+            self.text_input = TextInput(text=content, multiline=True)
+            
+        else:
+            if self.language == "EN":
+                self.text_input = TextInput(hint_text='Write here...',
+                                multiline=True)
+            else:
+                self.text_input = TextInput(hint_text='Platz für Notizen...', 
+                                       multiline=True)
+                
+            if self.active_entry == 'new':
+                self.active_entry = 1
+            else:
+                self.active_entry = instance.btn_nr
+              
+        self.text_input.bind(text=self.on_text_input)
+
+        # Create and bind the cancel, delete and save buttons.
+        if self.language == "EN":
+            close_button = RoundedButton(text='Close', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+        else:
+            close_button = RoundedButton(text='Zurück', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+            
+        close_button.bind(on_press=self.close_text_popup)
+
+        if self.language == "EN":
+            save_button = RoundedButton(text='Save', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+        else:
+            save_button = RoundedButton(text='Sichern', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+            
+        save_button.bind(on_press=self.update_entries)
+
+        if self.language == "EN":
+            delete_button = RoundedButton(text='Delete', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+        else:
+            delete_button = RoundedButton(text='Löschen', 
+                                    background_color=self.popup_btn_col,
+                                    font_size=48)
+            
+        # Close popup without confirmation, if no entry is saved.
+        entry = self.check_entry(self.nr)
+
+        if entry:
+            delete_button.bind(on_press=self.ask_delete)
+        else:
+            delete_button.bind(on_press=self.close_text_popup)
+    
+        # Create the layout of the day-view.
+        main_box = BoxLayout(orientation='vertical', padding=(10,0,10,0))
+
+        content_box = BoxLayout(orientation='vertical')
+        content_box.add_widget(self.text_input)
+
+        button_box = BoxLayout(orientation='horizontal',
+                               size_hint=(1,0.18), spacing=50,
+                               padding=(10,10,10,10))
+            
+        button_box.add_widget(close_button)
+        # Remove the delete button from the textbox, if creating a new entry.
+        if self.entered_text:
+            button_box.add_widget(delete_button)
+        button_box.add_widget(save_button)
+
+        spaceholder = BoxLayout(orientation='vertical', size_hint=(1, 0.85))
+            
+        main_box.add_widget(content_box)
+        main_box.add_widget(button_box)
+        main_box.add_widget(spaceholder)
+
+        # Create the Popup window with customized content
+        month = self.get_month_name(self.current_month)   
+        dayname = self.get_day_name()
+        self.text_popup = TextPopup(self, title=f'{month} {self.button_nr}. ' + 
+                            f'{self.current_year} {dayname}', content=main_box,
+                            size_hint=(1, 1), title_align='center')
+        
+        if self.language == "DE":
+            self.text_popup.title = (f'{dayname} {self.button_nr}. {month}' +
+                                    f' {self.current_year}')
+
+        self.text_popup.background_color = self.bg_popups
+        self.text_popup.open()
+        self.input = ""
+    
+    def close_text_popup(self, instance):
+        self.entered_text = ''
+        self.active_entry = None
+        self.update_day_popup(self.button_nr)
+        self.text_popup.dismiss()
+
+    def update_entries(self, instance):
+        self.save_entry(instance)
+        self.update_day_popup(instance)
+
+    def on_text_input(self, instance, x=None):
+        self.entered_text = instance.text
+
+
+    # Save and delete entries.
     def delete_entry(self, instance):
-        self.close_ask()
+        if not self.quick_delete:
+            self.close_ask()
+            
         key = self.check_entry(self.nr)
         if key and not key == None:
             entries = self.save_file.get(key)
@@ -1138,53 +1226,50 @@ class CalendarApp(App):
             self.update_main_window()
             self.close_text_popup(instance)
 
-            if self.sound:
-                self.ok_sound.play()
-
     def ask_delete(self, instance):
-        if self.sound:
-            self.btn_sound.play()
+        if not self.quick_delete:
+            # Creates a popup to confirm delete if not in quick-erase mode.
+            if self.language == "EN":
+                cancel_button = RoundedButton(text='No',
+                                        background_color=self.popup_btn_col,
+                                        font_size=40)
+            else:
+                cancel_button = RoundedButton(text='Nein',
+                                        background_color=self.popup_btn_col,
+                                        font_size=40)
+            cancel_button.bind(on_press=self.prep_close_ask)
 
-        # Creates a popup to confirm to delete the entry.
-        if self.language == "EN":
-            cancel_button = RoundedButton(text='No',
-                                    background_color=self.popup_btn_col,
-                                    font_size=40)
+            if self.language == "EN":
+                ok_button = RoundedButton(text='Ok',
+                                        background_color=self.popup_btn_col,
+                                        font_size=40)
+            else:
+                ok_button = RoundedButton(text='Ja',
+                                        background_color=self.popup_btn_col,
+                                        font_size=40)
+            
+            ok_button.bind(on_press=self.delete_entry)
+
+            main_box = BoxLayout(orientation='vertical', padding=(10,10,10,10))
+            button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.4),
+                                spacing=30)     
+            
+            button_box.add_widget(cancel_button)
+            button_box.add_widget(ok_button)
+            main_box.add_widget(button_box)
+
+            self.ask_popup = Popup(title='erase entry?', content=main_box,
+                                        size_hint=(0.8, 0.3), title_align='center')
+            
+            if self.language == "DE":
+                self.ask_popup.title = 'Eintrag löschen?'
+                    
+            self.ask_popup.background_color = self.bg_popups
+            self.ask_popup.pos_hint = {'center_x': 0.5, 'center_y': 0.45}
+            
+            self.ask_popup.open()
         else:
-            cancel_button = RoundedButton(text='Nein',
-                                    background_color=self.popup_btn_col,
-                                    font_size=40)
-        cancel_button.bind(on_press=self.prep_close_ask)
-
-        if self.language == "EN":
-            ok_button = RoundedButton(text='Ok',
-                                    background_color=self.popup_btn_col,
-                                    font_size=40)
-        else:
-            ok_button = RoundedButton(text='Ja',
-                                    background_color=self.popup_btn_col,
-                                    font_size=40)
-        
-        ok_button.bind(on_press=self.delete_entry)
-
-        main_box = BoxLayout(orientation='vertical', padding=(10,10,10,10))
-        button_box = BoxLayout(orientation='horizontal', size_hint=(1,0.4),
-                               spacing=30)     
-         
-        button_box.add_widget(cancel_button)
-        button_box.add_widget(ok_button)
-        main_box.add_widget(button_box)
-
-        self.ask_popup = Popup(title='erase entry?', content=main_box,
-                                    size_hint=(0.8, 0.3), title_align='center')
-        
-        if self.language == "DE":
-            self.ask_popup.title = 'Eintrag löschen?'
-                
-        self.ask_popup.background_color = self.bg_popups
-        self.ask_popup.pos_hint = {'center_x': 0.5, 'center_y': 0.45}
-        
-        self.ask_popup.open()
+            self.delete_entry(instance)
 
     def prep_close_ask(self, x=None):
         self.close_ask()
@@ -1230,9 +1315,6 @@ class CalendarApp(App):
             with open('save_file.json', 'w') as file:
                 json.dump(self.save_file, file)
 
-            if self.sound:
-                self.ok_sound.play()
-
             self.day_entries = None
             self.active_entry = None
             self.update_main_window()
@@ -1244,36 +1326,8 @@ class CalendarApp(App):
             self.close_text_popup(instance)
             self.active_entry = None
 
-    def get_month_name(self, value):
-        if self.language == "EN":
-            months = ["Jan", "Feb", "March", "April", "Mai", "June", "July",
-                    "Aug", "Sept", "Oct", "Nov", "Dec"]
-        else:
-            months = ["Jan", "Feb", "März", "April", "Mai", "Juni", "Juli",
-                    "Aug", "Sept", "Okt", "Nov", "Dez"]
-            
-        return months[value-1]
-       
-    def get_day_labels(self):
-        if self.language == "EN":
-            day_names = ["Mon", "Tue", "Wed", "Thu", "Fry", "Sat", "Sun"]
-        else:
-            day_names = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
 
-        labels = []
-        for i in day_names:
-            label = Label(text=f'{i}', color=self.main_text_col, font_size=40,
-                          bold=True)
-            labels.append(label)
-
-        return labels
-       
-    def load_month(self):
-        # Get the weeks in lists and get the 1. weekday of the month.
-        weeks = calendar.monthcalendar(self.current_year, self.current_month)
-        self.week_start = weeks[0].index(1)
-        return weeks
-
+    # Set-date popup.
     def set_date(self, x=None):
         """Create the set-date view to chose a date and jump to day-view."""
         if self.sound:
@@ -1582,6 +1636,8 @@ class CalendarApp(App):
         self.update_main_window()
         self.input = ""
 
+
+    # Menu popup.
     def open_menu_popup(self, x=None):
         """Popup to change settings."""
 
@@ -1704,6 +1760,32 @@ class CalendarApp(App):
 
         self.spaceholder_2 = Label(text='', font_size=64, size_hint=(1, 0.7))
 
+        # Labels, buttons, bindings for delete settings.
+        if self.language == "EN":
+            self.del_title = Label(text='Erase', font_size=48,
+                                color=self.setdate_text_col)
+        else:
+            self.del_title = Label(text='Löschen', font_size=48,
+                                color=self.setdate_text_col)
+
+        if self.quick_delete:
+            if self.language == "EN":
+                self.delete_btn = RoundedButton(text='Instant', font_size=48,
+                                         background_color=self.chosen_btn_col)
+            else:
+                self.delete_btn = RoundedButton(text='Sofort', font_size=48,
+                                        background_color=self.chosen_btn_col)
+        else:
+            if self.language == "EN":
+                self.delete_btn = RoundedButton(text='Confirm', font_size=48,
+                                         background_color=self.popup_btn_col)
+            else:
+                self.delete_btn = RoundedButton(text='Bestätigen',
+                                        background_color=self.popup_btn_col,
+                                        font_size=48,)
+            
+        self.delete_btn.bind(on_release=self.switch_erase_mode)
+
         # Boxes in boxes with titles and buttons.
         self.title_box = BoxLayout(orientation='vertical', spacing=30,
                                    size_hint=(0.4, 1))
@@ -1711,6 +1793,7 @@ class CalendarApp(App):
         self.title_box.add_widget(self.invert_title)
         self.title_box.add_widget(self.sound_title)
         self.title_box.add_widget(self.language_title)
+        self.title_box.add_widget(self.del_title)
         self.title_box.add_widget(self.spaceholder_2)
 
         self.clr_btns = BoxLayout(orientation='horizontal', spacing=20)
@@ -1729,11 +1812,15 @@ class CalendarApp(App):
         self.lang_btn = BoxLayout(orientation='horizontal')
         self.lang_btn.add_widget(self.language_button)
 
+        self.del_btn = BoxLayout(orientation='horizontal', spacing=0)
+        self.del_btn.add_widget(self.delete_btn)
+
         self.btn_box = BoxLayout(orientation='vertical', spacing=30)
         self.btn_box.add_widget(self.clr_btns)
         self.btn_box.add_widget(self.inv_btns)
         self.btn_box.add_widget(self.snd_btn)
         self.btn_box.add_widget(self.lang_btn)
+        self.btn_box.add_widget(self.del_btn)
         self.btn_box.add_widget(self.about_btn)
 
         self.btns_title_box = BoxLayout(orientation='horizontal', spacing=30)
@@ -1821,6 +1908,15 @@ class CalendarApp(App):
         if self.sound:
             self.btn_sound.play()
 
+    def switch_erase_mode(self, instance):
+        if self.quick_delete:
+            self.quick_delete = False
+        else:
+            self.quick_delete = True
+        self.update_menu(instance)
+        if self.sound:
+            self.btn_sound.play()
+
     def close_menu(self, x=None):
         self.menu_popup.dismiss()
         if self.sound:
@@ -1837,6 +1933,7 @@ class CalendarApp(App):
         self.clr_btns.clear_widgets()
         self.inv_btns.clear_widgets()
         self.snd_btn.clear_widgets()
+        self.del_btn.clear_widgets()
         self.menu_layout.clear_widgets()
         
         # Update labels, buttons, bindings for color settings.
@@ -1962,6 +2059,32 @@ class CalendarApp(App):
         
         self.language_button.bind(on_release=self.switch_language)
 
+        # Labels, buttons, bindings for delete settings.
+        if self.language == "EN":
+            self.del_title = Label(text='Erase', font_size=48,
+                                color=self.setdate_text_col)
+        else:
+            self.del_title = Label(text='Löschen', font_size=48,
+                                color=self.setdate_text_col)
+
+        if self.quick_delete:
+            if self.language == "EN":
+                self.delete_btn = RoundedButton(text='Instant', font_size=48,
+                                         background_color=self.chosen_btn_col)
+            else:
+                self.delete_btn = RoundedButton(text='Sofort', font_size=48,
+                                        background_color=self.chosen_btn_col)
+        else:
+            if self.language == "EN":
+                self.delete_btn = RoundedButton(text='Confirm', font_size=48,
+                                         background_color=self.popup_btn_col)
+            else:
+                self.delete_btn = RoundedButton(text='Bestätigen',
+                                        background_color=self.popup_btn_col,
+                                        font_size=48,)
+            
+        self.delete_btn.bind(on_release=self.switch_erase_mode)
+
         # Boxes in boxes with titles and buttons.
         self.title_box = BoxLayout(orientation='vertical', spacing=30,
                                    size_hint=(0.4, 1))
@@ -1969,6 +2092,7 @@ class CalendarApp(App):
         self.title_box.add_widget(self.invert_title)
         self.title_box.add_widget(self.sound_title)
         self.title_box.add_widget(self.language_title)
+        self.title_box.add_widget(self.del_title)
         self.title_box.add_widget(self.spaceholder_2)
 
         self.clr_btns = BoxLayout(orientation='horizontal', spacing=20)
@@ -1986,12 +2110,16 @@ class CalendarApp(App):
 
         self.lang_btn = BoxLayout(orientation='horizontal', spacing=0)
         self.lang_btn.add_widget(self.language_button)
+    
+        self.del_btn = BoxLayout(orientation='horizontal', spacing=0)
+        self.del_btn.add_widget(self.delete_btn)
 
         self.btn_box = BoxLayout(orientation='vertical', spacing=30)
         self.btn_box.add_widget(self.clr_btns)
         self.btn_box.add_widget(self.inv_btns)
         self.btn_box.add_widget(self.snd_btn)
         self.btn_box.add_widget(self.lang_btn)
+        self.btn_box.add_widget(self.del_btn)
         self.btn_box.add_widget(self.about_btn)
 
         self.btns_title_box = BoxLayout(orientation='horizontal', spacing=30)
@@ -2010,11 +2138,13 @@ class CalendarApp(App):
         inv_y = {"inv_y": self.swipe_y_default}
         sound = {"sound": self.sound}
         language = {"language": self.language}
+        delete = {"delete": self.quick_delete}
         self.save_file.update(color)
         self.save_file.update(inv_x)
         self.save_file.update(inv_y)
         self.save_file.update(sound)
         self.save_file.update(language)
+        self.save_file.update(delete)
 
         with open('save_file.json', 'w') as file:
                 json.dump(self.save_file, file)
@@ -2066,13 +2196,25 @@ class CalendarApp(App):
         self.sound = self.save_file["sound"]
         self.credits_sound.stop()
 
+    # def check_launch(self):
+    #     today = datetime.today().date()
+    #     prefs = activity.getSharedPreferences("launch_info", 0)
+    #     last_launch_date = prefs.getString("last_launch_date", "")
+
+    #     if last_launch_date == str(today):
+    #         print("App was already launched today")
+    #     else:
+    #         print("App was not launched today")
+    #         prefs.edit().putString("last_launch_date", str(today)).apply()
 
 class TextPopup(Popup):
+    """Custom popup to set the textbox-focus automatically, when opened ."""
     def __init__(self, app, **kwargs):
         super(TextPopup, self).__init__(**kwargs)
         self.app = app
     
     def on_open(self):
+        # This will display the android keyboard when opening the textpopup.
         self.app.text_input.focus = True
 
 
@@ -2097,6 +2239,58 @@ class RoundedButton(Button):
 
     def on_size(self, instance, size):
         self._rounded_rect.size = size
+
+
+# class ReminderService:
+#     def __init__(self, app, interval=24*60*60):  # Check every 24 hours
+#         self.app = app
+#         self.interval = interval
+
+#     def start(self):
+#         self.interval = 20
+#         self._scheduler = Clock.schedule_interval(self.check_entries,
+#                                                   self.interval)
+#         # now = datetime.now()
+#         # dt = datetime(now.year, now.month, now.day, 0, 0)  # Midnight
+#         # tomorrow = dt + timedelta(days=1)  # Next midnight
+#         # time_to_midnight = (tomorrow - now).total_seconds()  
+#         # self._scheduler = Clock.schedule_once(self.check_entries,
+#         #                                       time_to_midnight)
+
+#     def check_entries(self, dt):
+#         # Get the current date
+#         day = datetime.now().day
+#         month = datetime.now().month
+#         year = datetime.now().year
+#         # Format date and check if an entry is saved for today.
+#         if len(str(day)) == 1:
+#             if len(str(month)) == 1:
+#                 date = f'{year}0{month}0{day}'
+#             elif len(str(month)) == 2:
+#                 date = f'{year}{month}0{day}'
+#         elif len(str(day)) == 2:
+#             if len(str(month)) == 1:
+#                 date = f'{year}0{month}{day}'
+#             elif len(str(month)) == 2:
+#                 date = f'{year}{month}{day}'
+
+#         if date in self.app.save_file:
+#             self.send_notification('Calendar',
+#                                    'You have saved entries for today!')
+    
+#     @mainthread
+#     def send_notification(self, title, message):
+#         notification.notify(
+#             title=title,
+#             message=message,
+#             app_name='Calendar'
+#         )
+#         print("entry!")
+
+#     def app_was_launched_today(self):
+#         # Add logic to check if the app was launched today
+#         # Return True if the app was launched today, else return False
+#         pass
 
 
 if __name__ == '__main__':
