@@ -1779,8 +1779,6 @@ class CalendarApp(App):
             
         self.delete_btn.bind(on_release=self.switch_erase_mode)
 
-        # self.spaceholder_3 = Label(text='', font_size=64, size_hint=(1, 0.7))
-
         # Boxes in boxes with titles and buttons.
         self.title_box = BoxLayout(orientation='vertical', spacing=30,
                                    size_hint=(0.4, 1))
@@ -2133,11 +2131,13 @@ class CalendarApp(App):
         inv_y = {"inv_y": self.swipe_y_default}
         sound = {"sound": self.sound}
         language = {"language": self.language}
+        delete = {"delete": self.quick_delete}
         self.save_file.update(color)
         self.save_file.update(inv_x)
         self.save_file.update(inv_y)
         self.save_file.update(sound)
         self.save_file.update(language)
+        self.save_file.update(delete)
 
         with open('save_file.json', 'w') as file:
                 json.dump(self.save_file, file)
