@@ -9,6 +9,12 @@ from kivy.uix.textinput import TextInput
 from kivy.graphics import Color, RoundedRectangle
 from kivy.core.window import Window
 from kivy.core.audio import SoundLoader
+# from kivy.utils import platform
+# from kivy.logger import Logger
+# from kivy.clock import Clock
+# from kivy.clock import mainthread
+# from plyer import notification
+
 
 from datetime import datetime, timedelta
 import calendar
@@ -57,8 +63,20 @@ class CalendarApp(App):
         self.language = self.save_file['language']
         self.quick_delete = self.save_file['delete']
 
+        # Load icon.
+        self.icon = 'icon.png'
+
+        # Load colors.
         self.load_colors()
         Window.clearcolor = self.main_win_col
+
+        # Load sounds.
+        self.swipe_r_sound = SoundLoader.load('swipe_r.mp3')
+        self.swipe_l_sound = SoundLoader.load('swipe_l.mp3')
+        self.ok_sound = SoundLoader.load('ok.mp3')
+        self.btn_sound = SoundLoader.load('btn.mp3')
+        self.credits_sound = SoundLoader.load('credits.mp3')
+        self.credits_playing = False
 
         self.month_name = self.get_month_name(self.current_month)       
         self.day_labels = self.get_day_labels()
@@ -77,13 +95,9 @@ class CalendarApp(App):
         self.prev_btn = False
         self.next_btn = False
 
-        # Load sounds.
-        self.swipe_r_sound = SoundLoader.load('swipe_r.mp3')
-        self.swipe_l_sound = SoundLoader.load('swipe_l.mp3')
-        self.ok_sound = SoundLoader.load('ok.mp3')
-        self.btn_sound = SoundLoader.load('btn.mp3')
-        self.credits_sound = SoundLoader.load('credits.mp3')
-        self.credits_playing = False
+        # # Initialize the ReminderService
+        # self.reminder_service = ReminderService(self)
+        # self.reminder_service.start()
 
     def build(self):
         """Create the main view when the app is launched."""
@@ -233,15 +247,15 @@ class CalendarApp(App):
 
         # A grid of enumerated buttons, starting at the correct weekday.
         if len(self.weeks) == 4:
-            self.bottom_row = GridLayout(cols=7, rows=4, spacing=15)
+            self.bottom_row = GridLayout(cols=7, rows=4, spacing=20)
             self.set_buttons()
 
         elif len(self.weeks) == 5:
-            self.bottom_row = GridLayout(cols=7, rows=5, spacing=15)
+            self.bottom_row = GridLayout(cols=7, rows=5, spacing=20)
             self.set_buttons()
 
         elif len(self.weeks) == 6:
-            self.bottom_row = GridLayout(cols=7, rows=6, spacing=15)
+            self.bottom_row = GridLayout(cols=7, rows=6, spacing=20)
             self.set_buttons()
 
         # Create the main layout by stacking the top row, middle row and grid.
@@ -333,13 +347,13 @@ class CalendarApp(App):
             self.mid_row.add_widget(i)
 
         if len(self.weeks) == 4:
-            self.bottom_row = GridLayout(cols=7, rows=4, spacing=15)
+            self.bottom_row = GridLayout(cols=7, rows=4, spacing=20)
             self.set_buttons()
         elif len(self.weeks) == 5:
-            self.bottom_row = GridLayout(cols=7, rows=6, spacing=15)
+            self.bottom_row = GridLayout(cols=7, rows=6, spacing=20)
             self.set_buttons()
         elif len(self.weeks) == 6:
-            self.bottom_row = GridLayout(cols=7, rows=6, spacing=15)
+            self.bottom_row = GridLayout(cols=7, rows=6, spacing=20)
             self.set_buttons()
 
         self.main_layout.add_widget(self.top_row)
@@ -1196,6 +1210,7 @@ class CalendarApp(App):
     def delete_entry(self, instance):
         if not self.quick_delete:
             self.close_ask()
+            
         key = self.check_entry(self.nr)
         if key and not key == None:
             entries = self.save_file.get(key)
@@ -1211,15 +1226,9 @@ class CalendarApp(App):
             self.update_main_window()
             self.close_text_popup(instance)
 
-            if self.sound:
-                self.ok_sound.play()
-
     def ask_delete(self, instance):
         if not self.quick_delete:
-            if self.sound:
-                self.btn_sound.play()
-
-            # Creates a popup to confirm to delete the entry.
+            # Creates a popup to confirm delete if not in quick-erase mode.
             if self.language == "EN":
                 cancel_button = RoundedButton(text='No',
                                         background_color=self.popup_btn_col,
@@ -1305,9 +1314,6 @@ class CalendarApp(App):
 
             with open('save_file.json', 'w') as file:
                 json.dump(self.save_file, file)
-
-            if self.sound:
-                self.ok_sound.play()
 
             self.day_entries = None
             self.active_entry = None
@@ -2190,6 +2196,17 @@ class CalendarApp(App):
         self.sound = self.save_file["sound"]
         self.credits_sound.stop()
 
+    # def check_launch(self):
+    #     today = datetime.today().date()
+    #     prefs = activity.getSharedPreferences("launch_info", 0)
+    #     last_launch_date = prefs.getString("last_launch_date", "")
+
+    #     if last_launch_date == str(today):
+    #         print("App was already launched today")
+    #     else:
+    #         print("App was not launched today")
+    #         prefs.edit().putString("last_launch_date", str(today)).apply()
+
 
 class TextPopup(Popup):
     """Custom popup to set the textbox-focus automatically, when opened ."""
@@ -2223,6 +2240,57 @@ class RoundedButton(Button):
 
     def on_size(self, instance, size):
         self._rounded_rect.size = size
+
+
+# class ReminderService:
+#     def __init__(self, app, interval=24*60*60):  # Check every 24 hours
+#         self.app = app
+#         self.interval = interval
+
+#     def start(self):
+#         self.interval = 20
+#         self._scheduler = Clock.schedule_interval(self.check_entries,
+#                                                   self.interval)
+#         # now = datetime.now()
+#         # dt = datetime(now.year, now.month, now.day, 0, 0)  # Midnight
+#         # tomorrow = dt + timedelta(days=1)  # Next midnight
+#         # time_to_midnight = (tomorrow - now).total_seconds()  
+#         # self._scheduler = Clock.schedule_once(self.check_entries,
+#         #                                       time_to_midnight)
+
+#     def check_entries(self, dt):
+#         # Get the current date
+#         day = datetime.now().day
+#         month = datetime.now().month
+#         year = datetime.now().year
+#         # Format date and check if an entry is saved for today.
+#         if len(str(day)) == 1:
+#             if len(str(month)) == 1:
+#                 date = f'{year}0{month}0{day}'
+#             elif len(str(month)) == 2:
+#                 date = f'{year}{month}0{day}'
+#         elif len(str(day)) == 2:
+#             if len(str(month)) == 1:
+#                 date = f'{year}0{month}{day}'
+#             elif len(str(month)) == 2:
+#                 date = f'{year}{month}{day}'
+
+#         if date in self.app.save_file:
+#             self.send_notification('Calendar',
+#                                    'You have saved entries for today!')
+    
+#     @mainthread
+#     def send_notification(self, title, message):
+#         notification.notify(
+#             title=title,
+#             message=message,
+#             app_name='Calendar'
+#         )
+#         print("entry!")
+
+#     def app_was_launched_today(self):
+#         # Return True if the app was launched today, else return False
+#         pass
 
 
 if __name__ == '__main__':
